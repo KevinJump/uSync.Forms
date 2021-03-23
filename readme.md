@@ -2,6 +2,11 @@
 
 Synchronize Umbraco forms between umbraco installations as part of uSync 8
 
+```
+Install-Package uSync.Forms -pre
+```
+https://www.nuget.org/packages/uSync.Forms
+
 
 ### Requires uSync
 uSync.FormsEdition is an add on to uSync v8 that provides handlers and serializers 
