@@ -58,10 +58,10 @@ namespace uSync.Forms.Serializers
 
             info.Add(new XElement("GoToPageOnSubmit", GetContentKey(item.GoToPageOnSubmit)));
 
-            info.Add(new XElement("XPathOnSubmit", item.XPathOnSubmit));
+            info.Add(new XElement("XPathOnSubmit", item.XPathOnSubmit ?? string.Empty));
             info.Add(new XElement("ManualApproval", item.ManualApproval));
             info.Add(new XElement("StoreRecordsLocally", item.StoreRecordsLocally));
-            info.Add(new XElement("CssClass", item.CssClass));
+            info.Add(new XElement("CssClass", item.CssClass ?? string.Empty));
             info.Add(new XElement("DisabledDefaultStylesheet", item.DisableDefaultStylesheet));
             info.Add(new XElement("UseClientDependency", item.UseClientDependency));
             
@@ -175,18 +175,23 @@ namespace uSync.Forms.Serializers
 
         protected override SyncAttempt<Form> DeserializeCore(XElement node, SyncSerializerOptions options)
         {
-            var item = FindItem(node);
+            var item = FindItem(node.GetKey());
+            if (item == null)
+            {
+                item = FindItem(node.GetAlias());
+            }
 
             if (item == null)
             {
                 item = new Form();
+                item.Id = node.GetKey();
             }
 
             DeserializeInfo(node, item);
 
             DeserializePages(node, item);
 
-            SaveItem(item);
+            // SaveItem(item);
 
             return SyncAttempt<Form>.Succeed(item.Name, item, ChangeType.Import);
         }

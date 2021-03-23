@@ -67,6 +67,7 @@ namespace uSync.Forms.Serializers
             if (item == null)
             {
                 item = new FieldPreValueSource();
+                item.Id = node.GetKey();
             }
 
             var info = node.Element("Info");

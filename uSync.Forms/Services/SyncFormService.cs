@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Umbraco.Forms.Core;
 using Umbraco.Forms.Core.Data.Storage;
@@ -91,7 +92,7 @@ namespace uSync.Forms.Services
                 }
                 else
                 {
-                    return formStorage.GetForm(name);
+                    return formStorage.GetAll().FirstOrDefault(x => x.Name == name);
                 }
             }
             catch
@@ -104,13 +105,17 @@ namespace uSync.Forms.Services
         {
             if (Configuration.StoreUmbracoFormsInDb)
             {
-                _ = item.Id == Guid.Empty ? formService.Insert(item) : formService.Update(item);
+                _ = IsNew(item) ? formService.Insert(item) : formService.Update(item);
             }
             else
             {
-                _ = item.Id == Guid.Empty ? formStorage.InsertForm(item) : formStorage.UpdateForm(item);
+                _ = IsNew(item) ? formStorage.InsertForm(item) : formStorage.UpdateForm(item);
             }
         }
+
+        private bool IsNew(Form item)
+            => item.Id == Guid.Empty || !GetAllForms().Any(x => x.Id == item.Id);
+
 
         public void DeleteForm(Form item)
         {

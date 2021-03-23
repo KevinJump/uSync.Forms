@@ -53,6 +53,7 @@ namespace uSync.Forms.Serializers
             if (item == null)
             {
                 item = new FormDataSource();
+                item.Id = node.GetKey();
             }
 
             var info = node.Element("Info");
