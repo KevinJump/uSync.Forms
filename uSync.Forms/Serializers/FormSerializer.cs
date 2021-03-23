@@ -220,6 +220,9 @@ namespace uSync.Forms.Serializers
             item.NextLabel = info.Element("NextLabel").ValueOrDefault(string.Empty);
             item.PrevLabel = info.Element("PreVLabel").ValueOrDefault(string.Empty);
 
+            // have to save before we do the workflow and source. 
+            SaveItem(item);
+
             DeserializeWorkdlows(info, item);
             DesersilizeDataSource(info, item);
         }
