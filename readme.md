@@ -11,3 +11,6 @@ so you can sync forms, datasources and prevaluesources between servers.
 uSync.Forms Edition has been developed against Umbraco Forms v8.6.1 and should 
 work with both onDisk and Database setups of Forms. 
 
+---
+
+![uSync.Forms](./dist/usync-forms.gif)
