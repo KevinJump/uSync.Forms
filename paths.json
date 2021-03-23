@@ -1,0 +1,11 @@
+{
+    "library": "uSync.Forms",
+    "sites": [
+        "uSync.FormsOnDisk",
+        "uSync.FormsSite"
+    ],
+    "plugins": [
+        { "library": "uSync.Forms", "pluginFolder" : "uSync.Forms" }
+    ]
+}
+  

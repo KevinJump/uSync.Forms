@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<uSync xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+	<BackOffice>
+		<HandlerSets>
+			<Handlers Name="default" xdt:Locator="Match(Name)">
+				<Handler Alias="formsHandler" Enabled="true" xdt:Transform="Remove" xdt:Locator="Match(Alias)" />
+				<Handler Alias="formsPreValueHandler" Enabled="true" xdt:Transform="Remove" xdt:Locator="Match(Alias)" />
+				<Handler Alias="formsDataSourceHandler" Enabled="true" xdt:Transform="Remove" xdt:Locator="Match(Alias)" />
+
+				<Handler Alias="formsHandler" Enabled="true" xdt:Transform="Insert" xdt:Locator="Match(Alias)" />
+				<Handler Alias="formsPreValueHandler" Enabled="true" xdt:Transform="Insert" xdt:Locator="Match(Alias)" />
+				<Handler Alias="formsDataSourceHandler" Enabled="true" xdt:Transform="Insert" xdt:Locator="Match(Alias)" />
+			</Handlers>
+		</HandlerSets>
+	</BackOffice>
+</uSync>

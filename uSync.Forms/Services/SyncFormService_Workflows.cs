@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Umbraco.Forms.Core;
+using Umbraco.Forms.Core.Interfaces;
+using Umbraco.Forms.Core.Models;
+
+namespace uSync.Forms.Services
+{
+    public partial class SyncFormService
+    {
+
+        public void SaveWorkflow(Workflow workflow, Form form)
+        {
+            if (Configuration.StoreUmbracoFormsInDb)
+            {
+                _ = IsNew(workflow, form) ? workflowServices.Insert(workflow) : workflowServices.Update(workflow);
+            }
+            else
+            {
+                _ = IsNew(workflow, form) ? workflowStorage.InsertWorkflow(form, workflow) : workflowStorage.UpdateWorkflow(workflow);
+            }
+        }
+
+        /// <summary>
+        ///  workflows json has the guid in it, so it new workflows might have empty guid values. 
+        /// </summary>
+        public bool IsNew(Workflow item, Form form)
+            => (item.Id == Guid.Empty || (FindWorkflow(item.Id, form) == null));
+
+
+        public Workflow FindWorkflow(Guid id, Form form)
+        {
+            var workflows = GetWorkflows(form);
+            if (workflows == null) return null;
+            return (Workflow)workflows.FirstOrDefault(x => x.Id == id);
+        }
+
+
+        public List<IWorkflow> GetWorkflows(Form form)
+        {
+            if (Configuration.StoreUmbracoFormsInDb)
+            {
+                return workflowServices.Get(form);
+            }
+            else
+            {
+                return workflowStorage.GetAllWorkFlows(form);
+            }
+        }
+    }
+}
