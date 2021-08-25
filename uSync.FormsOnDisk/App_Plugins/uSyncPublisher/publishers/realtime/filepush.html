@@ -1,0 +1,20 @@
+﻿<div ng-controller="uSyncPublisherOptionsController as pvm">
+    <div class="usync-publish-options">
+
+        <div ng-if="pvm.server.SendSettings.Message.length > 0" class="usync-publish-server-message">
+            {{pvm.server.SendSettings.Message}}
+        </div>
+
+        <div class="usync-advanced">
+
+            <h4>Templates and Files</h4>
+
+            <localize ng-if="pvm.mode === 'filePush'" key="usyncpublish_filespush"></localize>
+            <localize ng-if="pvm.mode === 'filePull'" key="usyncpublish_filespull"></localize>
+
+            <p>This Includes the following folders:</p>
+            <ul><li>Views</li><li>Scripts</li><li>css</li></ul>
+        </div>
+
+    </div>
+</div>

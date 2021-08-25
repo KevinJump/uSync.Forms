@@ -224,7 +224,7 @@
         <h4 class="umb-forms-title">
             <strong>Your forms</strong>
             <div class="umb-forms__show-all">
-                <a class="btn btn-link" href="" ng-show="vm.forms.length > vm.formsLimit" ng-click="vm.showAllOverviews()">Show all</a>
+                <a class="btn btn-link" href="" ng-show="vm.forms.length > vm.formsLimit" ng-click="vm.showMore()">Show more</a>
             </div>
         </h4>
 
@@ -246,6 +246,12 @@
                 
             </li>
         </ul>
+
+        <div class="umb-forms-title" ng-show="vm.formsLimit > vm.initialFormsLimit">
+            <div class="umb-forms__show-all">
+                <a class="btn btn-link" href="" ng-show="vm.forms.length > vm.formsLimit" ng-click="vm.showMore()">Show more</a>
+            </div>
+        </div>
     </div>
 
 </div>

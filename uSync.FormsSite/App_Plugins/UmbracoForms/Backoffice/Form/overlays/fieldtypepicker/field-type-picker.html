@@ -1,4 +1,4 @@
-<div ng-controller="UmbracoForms.Overlays.FieldTypePickerOverlayController as vm">
+<div ng-controller="UmbracoForms.Overlays.FieldTypePickerOverlayController as vm" class="umb-forms-grid-picker">
     <umb-editor-view data-element="field-data-type-picker">
 
         <form novalidate name="FieldTypePickerForm" val-form-manager>
@@ -49,6 +49,7 @@
                     <umb-button type="button"
                                 button-style="link"
                                 label-key="general_close"
+                                shortcut="esc"
                                 action="vm.close()" data-umb="field-type-picker-close">
                     </umb-button>
                 </umb-editor-footer-content-right>

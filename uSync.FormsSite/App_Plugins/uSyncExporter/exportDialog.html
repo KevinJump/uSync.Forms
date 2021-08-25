@@ -1,0 +1,46 @@
+﻿<div ng-controller="usyncExporterExportController as vm">
+    <div class="umb-dialog-body form-horizontal">
+        <div class="umb-pane">
+            <umb-pane>
+
+                <h4>Choose what to export</h4>
+                <p>
+                    You can either export this item on its own, all with all the elements
+                    you would need to create it on another site. What you pick depends on where
+                    you are exporting to.
+                </p>
+                <p>
+                    <strong>
+                        In general, Including Dependencies and Ancestors will mean you can recreate this item
+                        on any Umbraco Install
+                    </strong>
+                </p>
+            </umb-pane>
+
+            <usync-export-sync-options options="vm.options" 
+                                       hide-decendants="!vm.hasChildren"
+                                       hide-files="!vm.isDocType" />
+
+            <umb-pane ng-if="vm.hasError">
+                <div class="alert alert-error">
+                    {{vm.errorMessage}}
+                </div>
+            </umb-pane>
+        </div>
+
+        <div class="umb-dialog-footer btn-toolbar umb-btn-toolbar">
+
+            <umb-button type="button"
+                        button-style="link"
+                        label-key="general_close"
+                        action="vm.close()">
+            </umb-button>
+
+            <umb-button type="button"
+                        button-style="success"
+                        label-key="actions_export"
+                        state="vm.buttonState"
+                        action="vm.exportItem()"></umb-button>
+        </div>
+    </div>
+</div>

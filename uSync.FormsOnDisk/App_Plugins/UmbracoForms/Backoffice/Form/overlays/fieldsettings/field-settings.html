@@ -90,10 +90,24 @@
                             <div class="umb-property">                                
                                 <umb-forms-file-upload-editor ng-model="model.field.allowedUploadTypes" />
                             </div>
+                            <h5>Allow multiple file uploads</h5>
+                            <div class="umb-property">
+                                <umb-toggle checked="model.field.allowMultipleFileUploads"
+                                            on-click="vm.toggleAllowMultipleFileUploads()"
+                                            show-labels="true"
+                                            label-on="Multiple files allowed"
+                                            label-off="Single file only"
+                                            label-position="right">
+                                </umb-toggle>
+                            </div>
                         </div>
                         <!-- Field type settings -->
                         <div class="umb-control-group" ng-if="model.field.$fieldType.supportsPrevalues">
                             <h5>Prevalues</h5>
+                            <p>
+                                <small ng-if="model.prevalueSources && model.prevalueSources.length > 0">Either provide here a list of options (prevalues) specific for this field, or select a predefined prevalue source.</small>
+                                <small ng-if="!model.prevalueSources || model.prevalueSources.length == 0">Provides a list of options (prevalues) for the field.</small>
+                            </p>
                             <div class="umb-property">
 
                                 <div class="control-group umb-control-group" ng-if="model.field.prevalueSourceId == null || model.field.prevalueSourceId == '00000000-0000-0000-0000-000000000000'">
@@ -101,12 +115,14 @@
                                     <umb-forms-prevalue-editor ng-model="model.field.preValues" />
                                 </div>
 
-                                <div class="control-group umb-control-group" ng-if="model.prevalueSources">
+                                <div class="control-group umb-control-group" ng-if="model.prevalueSources && model.prevalueSources.length > 0">
                                     <label class="control-label">Prevalue source</label>
-                                    <select ng-model="model.field.prevalueSourceId" ng-change="vm.getPrevalues(model.field)">
-                                        <option value="00000000-0000-0000-0000-000000000000" ng-selected="model.field.prevalueSourceId == '00000000-0000-0000-0000-000000000000'">Choose...</option>
-                                        <option ng-repeat="source in model.prevalueSources" value="{{source.id}}" ng-selected="model.field.prevalueSourceId == source.id">{{source.name}}</option>
-                                    </select>
+                                    <div>
+                                        <select ng-model="model.field.prevalueSourceId" ng-change="vm.getPrevalues(model.field)">
+                                          <option value="00000000-0000-0000-0000-000000000000" ng-selected="model.field.prevalueSourceId == '00000000-0000-0000-0000-000000000000'">Choose...</option>
+                                          <option ng-repeat="source in model.prevalueSources" value="{{source.id}}" ng-selected="model.field.prevalueSourceId == source.id">{{source.name}}</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                             </div>
@@ -118,7 +134,7 @@
                                 <div class="control-row" ng-repeat="setting in model.field.$fieldType.settings">
                                     <div class="control-group umb-control-group -no-border">
                                         <label class="control-label">{{setting.name}}</label>
-                                        <small style="margin-top: -10px; display: block;" ng-if="setting.description">{{setting.description}}</small>
+                                        <small style="display: block;" ng-if="setting.description">{{setting.description}}</small>
                                         <div ng-include="setting.view"></div>
                                     </div>
                                 </div>
@@ -231,6 +247,7 @@
 
                                     </div>
 
+                                    <br/>
                                     <button class="umb-forms-button" ng-click="vm.addConditionRule(model.field.condition)">
                                         Add condition
                                     </button>
@@ -247,6 +264,7 @@
                     <umb-button type="button"
                                 button-style="link"
                                 label-key="general_close"
+                                shortcut="esc"
                                 action="vm.close()" data-umb="field-settings-close">
                     </umb-button>
                     <umb-button type="button"

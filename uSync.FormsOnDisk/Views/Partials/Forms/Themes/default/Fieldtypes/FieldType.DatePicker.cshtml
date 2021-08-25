@@ -15,5 +15,12 @@
     }
 }
 
-<input type="hidden" name="@Model.Name" id="@Model.Id" data-umb="@Model.Id" class="datepickerfieldshadow" value="@val" />
-<input type="text" name="@Model.Name" id="@(Model.Id)_1" data-umb="@(Model.Id)_1" class="datepickerfield" autocomplete="off" value="@val" @{if (Model.Mandatory) { <text> data-val="true" data-val-required="@Model.RequiredErrorMessage" </text> }} />
+<input type="hidden" name="@Model.Name" id="@Model.Id" class="datepickerfieldshadow" value="@val" data-umb="@Model.Id"  />
+<input type="text"
+       name="@Model.Name"
+       id="@(Model.Id)_1"
+       class="datepickerfield"
+       autocomplete="off"
+       value="@val"
+       @{if (Model.Mandatory) { <text> data-val="true" data-val-required="@Model.RequiredErrorMessage" </text> }}
+       @{if(string.IsNullOrEmpty(Model.PlaceholderText) == false){<text>placeholder="@Model.PlaceholderText"</text>}}/>

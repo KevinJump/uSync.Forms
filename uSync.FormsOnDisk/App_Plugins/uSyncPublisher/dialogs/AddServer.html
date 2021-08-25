@@ -1,0 +1,120 @@
+﻿<div ng-controller="uSyncAddServerController as vm">
+    <umb-editor-panel>
+        <umb-editor-header name="vm.dialog.title"
+                           description="vm.dialog.description"
+                           description-locked="true"
+                           name-locked="true"
+                           hide-alias="true"
+                           hide-icon="true">
+        </umb-editor-header>
+        <umb-editor-container>
+            <div ng-if="vm.loading">
+                <umb-load-indicator></umb-load-indicator>
+            </div>
+            <div ng-if="!vm.loading" class="form-horizontal">
+                <umb-box>
+                    <umb-box-header title-key="usyncpublish_serverSetup"
+                                    description-key="usyncpublish_serverSetupAddDesc">
+                    </umb-box-header>
+                    <umb-box-content>
+                        <umb-control-group label="@general_name"
+                                           description="@usyncpublish_serverNameDesc">
+                            <input type="text"
+                                   class="umb-textstring umb-property-editor"
+                                   ng-model="vm.server.Name" required
+                                   ng-change="vm.nameChange()" />
+
+                            <div class="text-right">
+                                <small class="muted"> {{vm.server.Alias}}</small>
+                            </div>
+                        </umb-control-group>
+
+                        <umb-control-group label="@usyncpublish_url"
+                                           description="@usyncpublish_urlDesc">
+                            <input type="text"
+                                   class="umb-textstring umb-property-editor"
+                                   ng-model="vm.server.Url" required
+                                   ng-change="vm.urlChange()" />
+                        </umb-control-group>
+
+                        <div>
+                            <div ng-if="vm.showCheck" class="flex flex-column usync-items-center">
+                                <div ng-class="{'color-green' : vm.status.Status === 'Success', 'color-red' : vm.status.Status !== 'Success'}">
+                                    Connection Test :
+                                    <i class="icon icon-check" ng-if="vm.status.Status === 'Success'"></i>
+                                    {{vm.status.Status}} {{vm.status.Message}}
+                                </div>
+                                <umb-button ng-if="vm.showCheck && vm.status.Status === 'Unauthorized'"
+                                            type="button"
+                                            action="vm.setupServer()"
+                                            label="Setup connection"
+                                            button-style="primary">
+                                </umb-button>
+                                <div ng-if="vm.status.Status != 'Success'" class="text-muted">
+                                    <small>
+                                        <em>
+                                            <localize key="usyncpublish_setupConnectionError"></localize>
+                                        </em>
+                                    </small>
+                                </div>
+
+                            </div>
+                            <div ng-if="!vm.showCheck"
+                                 class="flex justify-end usync-items-center">
+                                <umb-button type="button"
+                                            action="vm.checkServer()"
+                                            label="Check connection"
+                                            button-style="action"
+                                            disabled="vm.server.Name.length == 0 || vm.server.Url.length == 0"
+                                            state="vm.checkState">
+                                </umb-button>
+                            </div>
+                        </div>
+
+                    </umb-box-content>
+                </umb-box>
+
+                <div ng-if="vm.checked">
+
+                    <div class="text-center">
+                        <h4>Choose a template</h4>
+                    </div>
+
+                    <div ng-repeat="template in vm.templates"
+                         class="usync-server-option"
+                         ng-class="{'selected' : template.selected}"
+                         ng-click="vm.select(template)">
+
+                        <i class="icon icon-check color-green" ng-if="template.selected"></i>
+                        <i class="icon {{template.icon}}" ng-if="!template.selected"></i>
+                        <div>
+                            <h4>{{template.heading}}</h4>
+                            <h5>{{template.subHeading}}</h5>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </umb-editor-container>
+        <umb-editor-footer>
+            <umb-editor-footer-content-right>
+                <umb-button type="button"
+                            button-style="link"
+                            label-key="general_close"
+                            action="vm.close()"
+                            disabled="vm.busy">
+                </umb-button>
+
+
+                <umb-button type="button"
+                            button-style="action"
+                            label-key="actions_create"
+                            state="vm.buttonState"
+                            action="vm.save()"
+                            disabled="!vm.selected">
+                </umb-button>
+
+            </umb-editor-footer-content-right>
+        </umb-editor-footer>
+    </umb-editor-panel>
+</div>

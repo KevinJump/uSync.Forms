@@ -1,0 +1,78 @@
+[
+  {
+    "icon": "icon-infinity color-blue",
+    "heading": "Deployed Sync",
+    "subHeading": "Content & Media - Minimal options",
+    "description": "<p>Settings are already synced by your deployment process.</p><p>Minimal editor choice.</p><p><em>Recommended when site settings are deployed using CI/CD</em></p>",
+    "publisher": "realtime",
+    "publisherConfig": "/App_Plugins/uSyncPublisher/publishers/realtime/serverConfig.html",
+    "flags": {
+      "IncludeChildren": "user-yes",
+      "IncludeMedia": "yes",
+      "DeleteMissing": "user-yes",
+      "IncludeConfig": "yes",
+      "IncludeDependencies": "no",
+      "IncludeFiles": "no",
+      "IncludeAncestors": "no",
+      "IncludeLinked": "no",
+      "Groups": [ "admin", "editor" ]
+    }
+  },
+  {
+    "icon": "icon-server color-green",
+    "heading": "Full Sync",
+    "subHeading": "Settings, Content & Media - Minimal options",
+    "description": "<p>Send Content and Settings as part of the deployment process.</p><p>Minimal editor choice.</p><p><em>Recommended for editors when site is not deployed via other methods</em></p>",
+    "publisher": "realtime",
+    "publisherConfig": "/App_Plugins/uSyncPublisher/publishers/realtime/serverConfig.html",
+    "flags": {
+      "IncludeChildren": "user-yes",
+      "IncludeMedia": "yes",
+      "DeleteMissing": "user-yes",
+      "IncludeConfig": "yes",
+      "IncludeDependencies": "yes",
+      "IncludeFiles": "yes",
+      "IncludeAncestors": "no",
+      "IncludeLinked": "no",
+      "Groups": [ "admin", "editor" ]
+    }
+  },
+  {
+    "icon": "icon-lab color-deep-purple",
+    "heading": "Complete Sync",
+    "subHeading": "Settings, Content & Media - All Options",
+    "description": "<p>Sync everything and let the user choose what to include in the dialog.</p><p>Full editor choice</p><p><em>(Recommended for a developer setup)</em></p>",
+    "publisher": "realtime",
+    "publisherConfig": "/App_Plugins/uSyncPublisher/publishers/realtime/serverConfig.html",
+    "flags": {
+      "IncludeChildren": "user-yes",
+      "IncludeMedia": "user-yes",
+      "DeleteMissing": "user-yes",
+      "IncludeConfig": "user-yes",
+      "IncludeDependencies": "user-yes",
+      "IncludeFiles": "user-yes",
+      "IncludeAncestors": "no",
+      "IncludeLinked": "no",
+      "Groups": [ "admin", "editor" ]
+    }
+  },
+  {
+    "icon": "icon-sunny color-purple",
+    "heading": "Blank",
+    "subHeading": "Clean Template",
+    "description": "Blank template, no settings already set, choose your own settings",
+    "publisher": "realtime",
+    "publisherConfig": "/App_Plugins/uSyncPublisher/publishers/realtime/serverConfig.html",
+    "flags": {
+      "IncludeChildren": "no",
+      "IncludeMedia": "no",
+      "DeleteMissing": "no",
+      "IncludeConfig":  "no",
+      "IncludeDependencies": "no",
+      "IncludeFiles": "no",
+      "IncludeAncestors": "no",
+      "IncludeLinked": "no",
+      "Groups": [ "admin", "editor" ]
+    }
+  }
+]

@@ -1,0 +1,42 @@
+﻿<div ng-controller="uSyncSideBySideController as vm">
+    <umb-editor-panel>
+        <umb-editor-header name="'Side by side'"
+                           description="'local and target site'"
+                           description-locked="true"
+                           name-locked="true"
+                           hide-alias="true"
+                           hide-icon="true">
+        </umb-editor-header>
+
+        <umb-editor-container>
+
+            <div class="usync-sbs-view">
+
+                <!-- source -->
+                <div>
+                    <h4>Local : {{vm.source}}</h4>
+                    <iframe ng-src="{{vm.source}}"></iframe>
+                </div>
+
+                <!-- target -->
+                <div>
+                    <h4>Target: {{vm.target}}</h4>
+                    <iframe ng-src="{{vm.target}}"></iframe>
+                </div>
+
+
+            </div>
+
+        </umb-editor-container>
+
+        <umb-editor-footer>
+            <umb-editor-footer-content-right>
+                <umb-button type="button"
+                            button-style="link"
+                            label-key="general_close"
+                            action="vm.close()">
+                </umb-button>
+            </umb-editor-footer-content-right>
+        </umb-editor-footer>
+    </umb-editor-panel>
+</div>

@@ -1,0 +1,25 @@
+﻿<div ng-controller="uSyncPublisherOptionsController as pvm">
+    <div class="usync-publish-options">
+
+        <div ng-if="pvm.server.SendSettings.Message.length > 0" class="usync-publish-server-message">
+            {{pvm.server.SendSettings.Message}}
+        </div>
+
+        <div class="usync-advanced">
+
+            <usync-send-option label="@usyncpublish_includeChildren"
+                               description="@usyncpublish_includeChildrenDesc"
+                               option="pvm.flags.includeChildren">
+            </usync-send-option>
+
+            <div class="usync-child-option">
+                <usync-send-option label="@usyncpublish_deleteMissing"
+                                   description="@usyncpublish_deleteMissingDesc"
+                                   option="pvm.flags.deleteMissing"
+                                   disabled="!pvm.flags.includeChildren.value"
+                                   disabled-value="false">
+                </usync-send-option>
+            </div>
+        </div>
+    </div>
+</div>

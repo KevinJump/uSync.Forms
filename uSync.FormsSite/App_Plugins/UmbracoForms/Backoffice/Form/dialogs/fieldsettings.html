@@ -58,11 +58,12 @@
                     </div>
                     <div class="control-group umb-control-group" ng-if="dialogOptions.prevaluesources">
                         <label class="control-label">Prevalue source</label>
-                        <select ng-model="dialogOptions.field.prevalueSourceId" ng-change="getPrevalues(dialogOptions.field)">
-                            <option value="00000000-0000-0000-0000-000000000000" ng-selected="dialogOptions.field.prevalueSourceId == '00000000-0000-0000-0000-000000000000'">Choose...</option>
-                            <option ng-repeat="source in dialogOptions.prevaluesources" value="{{source.id}}" ng-selected="dialogOptions.field.prevalueSourceId == source.id">{{source.name}}</option>
-                        </select>
-                        
+                        <div>
+                            <select ng-model="dialogOptions.field.prevalueSourceId" ng-change="getPrevalues(dialogOptions.field)">
+                                <option value="00000000-0000-0000-0000-000000000000" ng-selected="dialogOptions.field.prevalueSourceId == '00000000-0000-0000-0000-000000000000'">Choose...</option>
+                                <option ng-repeat="source in dialogOptions.prevaluesources" value="{{source.id}}" ng-selected="dialogOptions.field.prevalueSourceId == source.id">{{source.name}}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>

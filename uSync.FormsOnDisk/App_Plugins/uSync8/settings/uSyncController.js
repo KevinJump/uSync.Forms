@@ -1,8 +1,9 @@
 ﻿(function () {
     'use strict';
 
-    function uSyncController($scope,
+    function uSyncController($scope, $q, $controller,
         eventsService,
+        overlayService,
         notificationsService,
         editorService,
         uSync8DashboardService,
@@ -14,8 +15,18 @@
         vm.reported = false;
         vm.syncing = false;
         vm.hideLink = false;
+        vm.showSpinner = false;
+
+        vm.isLoadbalanced = Umbraco.Sys.ServerVariables.uSync.isLoadBalanced;
+
+        vm.groups = [];
+        vm.perf = 0;
 
         vm.showAdvanced = false;
+
+        vm.hasuSyncForms = false; 
+
+        vm.canHaveForms = false;
 
         var modes = {
             NONE: 0,
@@ -64,7 +75,7 @@
             subButtons: [{
                 labelKey: 'usync_exportClean',
                 handler: function () {
-                    exportItems(true);
+                    cleanExport();
                 }
             }]
         }
@@ -113,47 +124,94 @@
                 });
         }
 
+        function performAction(options, actionMethod, cb) {
 
-
-        ///////////
-        function report(group) {
-            resetStatus(modes.REPORT);
-            getWarnings('report');
-
-            uSync8DashboardService.report(group, getClientId())
-                .then(function (result) {
-                    vm.results = result.data;
-                    vm.working = false;
-                    vm.reported = true;
-                }, function (error) {
-                    notificationsService.error('Reporting', error.data.Message);
-                });
+            return $q(function (resolve, reject) {
+                uSync8DashboardService.getActionHandlers(options)
+                    .then(function (result) {
+                        vm.status.Handlers = result.data;
+                        performHandlerAction(vm.status.Handlers, actionMethod, options, cb)
+                            .then(function () {
+                                resolve();
+                            }, function (error) {
+                                reject(error)
+                            })
+                    });
+            });
         }
 
-        function exportItems(clean) {
-            resetStatus(modes.EXPORT);
-            vm.exportButton.state = 'busy';
+        function performHandlerAction(handlers, actionMethod, options, cb) {
 
-            if (clean && !confirm('Are you sure? A clean export will delete the contents of the uSync folder, you will may loose any delete/rename actions.')) {
-                vm.working = false;
-                vm.exportButton.state = 'success';
-                return;
-            }
+            return $q(function (resolve, reject) {
 
-            vm.hideLink = true;
-            uSync8DashboardService.exportItems(getClientId(), clean)
-                .then(function (result) {
-                    vm.results = result.data;
+                var index = 0;
+                vm.status.Message = 'Starting ' + options.action;
+
+                uSync8DashboardService.startProcess(options.action)
+                    .then(function () {
+                        runHandlerAction(handlers[index])
+                    });
+
+                function runHandlerAction(handler) {
+
+                    vm.status.Message = handler.Name;
+
+                    handler.Status = 1;
+                    actionMethod(handler.Alias, options, getClientId())
+                        .then(function (result) {
+
+                            vm.results = vm.results.concat(result.data.Actions);
+
+                            handler.Status = 2;
+                            handler.Changes = countChanges(result.data.Actions);
+
+                            index++;
+                            if (index < handlers.length) {
+                                runHandlerAction(handlers[index]);
+                            }
+                            else {
+
+                                vm.status.Message = 'Finishing ' + options.action;
+
+                                uSync8DashboardService.finishProcess(options.action, vm.results)
+                                    .then(function () {
+                                        resolve();
+                                    });
+                            }
+                        }, function (error) {
+                            // error in this handler ? 
+                            // do we want to carry on with the other ones or just stop?
+                            reject(error);
+                        });
+                }
+            });
+        } 
+
+        function report(group) {
+
+            vm.results = [];
+
+            resetStatus(modes.REPORT);
+            getWarnings('report');
+            vm.reportButton.state = 'busy';
+
+            var options = {
+                action: 'report',
+                group: group
+            };
+
+            var start = performance.now();
+
+            performAction(options, uSync8DashboardService.reportHandler)
+                .then(function (results) {
                     vm.working = false;
                     vm.reported = true;
-                    vm.exportButton.state = 'success';
-                    vm.savings.show = true;
-                    vm.savings.title = 'All items exported.';
-                    vm.savings.message = 'Now go wash your hands 🧼!';
-                    eventsService.emit('usync-dashboard.export.complete');
+                    vm.perf = performance.now() - start;
+                    vm.status.Message = 'Report complete';
+                    vm.reportButton.state = 'success';
                 }, function (error) {
-                    notificationsService.error('Exporting', error.data.ExceptionMessage);
-                    vm.exportButton.state = 'error';
+                    vm.reportButton.state = 'error';
+                    notificationsService.error('Error', error.data.ExceptionMessage ?? error.data.exceptionMessage);
                 });
         }
 
@@ -162,29 +220,92 @@
         }
 
         function importItems(force, group) {
+            vm.results = [];
             resetStatus(modes.IMPORT);
             getWarnings('import');
 
-            vm.hideLink = false;
             vm.importButton.state = 'busy';
 
-            uSync8DashboardService.importItems(force, group, getClientId())
-                .then(function (result) {
-                    vm.results = result.data;
-                    vm.working = false;
-                    vm.reported = true;
-                    vm.importButton.state = 'success';
-                    eventsService.emit('usync-dashboard.import.complete');
-                    calculateTimeSaved(vm.results);
-                }, function (error) {
-                    vm.importButton.state = 'error';
-                    notificationsService.error('Failed', error.data.ExceptionMessage);
+            var options = {
+                action: 'import',
+                group: group,
+                force: force
+            };
 
-                    vm.working = false;
-                    vm.reported = true;
+            var start = performance.now();
+
+            performAction(options, uSync8DashboardService.importHandler)
+                .then(function (results) {
+
+                    vm.status.Message = 'Post import actions';
+
+                    uSync8DashboardService.importPost(vm.results, getClientId())
+                        .then(function (results) {
+                            vm.working = false;
+                            vm.reported = true;
+                            vm.perf = performance.now() - start;
+                            vm.importButton.state = 'success';
+                            eventsService.emit('usync-dashboard.import.complete');
+                            calculateTimeSaved(vm.results);
+                            vm.status.Message = 'Complete';
+                        });
+                }, function (error) {
+                    notificationsService.error('Error', error.data.ExceptionMessage ?? error.data.exceptionMessage);
                 });
         }
 
+        function exportItems() {
+
+            vm.results = [];
+            resetStatus(modes.EXPORT);
+            vm.exportButton.state = 'busy';
+
+            var options = {
+                action: 'export',
+                group: ''
+            };
+
+            var start = performance.now();
+
+            performAction(options, uSync8DashboardService.exportHandler)
+                .then(function (results) {
+                    vm.status.Message = 'Export complete';
+                    vm.working = false;
+                    vm.reported = true;
+                    vm.perf = performance.now() - start;
+
+                    vm.exportButton.state = 'success';
+                    vm.savings.show = true;
+                    vm.savings.title = 'All items exported.';
+                    vm.savings.message = 'Now go wash your hands 🧼!';
+                    eventsService.emit('usync-dashboard.export.complete');
+                }, function (error) {
+                    notificationsService.error('Error', error.data.ExceptionMessage ?? error.data.exceptionMessage);
+                });
+        }
+     
+        function cleanExport() {
+
+            overlayService.open({
+                title: 'Clean Export',
+                content: 'Are you sure ? A clean export will delete all the contents of the uSync folder. You will loose any stored delete or rename actions.',
+                disableBackdropClick: true,
+                disableEscKey: true,
+                submitButtonLabel: 'Yes run a clean export',
+                closeButtonLabel: 'No, close',
+                submit: function () {
+                    overlayService.close();
+
+                    uSync8DashboardService.cleanExport()
+                        .then(function () {
+                            exportItems();
+                        });
+                },
+                close: function () {
+                    overlayService.close();
+                }
+            })
+        }
 
         // add a little joy to the process.
         function calculateTimeSaved(results) {
@@ -223,19 +344,36 @@
             uSync8DashboardService.getHandlerGroups()
                 .then(function (result) {
                     angular.forEach(result.data, function (group, key) {
+
+                        vm.groups.push({
+                            name: group.toLowerCase(),
+                            icon: group.toLowerCase()
+                        });
+
                         vm.importButton.subButtons.push({
                             handler: function () {
                                 importGroup(group);
                             },
                             labelKey: 'usync_import-' + group.toLowerCase()
                         });
+
                         vm.reportButton.subButtons.push({
                             handler: function () {
                                 report(group);
                             },
                             labelKey: 'usync_report-' + group.toLowerCase()
                         });
+
+                        if (group.toLowerCase() === "forms") {
+                            vm.hasuSyncForms = true;
+                        }
+
                     });
+
+                    if (!vm.hasuSyncForms) {
+                        vm.canHaveForms = canHaveForms();
+                    }
+
                     vm.loading = false;
                 }, function (error) {
                     vm.loading = false;
@@ -303,6 +441,7 @@
 
             vm.reported = vm.showAll = false;
             vm.working = true;
+            vm.showSpinner = false; 
             vm.runmode = mode;
             vm.hideLink = false;
             vm.savings.show = false;
@@ -314,11 +453,20 @@
                 Handlers: vm.handlers
             };
 
+            if (!vm.hub.active) {
+                vm.status.Message = 'Working ';
+                vm.showSpinner = true;
+            }
+
             vm.update = {
                 Message: '',
                 Count: 0,
                 Total: 1
             };
+
+            // performance timer. 
+            vm.perf = 0;
+
 
             switch (mode) {
                 case modes.IMPORT:
@@ -357,6 +505,22 @@
             }
             return "";
         }
+
+        function canHaveForms() {
+
+            if (vm.hasuSyncForms) return false;
+
+            try {
+
+                // check to see if umbraco.forms is installed. 
+                $controller('UmbracoForms.Dashboards.FormsController', { $scope: {} }, true)
+                return true;
+            }
+            catch {
+                return false;
+            }
+        }
+
     }
 
     angular.module('umbraco')

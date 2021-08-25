@@ -1,0 +1,30 @@
+﻿<div ng-controller="usyncExporterExportController as vm">
+    <umb-pane>
+        <p>
+            <localize key="usyncexport_exportGroupIntro">Export All</localize>
+            Datatypes
+            <localize key="usyncexport_exportGroupIntroSuffix">in this folder</localize>
+        </p>
+
+        <usync-export-sync-options options="vm.options" hide-decendants="true" />
+
+        <div class="alert alert-error" ng-if="vm.hasError">
+            {{vm.errorMessage}}
+        </div>
+
+
+    </umb-pane>
+    <div class="umb-dialog-footer btn-toolbar umb-btn-toolbar">
+        <umb-button type="button"
+                    button-style="link"
+                    label-key="general_close"
+                    action="vm.close()">
+        </umb-button>
+
+        <umb-button type="button"
+                    button-style="success"
+                    label-key="actions_export"
+                    state="vm.buttonState"
+                    action="vm.exportContainer('DataType')"></umb-button>
+    </div>
+</div>

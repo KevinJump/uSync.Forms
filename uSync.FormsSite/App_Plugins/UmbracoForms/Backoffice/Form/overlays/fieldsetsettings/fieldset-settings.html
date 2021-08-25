@@ -64,6 +64,7 @@
                                         </a>
                                     </div>
                                 </div>
+                                <br/>
                                 <button class="umb-forms-button" ng-click="vm.addConditionRule(model.fieldset.condition)">
                                     Add condition
                                 </button>
@@ -85,7 +86,10 @@
                                     </a>
                                 </div>
                             </div>
-                            <button class="umb-forms-button" ng-click="vm.addColumn()">
+                            <button class="umb-forms-button"
+                                    ng-class="{'-disabled': !vm.canAddColumn()}"
+                                    ng-click="vm.addColumn()"
+                                    ng-disabled="!vm.canAddColumn()">
                                 Add column
                             </button>
                         </div>
@@ -97,6 +101,7 @@
                     <umb-button type="button"
                                 button-style="link"
                                 label-key="general_close"
+                                shortcut="esc"
                                 action="vm.close(model)">
                     </umb-button>
                     <umb-button type="button"

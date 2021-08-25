@@ -1,0 +1,59 @@
+﻿<div ng-controller="uSyncPublisherServerPickerController as vm">
+    <div ng-if="!vm.loaded"></div>
+
+    <div ng-if="vm.loaded">
+
+        <div ui-sortable="vm.sortOptions" ng-model="vm.value">
+
+            <div ng-repeat="server in vm.value"
+                 class="umb-node-preview usync-node-preview">
+
+                <i ng-if="server.Icon" class="umb-node-preview__icon {{server.Icon}}"></i>
+
+                <div class="umb-node-preview__content">
+                    <div class="usync-node-preview-name">{{server.Name}}</div>
+                    <div class="usync-node-options">
+                        <div class="send-option-check">
+                            <umb-checkbox input-id="check_push_{{server.Alias}}"
+                                          name="check_push_{{server.Alias}}"
+                                          model="server.Push"
+                                          class="send-option-checkbox"></umb-checkbox>
+                            <div>
+                                <label for="check_push_{{server.Alias}}">
+                                    <span class="send-option-name">Push</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- pull -->
+                        <div class="send-option-check">
+                            <umb-checkbox input-id="check_pull_{{server.Alias}}"
+                                          name="check_pull_{{server.Alias}}"
+                                          model="server.Pull"
+                                          class="send-option-checkbox"></umb-checkbox>
+                            <div>
+                                <label for="check_pull_{{server.Alias}}">
+                                    <span class="send-option-name">Pull</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="umb-node-preview__actions">
+                    <a class="umb-node-preview__action umb-node-preview__action--red"
+                       ng-click="vm.remove(server)" href prevent-default>
+                        <localize key="general_remove">Remove</localize>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+        <a class="umb-node-preview-add"
+           ng-click="vm.open()"
+           href
+           prevent-default>
+            <localize key="general_add">Add</localize>
+        </a>
+    </div>
+</div>

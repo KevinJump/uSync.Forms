@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<language alias="en" intName="English (US)" localName="English (US)" lcid="" culture="en-US">
+  <creator>
+    <name>Jumoo</name>
+    <link>http://jumoo.uk</link>
+  </creator>
+  <area alias="usyncexport">
+    <key alias="importHeader">Choose an item to import</key>
+    <key alias="importHelp">To import a group of settings, choose a '.usync' file from your computer and then select 'import' you will then be able to check and import the contents of the file to this umbraco instance</key>
+    <key alias="exportIntro">Export this item and all its dependencies as a sing 'sync-pack' file. this file can then be taken to another umbraco instance and will install everything needed to recreate this item</key>
+
+    <key alias="importMenu">Import Sync-Pack</key>
+    <key alias="exportFolder">Export folder to Sync-Pack</key>
+    <key alias="exportMenu">Export to Sync-Pack</key>
+    
+    <key alias="exportGroup">Export group</key>
+    <key alias="exportHeading">Export item</key>
+
+    <key alias="exportGroupIntro">Export all</key>
+    <key alias="exportGroupIntroSuffix">in this folder</key>
+
+    <key alias="createTitle">Create a Sync-Pack</key>
+    
+    <key alias="dashboardTitle">uSync.Exporter</key>
+    <key alias="dashboardDesc">Import / Export Groups of Settings / Content</key>
+    
+    <key alias="dashboardIntro">If you have a sync-pack you can import it by using the button below.</key>
+    <key alias="dashboardCreate">You can create packs by right-clicking on a tree item and selecting 'export to Sync-Pack' or you can create a custom pack below</key>
+    <key alias="dashboardDepend">When you include an item, all its dependencies will also be included e.g you don't need to pick the datatypes for a content item</key>
+
+    <key alias="itemsHeader">Items in pack</key>
+    <key alias="itemsDesc">The following items are in the sync pack</key>
+
+    <key alias="includeDependencies">Include dependencies</key>
+    <key alias="includeFiles">Include templates</key>
+
+    <key alias="Files">Files</key>
+    <key alias="dependencies">Dependencies</key>
+    <key alias="children">Children</key>
+    <key alias="ancestors">Ancestors</key>
+
+		<key alias="createPack">Create a Sync-Pack</key>
+		<key alias="packSummary"><![CDATA[You are ready to create a sync pack]]></key>
+		<key alias="packComplete"><![CDATA[<p>Your sync-pack is complete, you should now be prompted to download it.</p>]]></key>
+  </area>
+  
+</language>

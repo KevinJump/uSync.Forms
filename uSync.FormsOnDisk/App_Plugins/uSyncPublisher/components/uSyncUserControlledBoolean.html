@@ -1,0 +1,21 @@
+﻿<div class="usync-user-boolean-value">
+    <div>
+        <umb-checkbox input-id="toggle_{{$id}}" name="toggle_{{$id}}"
+                      model="vm.toggle" on-change="vm.changeToggle(model)"></umb-checkbox>
+    </div>
+    <div>
+        <div ng-click="vm.toggleUser()" class="usync-user-lock">
+            <div ng-if="!vm.userControlled()"
+                 title="value cannot be changed by editor">
+                <i class="icon icon-lock color-red"></i> <localize key="usyncpublish_locked"></localize>
+            </div>
+
+            <div ng-if="vm.userControlled()"
+                 title="Editor can change value when pushing content">
+                <i class="icon icon-unlocked color-green"></i> <localize key="usyncpublish_unlocked"></localize>
+            </div>
+        </div>
+    </div>
+</div>
+
+

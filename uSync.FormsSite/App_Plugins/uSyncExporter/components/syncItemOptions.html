@@ -1,0 +1,38 @@
+﻿<div class="form-horizontal">
+    <div class="usync-export-toggles">
+        <umb-pane>
+            <umb-control-group localize="label"
+                               label="@usyncexport_includeDependencies"
+                               description="Include other items that are needed to create this item">
+                <umb-toggle checked="vm.options.includeDependencies"
+                            on-click="vm.options.includeDependencies = !vm.options.includeDependencies"></umb-toggle>
+            </umb-control-group>
+        </umb-pane>
+
+        <umb-pane>
+            <umb-control-group label="Include ancestors" description="Include if you need the tree the item lives in">
+
+                <umb-toggle checked="vm.options.includeAncestors"
+                            on-click="vm.options.includeAncestors = !vm.options.includeAncestors"></umb-toggle>
+            </umb-control-group>
+        </umb-pane>
+
+        <umb-pane ng-if="!vm.hideDecendants">
+            <umb-control-group localize="label"
+                               label="@defaultdialogs_includeDescendants"
+                               description="Include child items beneath this one">
+                <umb-toggle checked="vm.options.includeChildren"
+                            on-click="vm.options.includeChildren = !vm.options.includeChildren"></umb-toggle>
+            </umb-control-group>
+        </umb-pane>
+
+        <umb-pane ng-if="!vm.hideFiles">
+            <umb-control-group localize="label"
+                               label="@usyncexport_includeFiles"
+                               description="Include Template/Script/Style Files in pack">
+                <umb-toggle checked="vm.options.includeFiles"
+                            on-click="vm.options.includeFiles = !vm.options.includeFiles"></umb-toggle>
+            </umb-control-group>
+        </umb-pane>
+    </div>
+</div>

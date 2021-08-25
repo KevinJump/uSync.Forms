@@ -1,0 +1,37 @@
+﻿<div ng-controller="uSyncPublisherSyncController as vm">
+    <umb-box>
+        <umb-box-header title="Server Settings"
+                        description="Sync settings between servers"></umb-box-header>
+        <umb-box-content>
+            <localize key="usyncpublish_syncDesc"></localize>
+        </umb-box-content>
+    </umb-box>
+
+    <div class="flex flex-wrap">
+        <div ng-repeat="server in vm.servers"
+             class="usync-server-box usync-server-box-wide umb-box usync-setting-box">
+            <i class="icon {{server.Icon}}"></i>
+            <h5>{{server.Name}}</h5>
+            <div class="server-status">
+                <div ng-if="server.status.Enabled"><i class="icon icon-check color-green"></i> <localize key="usyncpublish_availible">Availible</localize> </div>
+                <div ng-if="server.status.Enabled === undefined"
+                     class="usync-wait-animate"></div>
+                <div ng-if="server.status.Enabled === false"><i class="icon icon-wrong color-red"></i> <localize key="usyncpublish_unavailible">Unavailible</localize> </div>
+            </div>
+            <div>
+                <div class="usync-server-actions"
+                     ng-if="server.Enabled && server.status.Enabled">
+
+                    <umb-button type="button"
+                                button-style="action"
+                                action="vm.checkSettings(server)"
+                                label="Deploy settings"
+                                state="vm.buttonState"
+                                disabled="vm.working"
+                                ng-if="!server.checked">
+                    </umb-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

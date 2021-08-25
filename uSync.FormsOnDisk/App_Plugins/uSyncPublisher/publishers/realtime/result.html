@@ -1,0 +1,36 @@
+﻿<div ng-controller="uSyncPublisherResultController as pvm">
+
+    <umb-box ng-if="!vm.isModal">
+        <umb-box-header title="{{vm.headings.boxTitle}}"
+                        description="{{vm.headings.boxDescription}}">
+        </umb-box-header>
+        <umb-box-content>
+            <usync-report-summary results="vm.report"
+                                  stage="'result'"
+                                  toggle="pvm.showDetails">
+            </usync-report-summary>
+        </umb-box-content>
+    </umb-box>
+
+    <div ng-if="!pvm.complete">
+        <div class="alert alert-warning">
+            <localize key="usyncpublish_systemApplyWarning"></localize>
+        </div>
+    </div>
+
+    <div ng-if="vm.isModal">
+        <usync-report-summary results="vm.report"
+                              stage="'result'"
+                              toggle="vm.showDetails">
+        </usync-report-summary>
+    </div>
+
+    <div ng-if="pvm.showDetails" class="mt3">
+        <usync-publish-result-view results="vm.report"
+                                   total="vm.total"
+                                   is-modal="vm.isModal" />
+    </div>
+
+
+
+</div>

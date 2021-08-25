@@ -1,0 +1,93 @@
+﻿<div ng-controller="uSyncPublishServerpickerDialogController as vm">
+    <umb-editor-panel>
+        <umb-editor-header name="'Pick a server'"
+                           name-locked="true"
+                           hide-alias="true"
+                           hide-icon="true"
+                           description="'Select a server to allow connections to'"
+                           description-locked="true">
+        </umb-editor-header>
+
+        <umb-editor-container>
+            <umb-load-indicator ng-if="vm.loading"></umb-load-indicator>
+
+            <div ng-if="!vm.loading">
+                
+
+                <umb-box>
+                    <umb-box-header title="Server"
+                                    description="Pick a server"></umb-box-header>
+                    <umb-box-content>
+                        <div ng-repeat="server in vm.servers" class="usync-publish-server-item"
+                             ng-click="vm.select(server)"
+                             ng-class="{'picked' : vm.options.Alias == server.Alias}">
+                            <div class="usync-publish-server-icon">
+                                <i class="icon icon-check color-green" ng-if="vm.options.Alias === server.Alias"></i>
+                                <i class="icon {{server.Icon}}" ng-if="vm.options.Alias !== server.Alias"></i>
+                            </div>
+                            <div class="usync-publish-server-detail">
+                                <strong>{{server.Name}}</strong>
+                                <small>{{server.Description}}</small>
+                            </div>
+                        </div>
+                    </umb-box-content>
+                </umb-box>
+
+                <umb-box ng-if="vm.selectedServer !== null">
+                    <umb-box-header title="{{vm.selectedServer.Name}}"
+                                    description="{{vm.selectedServer.Description}}"></umb-box-header>
+                    <umb-box-content>
+
+                        <!-- push -->
+                        <div class="send-option-check">
+                            <umb-checkbox input-id="check_push"
+                                          name="check_push"
+                                          model="vm.options.Push"
+                                          class="send-option-checkbox"></umb-checkbox>
+                            <div>
+                                <label for="check_push">
+                                    <span class="send-option-name">Push</span>
+                                    <span class="send-option-note">Allow items to be pushed to this server</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- pull -->
+                        <div class="send-option-check">
+                            <umb-checkbox input-id="check_pull"
+                                          name="check_pull"
+                                          model="vm.options.Pull"
+                                          class="send-option-checkbox"></umb-checkbox>
+                            <div>
+                                <label for="check_pull">
+                                    <span class="send-option-name">Pull</span>
+                                    <span class="send-option-note">Allow items to be pulled to this server</span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </umb-box-content>
+                </umb-box>
+
+            </div>
+        </umb-editor-container>
+
+        <umb-editor-footer>
+            <umb-editor-footer-content-right>
+                <umb-button type="button"
+                            button-style="link"
+                            label-key="general_close"
+                            action="vm.close()">
+                </umb-button>
+
+                <umb-button type="button"
+                            button-style="action"
+                            label-key="general_add"
+                            disabled="!vm.valid()"
+                            action="vm.submit(vm.site)">
+                </umb-button>
+            </umb-editor-footer-content-right>
+        </umb-editor-footer>
+
+    </umb-editor-panel>
+</div>

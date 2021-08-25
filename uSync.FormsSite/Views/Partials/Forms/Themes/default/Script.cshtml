@@ -15,9 +15,9 @@
     Html.AddFormThemeScriptFile(Model, "~/App_Plugins/UmbracoForms/Assets/Themes/Default/umbracoforms.js");
 }
 
-<script>
+<script type="application/javascript">
     if (typeof umbracoFormsCollection === 'undefined') var umbracoFormsCollection = [];
-    umbracoFormsCollection.push('@Html.Raw(Uri.EscapeUriString(JsonConvert.SerializeObject(formJsObj)))');
+    umbracoFormsCollection.push("@(Html.Raw(Uri.EscapeUriString(JsonConvert.SerializeObject(formJsObj))))");
 </script>
 
 @* Only render out scripts on the page if the form has not been submitted yet *@

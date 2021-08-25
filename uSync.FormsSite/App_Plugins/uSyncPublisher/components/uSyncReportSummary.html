@@ -1,0 +1,49 @@
+﻿<div>
+
+    <div ng-if="vm.summary.changes == 0" class="alert alert-success usync-no-change-alert">
+        <div>
+            <i class="icon icon-box-open"></i>
+        </div>
+        <div>
+            <h4><localize key="usyncpublish_nochangeHeading">No changes detected</localize></h4>
+            <p>
+                <localize key="usyncpublish_nochangeSummary">
+                    It looks like everything is already in sync between these servers, so you do need to
+                    do anything.
+                </localize>
+            </p>
+        </div>
+    </div>
+
+
+    <div class="usync-report-summary" ng-if="vm.summary.changes > 0">
+        <div class="flex content-center">
+            <h5>
+                <localize ng-if="vm.stage == 'report'" key="usyncpublish_reportChanges" tokens="[vm.summary.changes]"></localize>
+                <localize ng-if="vm.stage != 'report'" key="usyncpublish_resultChanges" tokens="[vm.summary.changes]"></localize>
+            </h5>
+        </div>
+
+        <ul>
+            <li ng-if="vm.summary.update > 0">
+                <i class="icon icon-traffic color-blue"></i>
+                {{vm.getDetailText(vm.summary.update, 'updated')}}
+            </li>
+            <li ng-if="vm.summary.create > 0">
+                <i class="icon icon-add color-green"></i>
+                {{vm.getDetailText(vm.summary.create, 'created')}}
+            </li>
+            <li ng-if="vm.summary.delete > 0">
+                <i class="icon icon-delete color-red"></i>
+                {{vm.getDetailText(vm.summary.delete, 'deleted')}}
+            </li>
+            <li ng-if="vm.summary.pending > 0">
+                <i class="icon icon-checkbox-empty color-orange"></i>
+                {{vm.getDetailText(vm.summary.pending, 'pending')}}
+            </li>
+        </ul>
+    
+    </div>
+
+
+</div>

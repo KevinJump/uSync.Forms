@@ -1,0 +1,87 @@
+﻿<div ng-controller="uSyncPublisherBlankDashboardController as vm"
+     class="usync-publisher-dashboard usync-pane-fade">
+
+    <div>
+        <div ng-if="vm.emptySite" class="flex justify-center flex-column items-center mb4">
+            <h2 class="mt4"><localize key="usyncpublish_blankHeading"></localize></h2>
+            <localize key="usyncpublish_blankMessage"></localize>
+        </div>
+
+        <div ng-if="!vm.emptySite" class="flex justify-center flex-column items-center mb4">
+            <h2 class="mt4"><localize key="usyncpublish_nonBlankHeading"></localize></h2>
+            <localize key="usyncpublish_nonBlankMessage"></localize>
+        </div>
+    </div>
+
+    <div ng-if="!vm.setup" class="usync-dashboard-block mt3">
+
+        <umb-box>
+            <umb-box-header title-key="usyncpublish_pickerPullTitle"
+                            description-key="usyncpublish_pickerPullDesc">
+            </umb-box-header>
+
+            <umb-box-content>
+                <usync-server-picker picker-title="@usyncpublish_pickerTitle"
+                                     description="@usyncpublish_pickerDesc"
+                                     servers="vm.servers"
+                                     on-selected="vm.onSelected(server)"
+                                     hide-box="true"></usync-server-picker>
+            </umb-box-content>
+
+
+            <umb-box-content ng-if="vm.picked">
+
+                <div class="flex justify-center mt3">
+                    <umb-button action="vm.doSync()"
+                                label="Syncronize with server : {{vm.server.Name}}"
+                                type="button"
+                                button-style="primary"
+                                size="xl" />
+                </div>
+
+            </umb-box-content>
+        </umb-box>
+    </div>
+
+    <div ng-if="vm.setup" class="usync-dashboard-block">
+        <umb-box>
+            <umb-box-header title-key="usyncpublish_pickerPullItemsTitle"
+                            description-key="usyncpublish_pickerPullItemsDesc">
+            </umb-box-header>
+
+          
+            <umb-box-content>
+                <usync-publishing-action mode="vm.mode"
+                                      items="vm.items"
+                                      options="vm.options"
+                                      state="vm.state"
+                                      action-button="vm.actionButton"
+                                      headings="vm.headings"
+                                      is-modal="true">
+                </usync-publishing-action>
+            </umb-box-content>
+
+            <umb-box-content>
+                <div class="flex justify-center">
+                    <umb-button ng-if="!vm.state.complete && !vm.state.loading"
+                                disabled="vm.state.working || !vm.state.valid"
+                                action="vm.performAction()"
+                                label="{{vm.actionButton.name}}"
+                                button-state="vm.actionButton.state"
+                                button-style="action"
+                                type="button"
+                                size="xl">
+                    </umb-button>
+
+                    <umb-button ng-if="vm.state.complete"
+                                action="vm.reset()"
+                                label="Complete"
+                                button-style="info"
+                                type="button">
+                    </umb-button>
+
+                </div>
+            </umb-box-content>
+        </umb-box>
+    </div>
+</div>

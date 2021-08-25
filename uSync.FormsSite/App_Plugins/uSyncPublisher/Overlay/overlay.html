@@ -1,0 +1,62 @@
+﻿<div ng-controller="uSyncPublishOverlayController as vm">
+
+    <div ng-if="vm.loading" class="usync-publisher-dialog-load">
+        <umb-load-indicator></umb-load-indicator>
+    </div>
+
+    <div ng-if="!vm.loading">
+        <div ng-if="vm.pickServer === true">
+            <usync-server-picker picker-title="@usyncpublish_pickerTitle"
+                                 description="@usyncpublish_pickerDesc"
+                                 servers="vm.servers"
+                                 on-selected="vm.onSelected(server)"
+                                 hide-box="true" />
+
+            <div ng-if="vm.contentIsDirty === true">
+                <div class="alert alert-warning">
+                    <localize key="usyncpublish_dirtyContent"></localize>
+                </div>
+            </div>
+        </div>
+
+        <div ng-if="vm.servers.length == 0" class="usync-no-servers">
+            <localize key="usyncpublish_noServers">No Servers</localize>
+        </div>
+
+        <div ng-if="vm.loadedActions">
+            <div ng-if="vm.view.show" class="usync-publish-step usync-model-step ">
+                <!-- action has user input before action -->
+                <div ng-include="vm.view.path"></div>
+            </div>
+
+            <div class="usync-complete-modal-progress" ng-if="!vm.view.show">
+                <div class="usync-step-name">{{vm.message.Title}}</div>
+                <div class="usync-dialog-progress-bar">
+                    <div class="usync-complete-progress-icons">
+                        <!-- action is a load of steps, we execute -->
+                        <div ng-repeat="step in vm.message.Steps"
+                             ng-class="{'complete': step.Status == 2, 'in-progress': step.Status == 1}">
+                            <i class="icon {{step.Icon}}"></i>
+                            <div>{{step.Name}}</div>
+                            <div class="usync-step-badge complete" ng-if="step.Status == 2"><i class="icon icon-check"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress" style="height: 5px;margin: 0 20px">
+                    <div class="bar" role="progressbar" style="width: {{vm.calcPercentage(vm.update)}}%;" aria-valuenow="{{vm.calcPercentage(vm.update)}}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+
+
+                <div class="usync-load-step">
+                    <div ng-repeat="bit in vm.update.blocks track by $index">
+                        <div class="usync-load-step-{{$index}}">{{bit}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div ng-if="vm.hasError" class="alert alert-error">
+            {{vm.error.ExceptionMessage}} {{vm.error.exceptionMessage}}
+        </div>
+    </div>
+</div>

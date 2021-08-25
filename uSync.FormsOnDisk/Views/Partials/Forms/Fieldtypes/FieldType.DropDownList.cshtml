@@ -1,13 +1,19 @@
+@using Umbraco.Forms.Web
 @model Umbraco.Forms.Mvc.Models.FieldViewModel
-<select name="@Model.Name" id="@Model.Id" data-umb="@Model.Id" 
-@if (Model.Mandatory){<text> data-val="true" data-val-required="@Model.RequiredErrorMessage"</text>}
->
-    <option value=""></option>
+@{
+    var allowMultiple = Model.GetSettingValue<bool>("AllowMultipleSelections", false);
+}
+<select name="@Model.Name"
+        id="@Model.Id"
+        data-umb="@Model.Id"
+        @if (allowMultiple) { <text> multiple </text> }
+        @if (Model.Mandatory) { <text> data-val="true" data-val-required="@Model.RequiredErrorMessage" </text> }>
+    @if (!allowMultiple)
+    {
+        <option value=""></option>
+    }
     @foreach (var pv in Model.PreValues)
     {
-        <option value="@pv.Value" 
-        @if (Model.ContainsValue(pv.Value))
-        {<text>selected="selected"</text>}
-        >@pv.Value</option>
+        <option value="@pv.Value" @if (Model.ContainsValue(pv.Value)) { <text> selected="selected" </text> }>@pv.Value</option>
     }
 </select>

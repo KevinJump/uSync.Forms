@@ -1,0 +1,14 @@
+{
+  "javascript": [
+    "~/App_Plugins/uSyncExpansions/expansionService.js",
+    "~/App_Plugins/uSyncExpansions/uSyncLicenceController.js",
+    "~/App_Plugins/uSyncExpansions/components/licenceComponent.js",
+
+    "~/App_Plugins/uSyncExpansions/resources/dependencyManager.js",
+    "~/App_Plugins/uSyncExpansions/resources/itemManager.js",
+
+    "~/App_Plugins/uSyncExpansions/Components/uSyncErrorComponent.js",
+    "~/App_Plugins/uSyncExpansions/Components/uSyncErrorDialogController.js"
+  ],
+  "css": [ "~/App_Plugins/uSyncExpansions/usyncexpansions.css" ]
+}

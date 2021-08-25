@@ -1,8 +1,8 @@
-﻿<div data-element="editor-data-types"  ng-controller="UmbracoForms.Editors.DataSource.EditController">
+<div data-element="editor-data-types"  ng-controller="UmbracoForms.Editors.DataSource.EditController">
 
     <umb-load-indicator ng-if="page.loading"></umb-load-indicator>
 
-    <form name="preValueSourceForm"
+    <form name="dataSourceForm"
           ng-show="loaded && security.userSecurity.manageDataSources"
           novalidate
           val-form-manager>

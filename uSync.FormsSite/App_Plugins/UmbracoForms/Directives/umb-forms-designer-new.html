@@ -4,10 +4,11 @@
         <umb-editor-sub-header-content-right>
             <umb-button
                 type="button"
-                button-style="link"
+                button-style="outline"
                 label-key="{{sortingButtonKey}}"
                 icon="icon-navigation"
-                action="toggleSortingMode();">
+                action="toggleSortingMode();"
+                size="xs">
             </umb-button>
         </umb-editor-sub-header-content-right>
     </umb-editor-sub-header>
@@ -25,15 +26,16 @@
                 <input type="text"
                    class="umb-forms__page-name"
                    ng-model="page.caption"
+                   no-password-manager
                    placeholder="Untitled page (optional)">
 
                 <div class="umb-forms__page-actions -page" ng-if="form.pages.length > 1">
                     <span>
-                        <i class="icon-trash" ng-click="togglePrompt(page)"></i>
+                        <i class="icon-trash" title="Delete" ng-click="toggleDeletePrompt(page)"></i>
                         <umb-confirm-action ng-if="page.deletePrompt"
                                             direction="left"
                                             on-confirm="removePage(form.pages, $index)"
-                                            on-cancel="hidePrompt(page)">
+                                            on-cancel="hideDeletePrompt(page)">
                         </umb-confirm-action>
                     </span>
                 </div>
@@ -41,7 +43,7 @@
 
             <div class="umb-forms__fieldsets" ng-class="{'-empty': page.fieldSets.length === 0}" ui-sortable="sortableFieldsets" ng-model="page.fieldSets">
 
-                <div class="umb-forms__fieldset sortable" ng-repeat="fieldset in page.fieldSets" ng-class="{'-active':fieldset.state =='active'}" ng-click="setActive(fieldset)"  data-umb="fieldset_{{$parent.$index}}_{{$index}}">
+                <div class="umb-forms__fieldset sortable" ng-repeat="fieldset in page.fieldSets track by fieldset.id" ng-class="{'-active':fieldset.state =='active'}" ng-click="setActive(fieldset)"  data-umb="fieldset_{{$parent.$index}}_{{$index}}">
 
                     <div class="umb-forms__fieldset-header">
 
@@ -52,29 +54,38 @@
                                 ng-if="!sortingMode"
                                 placeholder="Untitled group (optional)"
                                 ng-model="fieldset.caption"
+                                no-password-manager
                                 umb-auto-resize />
                             <div class="umb-forms__fieldset-name" ng-if="sortingMode">{{ fieldset.caption }}</div>
                         </div>
 
-                        <div class="umb-forms__fieldset-condition" ng-if="fieldset.condition.enabled">
-                            {{ fieldset.condition.actionType }} this group if {{ fieldset.condition.logicType }} of the following match:
-                            <span ng-repeat="rule in fieldset.condition.rules" data-umb="rule_{{$parent.$index}}_{{$index}}">
-                                <span>{{ getFieldNameFromGuid(rule.field) }} {{ rule.operator }} {{ rule.value }}</span><span ng-if="!$last">, </span>
-                            </span>
-                        </div>
-
                         <div class="umb-forms__page-actions -fieldset" ng-if="!sortingMode">
-                            <a href="" ng-click="editFieldset(fieldset)"><i class="icon-settings"></i></a>
+                            <a href="" title="Edit" ng-click="editFieldset(fieldset)"><i class="icon-settings"></i></a>
                             <span>
-                                <i class="icon-trash" ng-click="togglePrompt(fieldset)"></i>
+                                <i class="icon-documents" title="Copy" ng-click="toggleCopyPrompt(fieldset)"></i>
+                                <umb-confirm-action ng-if="fieldset.copyPrompt"
+                                                    direction="left"
+                                                    on-confirm="copyFieldset(page, fieldset)"
+                                                    on-cancel="hideCopyPrompt(fieldset)">
+                                </umb-confirm-action>
+                            </span>
+                            <span>
+                                <i class="icon-trash" title="Delete" ng-click="toggleDeletePrompt(fieldset)"></i>
                                 <umb-confirm-action ng-if="fieldset.deletePrompt"
                                                     direction="left"
                                                     on-confirm="removeFieldset(page, fieldset)"
-                                                    on-cancel="hidePrompt(fieldset)">
+                                                    on-cancel="hideDeletePrompt(fieldset)">
                                 </umb-confirm-action>
                             </span>
                         </div>
 
+                    </div>
+
+                    <div class="umb-forms__fieldset-condition" ng-if="fieldset.condition.enabled">
+                        {{ fieldset.condition.actionType }} this group if <strong>{{ fieldset.condition.logicType | lowercase }}</strong> of the following match:
+                        <span ng-repeat="rule in fieldset.condition.rules" data-umb="rule_{{$parent.$index}}_{{$index}}">
+                            <span><strong>{{ getFieldNameFromGuid(rule.field) }}</strong> {{ rule.operator }} <strong>{{ rule.value }}</strong></span><span ng-if="!$last">, </span>
+                        </span>
                     </div>
 
                     <div class="umb-forms__containers">
@@ -86,7 +97,7 @@
 
                             <div class="umb-forms__fields" ng-class="{'-empty': container.fields.length === 0}" ui-sortable="sortableFields" ng-model="container.fields" >
 
-                                <div class="umb-forms__field sortable" ng-class="{'-collapsed': sortingMode}" ng-repeat="field in container.fields" data-umb="field_{{$parent.$parent.$index}}_{{$parent.$index}}_{{$index}}">
+                                <div class="umb-forms__field sortable" ng-class="{'-collapsed': sortingMode}" ng-repeat="field in container.fields track by field.id" data-umb="field_{{$parent.$parent.$index}}_{{$parent.$index}}_{{$index}}">
 
                                     <div class="umb-forms__field-content">
 
@@ -130,9 +141,9 @@
                                             </div>
 
                                             <div class="umb-forms__field-condition" ng-if="field.condition.enabled">
-                                                {{ field.condition.actionType }} this question if {{ field.condition.logicType }} of the following match:
+                                                {{ field.condition.actionType }} this question if <strong>{{ field.condition.logicType | lowercase }}</strong> of the following match:
                                                 <span ng-repeat="rule in field.condition.rules"  data-umb="rule_{{$parent.$parent.$index}}_{{$parent.$index}}_{{$index}}">
-                                                    <span>{{ getFieldNameFromGuid(rule.field) }} {{ rule.operator }} {{ rule.value }}</span><span ng-if="!$last">, </span>
+                                                  <span><strong>{{ getFieldNameFromGuid(rule.field) }}</strong> {{ rule.operator }} <strong>{{ rule.value }}</strong></span><span ng-if="!$last">, </span>
                                                 </span>
                                             </div>
 
@@ -143,13 +154,21 @@
                                         </div>
 
                                         <div class="umb-forms__actions" ng-if="sortingMode === false">
-                                            <a href="" ng-click="openFieldSettings(field)"><i class="icon-settings" data-umb="open-field-settings_{{$parent.$parent.$index}}_{{$parent.$index}}_{{$index}}"></i></a>
+                                            <a href="" ng-click="openFieldSettings(field)" title="Edit"><i class="icon-settings" data-umb="open-field-settings_{{$parent.$parent.$index}}_{{$parent.$index}}_{{$index}}"></i></a>
                                             <span>
-                                                <i class="icon-trash" ng-click="togglePrompt(field)" data-umb="delete_{{$parent.$parent.$index}}_{{$parent.$index}}_{{$index}}"></i>
+                                                <i class="icon-documents" title="Copy" ng-click="toggleCopyPrompt(field)" data-umb="copy_{{$parent.$parent.$index}}_{{$parent.$index}}_{{$index}}"></i>
+                                                <umb-confirm-action ng-if="field.copyPrompt"
+                                                                    direction="left"
+                                                                    on-confirm="copyField(container, field)"
+                                                                    on-cancel="hideCopyPrompt(field)" data-umb="copy_confirm_{{$parent.$parent.$index}}_{{$parent.$index}}_{{$index}}">
+                                                </umb-confirm-action>
+                                            </span>
+                                            <span>
+                                                <i class="icon-trash" title="Delete" ng-click="toggleDeletePrompt(field)" data-umb="delete_{{$parent.$parent.$index}}_{{$parent.$index}}_{{$index}}"></i>
                                                 <umb-confirm-action ng-if="field.deletePrompt"
                                                                     direction="left"
                                                                     on-confirm="removeField(fieldset, container, field)"
-                                                                    on-cancel="hidePrompt(field)" data-umb="confirm_{{$parent.$parent.$index}}_{{$parent.$index}}_{{$index}}">
+                                                                    on-cancel="hideDeletePrompt(field)" data-umb="delete_confirm_{{$parent.$parent.$index}}_{{$parent.$index}}_{{$index}}">
                                                 </umb-confirm-action>
                                             </span>
                                         </div>
@@ -218,7 +237,6 @@
 
     </div>
 
-
     <div class="umb-forms-workflow-actions" ng-if="!sortingMode">
 
         <div class="umb-forms-workflow-flows">
@@ -240,7 +258,7 @@
                 </span>
 
                 <span class="umb-forms-workflow-preview" ng-repeat="workflow in form.formWorkflows.onSubmit | filter:{isDeleted:'false'}" data-umb="on_submit_workflow_{{$index}}">
-                    <a class="umb-forms-workflow-preview__item" ng-if="security.userSecurity.manageWorkflows" href="" ng-click="editWorkflowSettings(workflow)" data-umb="{{ workflow.name }}">{{ workflow.name }}</a>
+                    <a class="umb-forms-workflow-preview__item" ng-class="{'umb-forms-workflow-preview__item--inactive': !workflow.active}" ng-if="security.userSecurity.manageWorkflows" href="" ng-click="editWorkflowSettings(workflow)" data-umb="{{ workflow.name }}">{{ workflow.name }}</a>
                     <span class="umb-forms-workflow-preview__item" ng-if="security.userSecurity.manageWorkflows === false">{{ workflow.name }}</span>
                     <span ng-if="!$last">and</span>
                 </span>
@@ -257,7 +275,7 @@
                 </span>
 
                 <span class="umb-forms-workflow-preview" ng-repeat="workflow in form.formWorkflows.onApprove | filter:{isDeleted:'false'}" data-umb="onapprove_workflow_{{$index}}">
-                    <a class="umb-forms-workflow-preview__item" ng-if="security.userSecurity.manageWorkflows" href="" ng-click="editWorkflowSettings(workflow)">{{ workflow.name }}</a>
+                    <a class="umb-forms-workflow-preview__item" ng-class="{'umb-forms-workflow-preview__item--inactive': !workflow.active}" ng-if="security.userSecurity.manageWorkflows" href="" ng-click="editWorkflowSettings(workflow)">{{ workflow.name }}</a>
                     <span class="umb-forms-workflow-preview__item" ng-if="security.userSecurity.manageWorkflows === false">{{ workflow.name }}</span>
                     <span ng-if="!$last">and</span>
                 </span>

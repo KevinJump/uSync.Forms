@@ -59,7 +59,7 @@
                             <div class="umb-forms-workflows__line"></div>
                         </div>
                         <div class="umb-forms-workflows-divider"></div>
-                        <div class="umb-forms-workflows">
+                        <div class="umb-forms-workflows" ng-if="model.manualApproval || model.formWorkflows.onApprove.length > 0">
                             <div class="umb-forms-workflow -not-clickable">
                                 <div class="umb-forms-workflow__icon-wrapper -round">
                                     <i class="umb-forms-workflow__icon icon-thumb-up"></i>
@@ -113,6 +113,7 @@
                     <umb-button type="button"
                                 button-style="link"
                                 label-key="general_close"
+                                shortcut="esc"
                                 action="vm.close()">
                     </umb-button>
                     <umb-button type="button"

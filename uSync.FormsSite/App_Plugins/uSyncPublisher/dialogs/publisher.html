@@ -1,0 +1,113 @@
+﻿<div ng-controller="uSyncPublisherDialogController as vm">
+
+
+    <umb-editor-panel>
+        <umb-editor-header name="vm.dialog.title"
+                           description="vm.dialog.desc"
+                           description-locked="true"
+                           name-locked="true"
+                           hide-alias="true"
+                           hide-icon="true">
+        </umb-editor-header>
+        <umb-editor-container>
+
+            <div ng-if="vm.loading">
+                <umb-load-indicator></umb-load-indicator>
+            </div>
+
+            <div ng-if="!vm.loading">
+
+                <div ng-if="vm.hasError">
+                    <usync-error-box error="vm.error" title="Publisher" message="Error during {{vm.mode}}"></usync-error-box>
+                </div>
+
+                <div ng-if="vm.items.length > 1" class="usync-node-box-list">
+                    <h5>Items</h5>
+                    <div class="flex flex-wrap">
+                        <div ng-repeat="item in vm.items|limitTo:5" class="usync-node-box">
+                            <i class="icon {{item.icon}}"></i>
+                            {{item.name}}
+                        </div>
+                        <div ng-if="vm.items.length>5" class="usync-node-box clear-box"> &amp; {{vm.items.length-5}} more....</div>
+                    </div>
+                </div>
+
+                <div ng-if="vm.pickServer === true">
+                    <usync-server-picker picker-title="@usyncpublish_pickerTitle"
+                                         description="@usyncpublish_pickerDesc"
+                                         servers="vm.servers"
+                                         on-selected="vm.onSelected(server)" />
+                </div>
+
+                <div ng-if="vm.loadedActions && !vm.hasError" >
+  
+                    <div ng-if="vm.view.show" class="usync-publish-step">
+                        <!-- action has user input before action -->
+
+                        <umb-box>
+                            <umb-box-header title="{{model.title}}"
+                                description="{{model.subtitle}}">
+                            </umb-box-header>
+                            <umb-box-content>
+                                <div ng-include="vm.view.path"></div>
+                            </umb-box-content>
+                        </umb-box>
+                    </div>
+
+                    <div class="usync-complete-dialog-progress" ng-if="!vm.view.show">
+                        <div class="usync-step-name">{{vm.message.Title}}</div>
+
+                        <div class="usync-dialog-progress-bar">
+                            <div class="usync-complete-progress-icons">
+                                <div ng-repeat="step in vm.message.Steps"
+                                     ng-class="{'complete': step.Status == 2, 'in-progress': step.Status == 1}">
+                                    <i class="icon {{step.Icon}}"></i>
+                                    <div>{{step.Name}}</div>
+                                    <div class="usync-step-badge complete" ng-if="step.Status == 2"><i class="icon icon-check"></i></div>
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="progress" style="height: 5px;margin: 0 20px">
+                            <div class="bar" role="progressbar" style="width: {{vm.calcPercentage(vm.update)}}%;" aria-valuenow="{{vm.calcPercentage(vm.update)}}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+
+                        <div class="usync-load-step">
+                            <div ng-repeat="bit in vm.update.blocks track by $index">
+                                <div class="usync-load-step-{{$index}}">{{bit}}</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </umb-editor-container>
+
+        <umb-editor-footer>
+            <umb-editor-footer-content-left ng-if="!vm.view.show">
+                <em class="muted"><small>{{vm.stepArgs.stepName}} {{vm.stepArgs.options.StepIndex}}/{{vm.stepArgs.options.StepPass}}</small></em>
+            </umb-editor-footer-content-left>
+            <umb-editor-footer-content-right ng-if="!vm.loading">
+
+                <umb-button type="button"
+                            button-style="link"
+                            label-key="general_close"
+                            action="vm.close()"
+                            disabled="vm.working"
+                            ng-if="!vm.hideClose">
+                </umb-button>
+
+                <umb-button ng-if="!vm.complete && !vm.loading"
+                            type="button"
+                            action="vm.performAction()"
+                            button-style="action"
+                            label="{{vm.actionButton.name}}"
+                            button-state="vm.actionButton.state"
+                            disabled="vm.working || !vm.valid">
+                </umb-button>
+
+            </umb-editor-footer-content-right>
+        </umb-editor-footer>
+
+    </umb-editor-panel>
+
+</div>

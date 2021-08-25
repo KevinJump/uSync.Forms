@@ -1,0 +1,114 @@
+﻿<div ng-controller="realtimeServerConfigController as cvm">
+    <div class="usync-publish-settings nested">
+        <umb-box class="usync-main-settings">
+            <umb-box-header title-key="usyncpublish_contentOptions"
+                            description-key="usyncpublish_contentOptionsDesc">
+            </umb-box-header>
+            <umb-box-content>
+                <umb-control-group label="@usyncpublish_includeChildren"
+                                   description="@usyncpublish_includeChildrenDesc">
+                    <usync-user-controlled-boolean 
+                                localize="title"
+                                title="@usyncpublish_includeChildren"
+                                option="vm.server.SendSettings.IncludeChildren" />
+                </umb-control-group>
+
+                <umb-control-group label="@usyncpublish_includeMedia"
+                                   description="@usyncpublish_includeMediaDesc">
+                    <usync-user-controlled-boolean 
+                                localize="title"
+                                title="@usyncpublish_includeMedia" 
+                                option="vm.server.SendSettings.IncludeMedia" />
+                </umb-control-group>
+                <umb-control-group label="@usyncpublish_deleteMissing"
+                                   description="@usyncpublish_deleteMissingDesc">
+                    <usync-user-controlled-boolean
+                                localize="title"
+                                title="@usyncpublish_deleteMissing" 
+                                option="vm.server.SendSettings.DeleteMissing" />
+                </umb-control-group>
+            </umb-box-content>
+        </umb-box>
+
+        <umb-box>
+            <umb-box-header title-key="usyncpublish_developerOptions"
+                            description-key="usyncpublish_developerOptionsDesc">
+            </umb-box-header>
+            <umb-box-content>
+                <umb-control-group label="@usyncpublish_includeConfig"
+                                   description="@usyncpublish_includeConfigDesc">
+                    <usync-user-controlled-boolean 
+                                localize="title"
+                                title="@usyncpublish_includeConfig" 
+                                option="vm.server.SendSettings.IncludeConfig" />
+                </umb-control-group>
+
+                <umb-control-group label="@usyncpublish_includeDependencies"
+                                   description="@usyncpublish_includeDependenciesDesc">
+                    <usync-user-controlled-boolean 
+                                localize="title"
+                                title="@usyncpublish_includeDependencies" 
+                                option="vm.server.SendSettings.IncludeDependencies" />
+                </umb-control-group>
+
+                <umb-control-group label="@usyncpublish_includeFiles"
+                                   description="@usyncpublish_includeFiles">
+                    <usync-user-controlled-boolean 
+                                localize="title"
+                                title="@usyncpublish_includeFiles" 
+                                option="vm.server.SendSettings.IncludeFiles" />
+                </umb-control-group>
+        </umb-box>
+    </div>
+
+    <div class="usync-publish-settings nested">
+        <umb-box class="usync-main-settings">
+            <umb-box-header title-key="usyncpublish_stepOptions"
+                            description-key="usyncpublish_stepOptionsDesc">
+            </umb-box-header>
+            <umb-box-content>
+                <umb-control-group label="@usyncpublish_schedule"
+                                   description="@usyncpublish_scheduleDesc">
+                    <umb-checkbox name="check_schedule"
+                                  input-id="check_schedule"
+                                  title="@usyncpublish_schedule"
+                                  localize="title"
+                                  model="vm.server.PublisherSettings.canSchedule"></umb-checkbox>
+                </umb-control-group>
+
+                <umb-control-group label="@usyncpublish_variant"
+                                   description="@usyncpublish_variantDesc">
+
+                    <umb-checkbox name="check_variants"
+                                  input-id="check_variants"
+                                  title="@usyncpublish_variant"
+                                  localize="title"
+                                  model="vm.server.PublisherSettings.selectVariants"></umb-checkbox>
+                </umb-control-group>
+
+            </umb-box-content>
+        </umb-box>
+
+        <umb-box>
+            <umb-box-header title-key="usyncpublish_additionalOptions"
+                            description-key="usyncpublish_includeLinkedWarn">
+            </umb-box-header>
+            <umb-box-content>
+
+                <umb-control-group label="@usyncpublish_includeAncestors"
+                                   description="@usyncpublish_includeAncestorsDesc">
+                    <usync-user-controlled-boolean 
+                                                   localize="title"
+                                                   title="@usyncpublish_includeAncestors"
+                                                   option="vm.server.SendSettings.IncludeAncestors" />
+                </umb-control-group>
+                <umb-control-group label="@usyncpublish_includeLinked"
+                                   description="@usyncpublish_includeLinkedDesc">
+                    <usync-user-controlled-boolean localize="title"
+                                                   title="@usnycpublish_includeLinked" 
+                                                   option="vm.server.SendSettings.IncludeLinked" />
+                </umb-control-group>
+            </umb-box-content>
+        </umb-box>
+    </div>
+</div>

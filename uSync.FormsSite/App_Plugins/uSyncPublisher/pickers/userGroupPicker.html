@@ -1,0 +1,31 @@
+﻿<div ng-controller="usyncUserGroupPickerController as vm">
+    <!-- user group picker -->
+
+    <div ng-repeat="group in vm.groups" class="umb-node-preview">
+
+
+        <i class="umb-node-preview__icon {{group.icon}}"></i>
+
+        <div class="umb-node-preview__content">
+            <div class="umb-node-preview__name">{{group.name}}</div>
+        </div>
+
+        <div class="umb-node-preview__actions">
+            <a class="umb-node-preview__action umb-node-preview__action--red"
+               title="Remove {{group.name}}"
+               ng-click="vm.remove(group)"
+               ng-if="!vm.readonly">
+                <localize key="general_remove">Remove</localize>
+                <span class="sr-only">{{group.name}}</span>
+            </a>
+        </div>
+    </div>
+
+    <a ng-if="!vm.readonly"
+       class="umb-node-preview-add"
+       ng-click="vm.open()"
+       href
+       prevent-default>
+        <localize key="general_add">Add</localize>
+    </a>
+</div>

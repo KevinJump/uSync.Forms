@@ -1,0 +1,124 @@
+﻿<div ng-controller="uSyncPublisherConfigPushController as pvm">
+
+
+    <div ng-if="vm.options.simple">
+        <h2>Simple sync view</h2>
+    </div>
+
+    <div ng-if="!vm.options.simple">
+
+        <div><em><localize key="usyncpublish_deployDesc"></localize></em></div>
+
+        <div class="flex justify-between">
+            <div class="usyncpublish-settings-box">
+                <div class="usync-settings-header">
+                    <h4>Settings</h4>
+                </div>
+
+                <usync-send-option label="@treeHeaders_documentTypes"
+                                   description="Include all document types in the check"
+                                   option="pvm.items.docTypes">
+                </usync-send-option>
+
+                <usync-send-option label="@treeHeaders_dataTypes"
+                                   description="Include all DataTypes types in the check"
+                                   option="pvm.items.dataTypes">
+                </usync-send-option>
+
+                <usync-send-option label="@treeHeaders_mediaTypes"
+                                   description="Include any media types"
+                                   option="pvm.items.mediaTypes">
+                </usync-send-option>
+
+                <usync-send-option label="@treeHeaders_memberTypes"
+                                   description="Sync membertype information"
+                                   option="pvm.items.memberTypes">
+                </usync-send-option>
+
+                <usync-send-option label="@treeHeaders_macros"
+                                   description="Sync Macros (include files, for script files)"
+                                   option="pvm.items.macro">
+                </usync-send-option>
+
+            </div>
+            <div class="usyncpublish-settings-box">
+
+                <div class="usync-settings-header">
+                    <h4>Languages and Security</h4>
+                </div>
+                <usync-send-option label="@treeHeaders_languages"
+                                   description="Sync installed languages"
+                                   option="pvm.items.languages">
+                </usync-send-option>
+
+                <usync-send-option label="@treeHeaders_dictionary"
+                                   description="Sync dictionary items (will overwrite)"
+                                   option="pvm.items.dictionary">
+                </usync-send-option>
+
+                <usync-send-option label="@actions_assignDomain"
+                                   description="Include and domain settings across the content"
+                                   option="pvm.items.domains">
+                </usync-send-option>
+
+                <usync-send-option label="@actions_protect"
+                                   description="Sync 'Public Access' settings"
+                                   option="pvm.items.protect">
+                </usync-send-option>
+            </div>
+            <div class="usyncpublish-settings-box usync-publish-settings-third">
+
+                <div class="usync-settings-header">
+                    <h4>Files</h4>
+                </div>
+                <usync-send-option label="@treeHeaders_templates"
+                                   description="Include all Template settings"
+                                   option="pvm.items.template">
+                </usync-send-option>
+
+                <usync-send-option label="Include Files"
+                                   description="Files must be included if you want to sync templates"
+                                   option="pvm.items.files">
+                </usync-send-option>
+
+                <usync-send-option label="Include System Files"
+                                   description="Include any files from the Bin or app_plugins folder"
+                                   option="pvm.items.systemFiles">
+                </usync-send-option>
+
+                <div ng-if="pvm.items.systemFiles.value" class="alert usync-alert">
+                    <h4>Warning</h4>
+                    <p>
+                        Updating system files will cause your site to restart, if you update the target site
+                        with files that are not compatibile with your setup you may cause your website to
+                        be unresponsive or crash.
+                    </p>
+                </div>
+
+
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="flex justify-between">
+            <div class="usyncpublish-settings-box">
+                <div class="usync-settings-header">
+                    <h4>Content</h4>
+
+                    <usync-send-option label="@treeHeaders_content"
+                                       description="Include all document types in the check"
+                                       option="pvm.items.content">
+                    </usync-send-option>
+
+                    <usync-send-option label="@treeHeaders_media"
+                                       description="Include all DataTypes types in the check"
+                                       option="pvm.items.media">
+                    </usync-send-option>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,6 +1,6 @@
-﻿<div class="umb-pane" ng-controller="UmbracoForms.Editors.PreValueSource.DeleteController">
+<div class="umb-pane" ng-controller="UmbracoForms.Editors.PreValueSource.DeleteController">
     <p>
-        Are you sure you want to delete {{currentNode.name}} ?
+        Are you sure you want to delete {{currentNode.name}}?
     </p>
 
     <div>
@@ -9,7 +9,7 @@
         <div class="umb-pane btn-toolbar umb-btn-toolbar">
             <div class="control-group umb-control-group">
                 <a href="" class="btn btn-link" ng-click="cancelDelete()"><localize key="general_cancel">Cancel</localize></a>
-                <a href="" class="btn btn-primary" ng-click="delete(currentNode.id)"><localize key="general_ok">OK</localize></a>
+                <a href="" class="btn btn-danger" ng-click="delete(currentNode.id)"><localize key="general_ok">OK</localize></a>
             </div>
         </div>
     </div>

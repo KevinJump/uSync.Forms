@@ -1,0 +1,117 @@
+﻿<div ng-controller="uSyncExporterImportController as vm">
+    <umb-editor-panel>
+        <umb-editor-header name="'Import Sync-Pack'"
+                           name-locked="true"
+                           hide-alias="true"
+                           hide-icon="true"
+                           hide-description="true">
+        </umb-editor-header>
+        <umb-editor-container>
+
+            <umb-box ng-if="vm.state == 'error'">
+                <umb-box-header title="Import error"
+                                description="Something caused the import to stop">
+                </umb-box-header>
+                <umb-box-content>
+                    <div class="color-red">{{vm.errorMessage}}</div>
+                </umb-box-content>
+            </umb-box>
+
+            <umb-box ng-if="vm.state == 'init'">
+                <umb-box-header title-key="usyncexport_importHeader"></umb-box-header>
+                <umb-box-content>
+                    <localize key="usyncexport_importHelp"></localize>
+                </umb-box-content>
+                <umb-box-content>
+                    <input id="usyncimportpicker" type="file"
+                           accept=".usync"
+                           ngf-select
+                           ngf-model="filesHolder"
+                           ngf-change="vm.handleFiles($files, $event)"
+                           ngf-multipart="true"
+                           class="usync-exporter-upload" />
+
+                    <label for="usyncimportpicker" class="btn btn-default usync-exporter-upload-button">Choose File</label>
+
+                    <span>{{vm.file.name}}</span>
+
+                    <umb-button type="button"
+                                button-style="action"
+                                label-key="general_upload"
+                                action="vm.upload(vm.file)"
+                                ng-if="vm.file != null"
+                                state="vm.buttonState"
+                                disabled="vm.buttonState == 'busy'" />
+
+                </umb-box-content>
+            </umb-box>
+
+            <div ng-if="vm.state == 'busy'">
+                <div class="usync-complete-dialog-progress">
+
+                    <div class="usync-dialog-progess-bar">
+                        <div class="usync-complete-progress-icons">
+                            <div ng-repeat="step in vm.progress.steps"
+                                 ng-class="{'complete' : step.status == 'Complete', 'in-progress': step.status == 'InProgress'}">
+                                <i class="icon {{step.icon}}"></i>
+                                <div>{{step.name}}</div>
+                                <div ng-if="step.status == 'Complete'" class="usync-step-badge complete">
+                                    <i class="icon icon-check"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress" style="height: 7px;margin: 0 20px;">
+                        <div class="bar" role="progressbar"
+                             style="width:{{vm.calcPercentage(vm.update)}}%"
+                             aria-valuenow="{{vm.calcPercentage(vm.update)}}"
+                             aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+
+                    <div class="usync-load-step flex justify-center">
+                        <strong>{{vm.update.Message}}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <umb-box ng-if="vm.state == 'report' || vm.state == 'imported'">
+                <umb-box-header title-key="usyncexport_itemsHeader"
+                                description-key="usyncexport_itemsDesc"></umb-box-header>
+                <umb-box-content>
+                    <usync-report-view results="vm.report" 
+                                       show-all="true"
+                                       hide-action="true"></usync-report-view>
+                </umb-box-content>
+            </umb-box>
+        </umb-editor-container>
+
+        <umb-editor-footer>
+            <umb-editor-footer-content-left ng-if="vm.state == 'report'">
+                <strong>
+                    {{vm.countChanges(vm.report)}}/{{vm.report.length}} Changes
+                </strong>
+            </umb-editor-footer-content-left>
+            <umb-editor-footer-content-left ng-if="vm.state == 'imported'">
+                <strong>
+                    Complete {{vm.countChanges(vm.report)}} Items imported
+                </strong>
+            </umb-editor-footer-content-left>
+
+            <umb-editor-footer-content-right>
+                <umb-button type="button"
+                            button-style="link"
+                            label-key="general_close"
+                            action="vm.close()">
+                </umb-button>
+
+                <umb-button-group ng-if="vm.state == 'report'"
+                                  default-button="vm.importGroup.defaultButton"
+                                  sub-buttons="vm.importGroup.subButtons"
+                                  direction="up"
+                                  float="right">
+                </umb-button-group>
+            </umb-editor-footer-content-right>
+        </umb-editor-footer>
+    </umb-editor-panel>
+</div>

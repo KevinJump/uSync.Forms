@@ -1,0 +1,91 @@
+﻿<div ng-controller="uSyncPublisherBrowserDashboardController as vm"
+     class="usync-publisher-dashboard">
+
+    <umb-box ng-if="vm.isBlank">
+        <umb-box-content class="alert alert-info usync-alert">
+            <localize key="usyncpublish_emptyLink"></localize>
+        </umb-box-content>
+    </umb-box>
+
+    <umb-box>
+        <umb-box-header title="Select Source"
+                        description="Push content from local or pull content from remote servers">
+            <small class="muted">powered by uSync.Complete</small>
+        </umb-box-header>
+        <umb-box-content>
+
+            <div class="flex">
+                <div class="usync-browser-category-box">
+                    <h5>Local (Push)</h5>
+                    <div class="usync-inline-server-list">
+                        <div class="usync-server-list-boxless">
+                            <div class="usync-server-list">
+                                <div class="usync-server-box" ng-click="vm.selectLocal()"
+                                     ng-class="{'selected' : vm.local }">
+                                    <i class="icon icon-laptop color-blue"></i>
+                                    <h5>Local</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h5>Remote (Pull)</h5>
+                    <usync-server-picker picker-title="@usyncpublish_pickerTitle"
+                                         description="@usyncpublish_pickerDesc"
+                                         servers="vm.servers"
+                                         on-selected="vm.onSelected(server)"
+                                         class="usync-inline-server-list"
+                                         hide-box="true"></usync-server-picker>
+
+                </div>
+            </div>
+
+        </umb-box-content>
+    </umb-box>
+
+    <umb-editor-sub-header ng-class="{'--state-selection':(vm.selected.length > 0)}">
+        <umb-editor-sub-header-content-left ng-if="vm.selected.length > 0">
+            <umb-editor-sub-header-section>
+                <umb-button type="button"
+                            label="Clear selection"
+                            button-style="white"
+                            action="vm.clearSelection()">
+                </umb-button>
+            </umb-editor-sub-header-section>
+
+            <umb-editor-sub-header-section>
+                <strong>{{vm.selected.length}} of {{vm.folders.length}} selected</strong>
+            </umb-editor-sub-header-section>
+        </umb-editor-sub-header-content-left>
+
+        <umb-editor-sub-header-content-right ng-if="vm.selected.length > 0">
+            <umb-editor-sub-header-section>
+                <umb-button type="button"
+                            label="{{vm.selectionLabel}}"
+                            button-style="white"
+                            action="vm.openDialog()">
+                </umb-button>
+            </umb-editor-sub-header-section>
+        </umb-editor-sub-header-content-right>
+
+    </umb-editor-sub-header>
+
+    <div ng-if="vm.items.folders.length > 0 || vm.items.nodes.length > 0">
+
+        <usync-item-browser items="vm.items"
+                            selection="vm.selected"
+                            load-folder="vm.getFolders(key)"
+                            type="{{vm.section}}"
+                            loading="vm.loading"
+                            layouts="vm.layouts"
+                            active-layout="vm.activeLayout"
+                            server-name="vm.server.Name">
+        </usync-item-browser>
+    </div>
+
+    <div ng-if="!vm.items.folders && vm.loading">
+        <umb-load-indicator></umb-load-indicator>
+    </div>
+</div>

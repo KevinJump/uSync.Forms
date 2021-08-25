@@ -1,11 +1,14 @@
 @model Umbraco.Forms.Mvc.Models.FieldViewModel
 @using Umbraco.Forms.Mvc
-
+@using Umbraco.Forms.Web
+@{
+    var numberOfRows = Model.GetSettingValue<int>("NumberOfRows", Umbraco.Forms.Core.Providers.FieldTypes.Textarea.DefaultNumberOfRows);
+}
 <textarea class="@Html.GetFormFieldClass(Model.FieldTypeName)"  
           name="@Model.Name" 
           id="@Model.Id" 
           data-umb="@Model.Id" 
-          rows="2" 
+          rows="@numberOfRows" 
           cols="20"
         @{if(string.IsNullOrEmpty(Model.PlaceholderText) == false){<text>placeholder="@Model.PlaceholderText"</text>}}
         @{if(Model.Mandatory || Model.Validate){<text>data-val="true"</text>}}

@@ -1,0 +1,154 @@
+﻿<div ng-controller="uSyncExporterDashboardController as vm">
+
+    <div ng-if="vm.loading">
+        <umb-load-indicator></umb-load-indicator>
+    </div>
+
+    <div ng-if="!vm.loading">
+
+        <usync-expansion-licence product="'exporter'" version="'8.0.0'"></usync-expansion-licence>
+
+        <umb-box>
+            <umb-box-header title-key="usyncexport_dashboardTitle"
+                            description-key="usyncexport_dashboardDesc">
+                <small class="muted"><em>v{{vm.version}}</em></small>
+            </umb-box-header>
+
+            <umb-box-content ng-if="vm.licenced">
+
+                <umb-button ng-if="!vm.disableImport"
+                            action="vm.openImportDialog()"
+                            type="button"
+                            button-style="action"
+                            label-key="usyncexport_importMenu"
+                            disabled="vm.loading">
+                </umb-button>
+
+                <div ng-if="vm.disableImport">
+                    Import has been disabled for this site.
+                </div>
+            </umb-box-content>
+
+        </umb-box>
+
+        <umb-box ng-if="vm.licenced">
+            <umb-box-header title-key="usyncexport_createTitle"
+                            description-key="usyncexport_dashboardCreate">
+                <button class="btn btn-link usync-box-help-icon"
+                        ng-click="vm.showHelp('create a sync-pack help', 'export');">
+                    <i class="icon icon-help-alt" title="help"></i>
+                </button>
+            </umb-box-header>
+
+            <umb-box-content class="flex items-start justify-between">
+                <div>
+                    <div ng-repeat="group in vm.exporters">
+                        <h4>{{group.group}}</h4>
+                        <div class="flex flex-wrap exporter-button-list">
+                            <div ng-repeat="exporter in group.exporters"
+                                 ng-class="{'exporter-seperator': exporter.seperator}">
+                                <button ng-if="!exporter.seperator"
+                                        class="btn btn-info usync-exporter-button"
+                                        ng-click="vm.pickTypes(exporter)"
+                                        ng-disabled="vm.working">
+                                    <i class="icon {{exporter.icon}}"></i> {{exporter.name}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="usync-right-toggles">
+                    <umb-checkbox input-id="includeMedia"
+                                  name="includeMedia"
+                                  model="vm.includeMedia"
+                                  text="Include Media files"></umb-checkbox>
+
+                    <umb-checkbox input-id="includeDictionary"
+                                  name="includeDictionary"
+                                  model="vm.includeDictionary"
+                                  text="Include (All) Dictionary items"></umb-checkbox>
+
+                    <umb-checkbox input-id="includeFiles"
+                                  name="includeFiles"
+                                  model="vm.includeFiles"
+                                  text="Include Template files"></umb-checkbox>
+
+                    <umb-checkbox input-id="includeConfig"
+                                  name="includeConfig"
+                                  model="vm.includeConfig"
+                                  text="Include node config"></umb-checkbox>
+
+                    <umb-checkbox input-id="includeLinked"
+                                  name="includeLinked"
+                                  model="vm.includeLinked"
+                                  text="Include Linked items"></umb-checkbox>
+                </div>
+            </umb-box-content>
+        </umb-box>
+
+        <umb-box ng-if="vm.selection.length > 0">
+
+            <umb-box-content>
+
+                <div class="usync-list">
+
+                    <div class="usync-list-item usync-list-header">
+                        <div></div>
+                        <div><localize key="general_type"></localize></div>
+                        <div><localize key="general_name"></localize></div>
+                        <div class="usync-list-toggle"><localize key="usyncexport_dependencies"></localize></div>
+                        <div class="usync-list-toggle"><localize key="usyncexport_children"></localize></div>
+                        <div class="usync-list-toggle"><localize key="usyncexport_ancestors"></localize></div>
+                        <div></div>
+                    </div>
+
+                    <div ng-repeat="item in vm.selection" class="usync-list-item">
+                        <div class="icon {{item.icon}}"></div>
+                        <div><strong>{{item.nodeType}}</strong></div>
+                        <div>{{item.name}}</div>
+
+                        <div class="usync-list-toggle">
+                            <umb-toggle checked="item.flags.includeDependencies" on-click="item.flags.includeDependencies = !item.flags.includeDependencies"
+                                        disabled="vm.working"></umb-toggle>
+                        </div>
+                        <div class="usync-list-toggle">
+                            <umb-toggle checked="item.flags.includeChildren" on-click="item.flags.includeChildren = !item.flags.includeChildren"
+                                        disabled="vm.working"></umb-toggle>
+                        </div>
+                        <div class="usync-list-toggle">
+                            <umb-toggle checked="item.flags.includeAncestors" on-click="item.flags.includeAncestors = !item.flags.includeAncestors"
+                                        disabled="vm.working"></umb-toggle>
+                        </div>
+
+                        <div class="usync-list-toggle">
+                            <button class="btn btn-link color-red"
+                                    ng-click="vm.remove(item.id)"
+                                    ng-disabled="vm.working">
+                                <i class="icon icon-wrong"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </umb-box-content>
+
+            <umb-box-content>
+                <div class="flex justify-center">
+                    <umb-button action="vm.createExport()"
+                                label-key="actions_create"
+                                type="button"
+                                size="xl"
+                                state="vm.createState"
+                                button-style="primary">
+                    </umb-button>
+                </div>
+            </umb-box-content>
+        </umb-box>
+    </div>
+
+    <umb-overlay ng-if="vm.help.show"
+                 model="vm.help"
+                 view="vm.help.view"
+                 position="right"></umb-overlay>
+
+</div>

@@ -1,12 +1,15 @@
 <div ng-controller="UmbracoForms.Editors.Form.CopyController">
     <div class="umb-dialog-body with-footer">
         <div class="umb-pane">
-            <h5><i class="icon icon-autofill"></i> Copy form '{{ currentNode.name }}'</h5>
+            <h5><i class="icon icon-autofill"></i> Copying form '{{ currentNode.name }}'</h5>
 
-            <input type="text" placeholder="Copy of {{ currentNode.name }}" ng-model="newFormName" class="input-block-level" required/>
+            <umb-control-group label="Enter a name for the copied form" hide-label="false">
+                <input type="text" name="folderName" maxlength="255" ng-model="copiedForm.name" class="umb-textstring textstring input-block-level" umb-auto-focus required />
+            </umb-control-group>
+
+            <umb-checkbox model="copiedForm.copyWorkflows" text="Also copy workflows?"></umb-checkbox>
         </div>
     </div>
-
 
     <div class="umb-dialog-footer btn-toolbar umb-btn-toolbar">
         <a class="btn btn-link" ng-click="cancelCopy()">

@@ -1,0 +1,41 @@
+[
+    {
+      "alias": "content",
+      "icon": "icon-documents color-blue",
+      "name": "Sync Content/Media",
+      "description": "Keep Content and media in sync, settings are synced by deployment processes",
+      "settings": {
+        "IncludeChildren": "user-yes",
+        "IncludeMedia": "yes",
+        "DeleteMissing": "user-yes",
+        "IncludeConfig": "yes",
+        "IncludeDependencies": "no",
+        "IncludeFiles": "no",
+        "IncludeAncestors": "no",
+        "IncludeLinked": "no"
+      }
+    },
+    {
+      "alias": "all",
+      "icon": "icon-settings color-green",
+      "name": "Sync Everything",
+      "description": "All content, media and settings are synced with a publish, everything is controlled via uSync.Publisher",
+      "settings": {
+        "IncludeChildren": "user-yes",
+        "IncludeMedia": "yes",
+        "DeleteMissing": "user-yes",
+        "IncludeConfig": "yes",
+        "IncludeDependencies": "yes",
+        "IncludeFiles": "yes",
+        "IncludeAncestors": "no",
+        "IncludeLinked": "no"
+      }
+    },
+  {
+    "alias": "custom",
+    "icon": "icon-umb-settings color-red",
+    "name": "Custom",
+    "description": "Custom setup, based on the Send options below.",
+    "settings": {}
+  }
+]

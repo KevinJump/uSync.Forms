@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
 
 
     // polyfill for matches and closest
@@ -37,13 +37,13 @@
         configureUmbracoFormsValidation();
 
         for (var i = 0; i < formsCollection.length; i++) {
-            init({ form: JSON.parse(decodeURI(formsCollection[i])) });
+            init({ form: formsCollection[i] });
         }
     }
 
     function init(e) {
 
-        var formItem = e.form;
+        var formItem = JSON.parse(decodeURI(e.form));
 
         var forms = document.querySelectorAll('.umbraco-forms-form');
 
@@ -58,7 +58,7 @@
                 formItem.fieldConditions,
                 formItem.recordValues);
             conditions.watch();
-        };
+        }
     }
 
     /** Configures the jquery validation for Umbraco forms */
@@ -78,7 +78,7 @@
            
             function required(value, element, params) {
                 // Handle single and multiple checkboxes:
-                if(element.type.toLowerCase() === "checkbox") {
+                if(element.type.toLowerCase() === "checkbox" || element.type.toLowerCase() === "radio") {
                     var allCheckboxesOfThisName = element.form.querySelectorAll("input[name='"+element.name+"']");
                     for (var i=0; i<allCheckboxesOfThisName.length; i++) {
                         if (allCheckboxesOfThisName[i].checked === true) {
@@ -98,24 +98,25 @@
                     return true;
                 }
         
-                let r = new RegExp(params.pattern);
+                var r = new RegExp(params.pattern);
                 return r.test(value);
             }
             validationService.addProvider("umbracoforms_regex", umbracoforms_regex);
 
             function wrapProviderWithIgnorerBehaviour(provider) {
-                return async function(value, element, params) {
+                return function(value, element, params) {
                     
                     // If field is hidden we ignorer the validation.
-                    if(element.offsetParent === null) {
+                    if (element.offsetParent === null) {
                         return true;
                     }
+
                     return provider(value, element, params);
                 }
             }
 
             // we can only incept with default validator if we do it after bootstrapping but before window load event triggers validationservice.
-            window.addEventListener('load', event => {
+            window.addEventListener('load', function() {
 
                 // Wrap all providers with ignorer hidden fields logic:
                 for (var key in validationService.providers) {
@@ -125,12 +126,20 @@
 
             // bootstrap validation service.
             validationService.bootstrap();
-            
-            
-            
-             
 
-        } else if ($ && $.validator !== undefined) {
+            // Without jquery validation, the previous page submit button click isn't sent with it's name,
+            // so can't be used server-side to determine whether to go forward or back.
+            // Hence we'll use an alternate method, setting a hidden field that's also used in the check.
+            var handlePreviousClicked = function () {
+                this.form.elements["PreviousClicked"].value = "clicked";
+            };
+            var previousButtonElements = document.getElementsByClassName("prev cancel");
+            for (var i = 0; i < previousButtonElements.length; i++) {
+                previousButtonElements[i].form.elements["PreviousClicked"].value = "";
+                previousButtonElements[i].addEventListener('click', handlePreviousClicked, false);
+            }
+
+        } else if (typeof jQuery === "function" && $.validator) {
             //Jquery validation setup
 
             $.validator.setDefaults({
@@ -175,48 +184,52 @@
      * @param {Form Element} formEl the element of the form
      */
     function dependencyCheck(formEl) {
-        //Only perform check if the global 'Umbraco.Sys' is null/undefined
-        //If present means we are in backoffice & that this is being rendered as a macro preview
-        //We do not need to perform this check here
-        if (typeof Umbraco !== "undefined" && typeof Umbraco.Sys !== "undefined") {
+        // Only perform check if the global 'Umbraco.Sys' is null/undefined.
+        // If present means we are in backoffice & that this is being rendered as a macro preview and We do not need to perform this check here.
+        // Similarly we need a check for if running in a rich text editor.
+        var isBackOffice = function () {
+            return typeof Umbraco !== "undefined" && typeof Umbraco.Sys !== "undefined";
+        };
+        var isBackOfficeRte = function () {
+            return document.body.id === "tinymce";
+        };
+        if (isBackOffice() || isBackOfficeRte()) {
             return;
         }
-        else {
 
-            var errorElement = document.createElement("div");
-            errorElement.className = "umbraco-forms missing-library";
-            errorElement.style.color = "#fff";
-            errorElement.style.backgroundColor = "#9d261d";
-            errorElement.style.padding = "15px";
-            errorElement.style.margin = "10px 0";
-            var errorMessage = "";
+        var errorElement = document.createElement("div");
+        errorElement.className = "umbraco-forms missing-library";
+        errorElement.style.color = "#fff";
+        errorElement.style.backgroundColor = "#9d261d";
+        errorElement.style.padding = "15px";
+        errorElement.style.margin = "10px 0";
+        var errorMessage = "";
 
-            //Ensure umbracoForm is not null
-            if (formEl) {
+        //Ensure umbracoForm is not null
+        if (formEl) {
 
-                //Check to see if the message for the form has been inserted already
-                var checkForExistinhgErr = formEl.getElementsByClassName('umbraco-forms missing-library');
-                if (checkForExistinhgErr.length > 0) {
-                    return;
-                }
+            //Check to see if the message for the form has been inserted already
+            var checkForExistinhgErr = formEl.getElementsByClassName('umbraco-forms missing-library');
+            if (checkForExistinhgErr.length > 0) {
+                return;
+            }
 
-                var hasValidationFramework = false;
+            var hasValidationFramework = false;
 
-                if (window.jQuery && $ && $.validator !== undefined) {
-                    hasValidationFramework = true;
-                } else if (window.aspnetValidation !== undefined) {
-                    hasValidationFramework = true;
-                }
+            if (window.jQuery && $ && $.validator !== undefined) {
+                hasValidationFramework = true;
+            } else if (window.aspnetValidation !== undefined) {
+                hasValidationFramework = true;
+            }
 
-                if(hasValidationFramework === false) {
-                    errorMessage = errorMessage + "Umbraco Forms requires a validation framework to run, please read documentation for posible options.";
-                }
+            if(hasValidationFramework === false) {
+                errorMessage = errorMessage + "Umbraco Forms requires a validation framework to run, please read documentation for posible options.";
+            }
 
-                if (errorMessage !== "") {
-                    errorElement.innerHTML = errorMessage + '<br/> <a href="https://our.umbraco.org/documentation/products/umbracoforms/developer/Prepping-Frontend/" target="_blank" style="text-decoration:underline; color:#fff;">See Umbraco Forms Documentation</a>';
+            if (errorMessage !== "") {
+                errorElement.innerHTML = errorMessage + '<br/> <a href="https://our.umbraco.org/documentation/products/umbracoforms/developer/Prepping-Frontend/" target="_blank" style="text-decoration:underline; color:#fff;">See Umbraco Forms Documentation</a>';
 
-                    formEl.insertBefore(errorElement, formEl.childNodes[0]);
-                }
+                formEl.insertBefore(errorElement, formEl.childNodes[0]);
             }
         }
     }
@@ -247,16 +260,16 @@
             var selectFields = page.querySelectorAll("select");
             for(var i=0; i<selectFields.length; i++) {
                 var field = selectFields[i];
-                formValues[field.getAttribute("id")] = field.querySelector("option[value='" + field.value + "']").innerText;
+                formValues[field.getAttribute("id")] = field.value ? field.querySelector("option[value='" + field.value.replace(/'/g, "\\'") + "']").innerText : null;
                 dataTypes[field.getAttribute("id")] = "select";
-            };
+            }
 
             var textareaFields = page.querySelectorAll("textarea");
             for(var i=0; i<textareaFields.length; i++) {
                 var field = textareaFields[i];
                 formValues[field.getAttribute("id")] = field.value;
                 dataTypes[field.getAttribute("id")] = "textarea";
-            };
+            }
 
             // clear out all saved checkbox values to we can safely append
             var checkboxFields = page.querySelectorAll("input[type=checkbox]");
@@ -264,7 +277,7 @@
                 var field = checkboxFields[i];
                 formValues[field.getAttribute("name")] = null;
                 dataTypes[field.getAttribute("id")] = "checkbox";
-            };
+            }
 
             //$page.find("input").each(function () {
             var inputFields = page.querySelectorAll("input");
@@ -298,7 +311,7 @@
                         formValues[field.getAttribute("name")] = (field.matches(":checked") ? "true" : "false");
                     }
                 }
-            };
+            }
         }
 
         /* Public api */
@@ -522,11 +535,13 @@
 
             function handleCondition(element, id, condition, type) {
                 var shouldShow = isVisible(id, condition);
-                if (shouldShow) {
-                    element.style.display = "";
-                }
-                else {
-                    element.style.display = "none";
+                if (element) {
+                    if (shouldShow) {
+                        element.style.display = "";
+                    }
+                    else {
+                        element.style.display = "none";
+                    }
                 }
             }
 
@@ -538,10 +553,12 @@
 
             for (fieldId in self.fieldConditions) {
                 if (self.fieldConditions.hasOwnProperty(fieldId)) {
-                    handleCondition(document.getElementById(fieldId).closest(".umbraco-forms-field"),// sadly we cant use querySelector with current mark-up (would need to prefix IDs)
-                        fieldId,
-                        self.fieldConditions[fieldId],
-                        "Field");
+                    if (document.getElementById(fieldId)) {
+                        handleCondition(document.getElementById(fieldId).closest(".umbraco-forms-field"),// sadly we cant use querySelector with current mark-up (would need to prefix IDs)
+                            fieldId,
+                            self.fieldConditions[fieldId],
+                            "Field");
+                    }
                 }
             }
         };

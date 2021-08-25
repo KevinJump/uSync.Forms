@@ -4,10 +4,10 @@
         <umb-control-group label="Store Records" description="Check this box to save submitted records in a database.
                                                               This will allow you to view and export them from the queries overview.
                                                               If you don't want to store data (due to policies in your organisation), leave the box un-checked.">
-            <label class="checkbox no-indent">
-                <input type="checkbox" ng-model="model.storeRecordsLocally" />
-                Yes, keep submitted records in a database so they can be viewed and exported later
-            </label>
+            <umb-checkbox
+                model="model.storeRecordsLocally"
+                text="Yes, keep submitted records in a database so they can be viewed and exported later">
+            </umb-checkbox>
         </umb-control-group>
 
         <!--Captions-->
@@ -33,16 +33,16 @@
                 <input class="-full-width-input" type="text" ng-model="model.cssClass" />
             </div>
             <div class="control-row">
-                <label class="checkbox no-indent">
-                    <input type="checkbox" ng-model="model.disableDefaultStylesheet" />
-                    Disable default stylesheet
-                </label>
+                <umb-checkbox
+                    model="model.disableDefaultStylesheet"
+                    text="Disable default stylesheet">
+                </umb-checkbox>
             </div>
             <div class="control-row">
-                <label class="checkbox no-indent">
-                    <input type="checkbox" ng-model="model.useClientDependency" />
-                    Load assets with Client Dependency
-                </label>
+                <umb-checkbox
+                    model="model.useClientDependency"
+                    text="Load assets with Client Dependency">
+                </umb-checkbox>
             </div>
         </umb-control-group>
         
@@ -60,33 +60,33 @@
                     <small>Message to display when a field is invalid</small>
                     <input class="-full-width-input" type="text" ng-model="model.invalidErrorMessage" />
                 </div>
-                <div>
-                    <label class="checkbox no-indent">
-                        <input type="checkbox" ng-model="model.showValidationSummary" />
-                        Show validation summary
-                    </label>
+                <div class="control-row">
+                    <umb-checkbox
+                        model="model.showValidationSummary"
+                        text="Show validation summary">
+                    </umb-checkbox>
                 </div>
-                <div>
-                    <label class="checkbox no-indent">
-                        <input type="checkbox" ng-model="model.hideFieldValidation" />
-                        Hide field validation labels
-                    </label>
+                <div class="control-row">
+                    <umb-checkbox
+                        model="model.hideFieldValidation"
+                        text="Hide field validation labels">
+                    </umb-checkbox>
                 </div>
                 <hr />
                 <div class="control-row">
                     <label class="control-label -block">Mark fields</label>
-                    <label class="radio -block -no-indent">
-                        <input type="radio" ng-model="model.fieldIndicationType" value="NoIndicator">
-                        No Indicator
-                    </label>
-                    <label class="radio -block -no-indent">
-                        <input type="radio" ng-model="model.fieldIndicationType" value="MarkMandatoryFields">
-                        Mark Mandatory Fields
-                    </label>
-                    <label class="radio -block -no-indent">
-                        <input type="radio" ng-model="model.fieldIndicationType" value="MarkOptionalFields">
-                        Mark Optional Fields
-                    </label>
+                    <umb-radiobutton value="NoIndicator"
+                                     model="model.fieldIndicationType"
+                                     text="No Indicator">
+                    </umb-radiobutton>
+                    <umb-radiobutton value="MarkMandatoryFields"
+                                     model="model.fieldIndicationType"
+                                     text="Mark Mandatory Fields">
+                    </umb-radiobutton>
+                    <umb-radiobutton value="MarkOptionalFields"
+                                     model="model.fieldIndicationType"
+                                     text="Mark Optional Fields">
+                    </umb-radiobutton>
                 </div>
                 <br />
                 <div>
@@ -99,10 +99,14 @@
         
         <!--Moderation-->
         <umb-control-group label="Moderation" description="Allow form submissions to be post moderated. Most use cases are for publicly shown entries such as blog post comments or submissions for a social campaign.">
-            <label class="checkbox no-indent">
-                <input type="checkbox" ng-model="model.manualApproval" />
-                Enable Post Moderation
-            </label>
+            <umb-toggle
+                checked="model.manualApproval"
+                on-click="model.manualApproval = !model.manualApproval"
+                show-labels="true"
+                label-position="right"
+                label-off="Enable post moderation"
+                label-on="Enable post moderation">
+            </umb-toggle>
         </umb-control-group>
     </umb-box-content>
 </umb-box>

@@ -1,0 +1,371 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<language alias="en" intName="English (US)" localName="English (US)" lcid="" culture="en-US">
+	<creator>
+		<name>Jumoo</name>
+		<link>http://jumoo.uk</link>
+	</creator>
+	<area alias="dashboardTabs">
+		<key alias="usyncMediaDashboard">Remote Media</key>
+		<key alias="usyncContentDashboard">Remote Content</key>
+		<key alias="uSyncBlankSiteDashboard">uSync Complete</key>
+	</area>
+	<area alias="usyncpublish">
+
+		<key alias="settingsPushButton">Push to server</key>
+		<key alias="settingsPullButton">Pull from server</key>
+
+		<key alias="configPushButton">Push to server</key>
+		<key alias="configPullButton">Pull from server</key>
+
+		<key alias="dictionaryPushButton">Push to server</key>
+		<key alias="dictionaryPullButton">Pull from server</key>
+
+		<key alias="filePushButton">Push to server</key>
+		<key alias="filePullButton">Pull from server</key>
+
+		<key alias="pushButton">Publish to server</key>
+		<key alias="pullButton">Pull from server</key>
+		
+		<key alias="publishButton">Publish to server</key>
+
+		<key alias="pushcontent">Publish to</key>
+		<key alias="pullcontent">Pull content</key>
+		<key alias="pushmedia">Push to</key>
+		<key alias="pullmedia">Pull media</key>
+
+		<key alias="defaultPush">Push to</key>	
+		<key alias="defaultPull">Pull from</key>
+		
+		<key alias="pushdictionary">Push dictionary items</key>
+		<key alias="pulldictionary">Pull dictionary items</key>
+
+		<key alias="intro">
+			<![CDATA[uSync.Publisher allows you to link your Umbraco sites so you can push and pull
+                content, media and other settings between them.]]>
+		</key>
+
+
+		<key alias="nochangeHeading">No changes detected</key>
+		<key alias="nochangeSummary">
+			<![CDATA[It looks like everything is already in sync between these servers, so you do need to do anything.]]>
+		</key>
+		<key alias="updating">Updating</key>
+		<key alias="items">Items</key>
+		<key alias="change">Change</key>
+
+		<key alias="unlocked">Unlocked</key>
+		<key alias="locked">Locked</key>
+
+		<!-- dashboard -->
+		<key alias="currentServer">Current Server</key>
+		<key alias="copyToClipboard">Copy url to clipboard</key>
+
+		<key alias="directions">Sync Directions</key>
+
+		<key alias="incoming">Incoming</key>
+		<key alias="incomingDesc">This server will listen and respond to requests from other servers</key>
+
+		<key alias="outgoing">Outgoing</key>
+		<key alias="outgoingDesc">Allow publish / pull requests to be made from this server</key>
+
+		<key alias="settings">Setup</key>
+
+		<key alias="addNew">Add new server</key>
+
+		<!-- server settings -->
+
+		<key alias="serverSettings">uSync Publisher settings</key>
+		<key alias="serverSettingsDesc">Server wide settings</key>
+	
+		<key alias="setupAlert">
+			<![CDATA[Checkout the <a href="https://jumoo.co.uk/usync/publisher/setup/" target="_blank">Security setup guide</a> to harden your setup.]]>
+		</key>
+
+		<key alias="keysetup">
+			<![CDATA[
+				<h4><i class="icon icon-coin color-green"></i> One time setup</h4>
+				<p>
+					This installation has no AppId or AppKey value set.
+				</p>
+				<p>Inorder to communicate between servers you need to create a new appId and AppKey.</p>
+				<p>
+					If you already have other Umbraco installations setup you may want to take 
+					the AppId / AppKey values from the uSync.Publish.config for that install
+					and use them for this one.
+				</p>
+				<p>
+					<strong>Create new AppId/AppKey pair now?</strong>
+				</p>
+		]]>
+			
+		</key>
+
+		<key alias="createKeys">Create new keys</key>
+		<key alias="securityKey">AppId/AppKey</key>
+		<key alias="securityKeyDesc">Setting up a secure channel between servers</key>
+		<key alias="securityKeySet">
+			<![CDATA[<p>
+			This server has an AppId and AppKey. These keys are stored in the <code>uSync.Publish.Config</code> file. You should ensure each server
+    has the correct keys installed in this file.</p>]]>
+		</key>
+
+		<key alias="securityKeyBlank"><![CDATA[<p>This server has no AppId or AppKey value set. 
+		You can create a key for this server now, or via the `connect to server` dialog on the server you want to connect from</p>]]></key>
+
+		<key alias="serverUrl">Server url</key>
+		<key alias="serverUrlDesc">This is the server URL; you will need this to connect other Umbraco instances to this site</key>
+		<key alias="serverUrlCopy">Copy this URL and use it in the server URL on your other installations</key>
+
+		<key alias="defaultOptions">Default publish options</key>
+		<key alias="defaultOptionsDesc">Default publishing options when not overridden by server settings</key>
+
+		<!-- pickers -->
+		<key alias="pickerTitle">Select a target</key>
+		<key alias="pickerDesc">Choose where to publish content</key>
+		<key alias="pickerPullTitle">Select a source</key>
+		<key alias="pickerPullDesc">Choose where to pull content from</key>
+
+		<key alias="pickerPullItemsTitle">Select items</key>
+		<key alias="pickerPullItemsDesc">Choose which items you want to pull down from the server</key>
+
+		<key alias="check">Check access</key>
+		<key alias="availible">Available</key>
+		<key alias="unavailible">Unavailable</key>
+		
+		<!-- option headings -->
+		<key alias="contentOptions">Content options</key>
+		<key alias="contentOptionsDesc">Options for sending content and media</key>
+
+		<key alias="developerOptions">Developer settings</key>
+		<key alias="developerOptionsDesc">If you are controlling deployment of config another way you don't need these settings on.</key>
+		
+		<key alias="stepOptions">Publish steps</key>
+		<key alias="stepOptionsDesc">Control extra features of the UI, when select these options add extra steps to the publish process.</key>
+
+		<key alias="additionalOptions">Additional</key>
+
+		<!-- dialogs -->
+		<key alias="publishTitle">Publish content</key>
+		<key alias="publishMediaTitle">Push media</key>
+		<key alias="pullTitle">Pull content</key>
+		<key alias="pullMediaTitle">Pull media</key>
+
+		<key alias="reportPullTitle">Proposed changes</key>
+		<key alias="reportPullDesc">Items that will be imported to this site</key>
+
+		<key alias="reportTitle">Proposed changes</key>
+		<key alias="reportDesc">Changes that will be made on the site</key>
+
+		<key alias="includeChildren">Include children</key>
+		<key alias="includeChildrenDesc">include the children of the selected item</key>
+
+		<key alias="deleteMissing">Delete missing items</key>
+		<key alias="deleteMissingDesc">Remove any items on the target site that are not children of the selected item</key>
+
+		<key alias="includeMedia">Include media</key>
+		<key alias="includeMediaDesc">Include media items used in these pages</key>
+
+		<key alias="includeLinked">Include linked pages</key>
+		<key alias="includeLinkedDesc">Include content pages linked to from selected items</key>
+		<key alias="includeLinkedWarn">
+			<![CDATA[
+        The following settings can result in a large amount of extra content or media being sent during a publish.
+        Most of the time you won't want a user to select these settings.
+      ]]>
+		</key>
+
+		<key alias="includeAncestors">Include ancestors</key>
+		<key alias="includeAncestorsDesc">Include the parents of selected items</key>
+
+		<key alias="includeDependencies">Include dependencies</key>
+		<key alias="includeDependenciesDesc">Include settings including doctypes and datatypes</key>
+
+		<key alias="includeConfig">Include content config</key>
+		<key alias="includeConfigDesc">Configuration on content, such as public access settings, Culture and Hostnames</key>
+
+		<key alias="includeFiles">Include files</key>
+		<key alias="includeFilesDesc">Include required templates, stylesheets and scripts</key>
+
+		<key alias="schedule">Schedule publish</key>
+		<key alias="schedulePick">Choose publish date/time</key>
+		<key alias="scheduleDesc">Allow user to schedule the publish time</key>
+
+		<key alias="variant">Variant publish</key>
+		<key alias="variantDesc">Allow users to select the variant (culture) during publish</key>
+
+		<key alias="setupMode">Setup mode</key>
+		<key alias="setupModeDesc">switch between network and server mode setups</key>
+		
+		<key alias="networkMode">Use network mode</key>
+		<key alias="networkModeDesc">Visible servers are controlled via a list for each server, sharing a single config for all.</key>
+		<key alias="networkModeHelp">
+			<![CDATA[<h4>Server mode <small>(default)</small></h4>
+      <p>In server mode the configuration of what can be pushed/pulled is setup against each server in the individual server's config file</p>
+      <h4>Network mode</h4>
+      <p>In network mode configuration is based a list of 'visible servers' that is stored in each servers section of the config file. This means a single config file can be shared between all servers without the need of transforms.</p>
+      <p><a href="https://jumoo.co.uk/usync/publisher/modes/" target="_blank">More information</a></p>]]>
+		</key>
+
+
+		<key alias="noChoicesMsg"><![CDATA[<p>Publish this page and related media]]></key>
+
+		<!-- server setup-->
+		<key alias="serverSetup">Server setup</key>
+		<key alias="serverSetupDesc">Url, access and message settings</key>
+		<key alias="serverSetupAddDesc">Name and Url of your new server</key>
+		
+		<key alias="serverConnect">Setup connection</key>
+		<key alias="setupConnectionError">You can continue to set the server up and fix the connection issues later.</key>
+		<key alias="serverNameDesc">Name of the server</key>
+
+		<key alias="deploy">Push settings</key>
+		<key alias="deployDesc">
+			<![CDATA[<p>Push all the settings from this server to the target. While settings can be pushed as part of a deployment, you can if you want keep the servers in sync by using this page.</p>]]>
+		</key>
+
+		<key alias="pullDeploy">Pull settings</key>
+		<key alias="pullDeployDesc">
+			<![CDATA[<p>Pull all the settings from this server to the target. While settings can be pulled as part of a deployment, you can if you want keep the servers in sync by using this page.</p>]]>
+		</key>
+		
+		<key alias="showPush">Show for push</key>
+		<key alias="showPushDesc">Show in the list of servers when pushing content/media</key>
+
+		<key alias="showPull">Show for pull</key>
+		<key alias="showPullDesc">Show in the list of servers when pulling content/media</key>
+
+		<key alias="server">Server</key>
+		<key alias="url">Url</key>
+		<key alias="urlDesc"><![CDATA[http://server.name/umbraco]]></key>
+
+		<key alias="serverMessage">Message</key>
+		<key alias="serverMessageDesc">Text to display to user when they pick this server</key>
+
+		<key alias="allowedServers">Connected Servers</key>
+		<key alias="allowedServersDesc">List of servers that you can push/pull from while on this server (N.B this UI config, not security!)</key>
+
+		<key alias="defaultAllowedServers">Default Servers</key>
+		<key alias="defaultAllowedServersDesc">List of servers you will see if you are not connected to one of the configured servers (e.g if you are on a localhost dev machine)</key>
+
+		<key alias="showSelf">Show self</key>
+		<key alias="showSelfDesc">Server is still displayed in list of servers when user is on this server </key>
+		
+		<key alias="groups">User groups</key>
+		<key alias="groupsDesc">Users have to be members of these groups to push or pull items</key>
+
+		<key alias="serverPublisher">Publisher</key>
+		<key alias="serverPublisherDesc">Publisher being used for this server</key>
+		<key alias="serverPublisherNote">If you change the publisher you will need to save and reload the settings page to see the new publisher's options</key>
+		
+		<!-- connection messages -->
+		<key alias="error_disabled">The server is disabled</key>
+		<key alias="error_unlicenced">The server is unlicenced</key>
+		<key alias="error_apiversion">The API version on the server is out of date</key>
+		<key alias="error_unreachable">The server cannot be reached. It may be turned off or the url may be invalid?</key>
+		<key alias="error_unauthorized">The ApiKey/Secret cannot be authorized</key>
+		<key alias="error_notenabled">The server is not enabled.</key>
+		<key alias="error_nopublisher">There is no valid publisher for this server</key>
+		<key alias="error_unknownserver">The server is unknown</key>
+		<key alias="error_notfound">Umbraco not found - server responded but URL returned 404</key>
+		<key alias="error_invalidresponse">Invalid response - server didn't respond with a version number</key>
+		<key alias="error_unknown">Unexpected response - check the logs to see the status code and reason</key>
+
+		<!-- buttons -->
+		<key alias="send">Send to server</key>
+		<key alias="pull">Pull from server</key>
+		<key alias="import">Import</key>
+
+		<!-- sort -->
+		<key alias="sortHelp">
+			<![CDATA[Drag the different items up or down below to set how they should be arranged]]>
+		</key>
+
+		<key alias="sortEmpty">There are no servers to sort</key>
+
+		<key alias="syncDesc">
+			<![CDATA[
+      <h4>Push the server settings between sites.</h4>
+      <p>Settings can be included when you push and pull content, but only the required settings will be pushed that way.</p>
+      <p>If you want to push settings irrespective of their use in content, you can do that here</p>
+      <p>Here you can also push settings that may not be included in a content publish, such as hostnames and Public Access settings</p>
+      ]]>
+		</key>
+
+		<key alias="fulltreeWarning">
+			<![CDATA[Including media when syncing a large content tree can make things go slower. 
+      Consider syncing the media from the media section and then syncing the content tree.]]>
+		</key>
+
+		<key alias="dirtyContent">
+			<![CDATA[
+      The current page has changes that have not been saved or published. Any changes you now push to another server
+      will not include these changes. You should Save and Publish this page first before sending to another site.
+      ]]>
+		</key>
+
+
+		<key alias="noServers">No servers configured</key>
+
+		<key alias="reloadSettings">Reload settings from disk</key>
+
+		<key alias="advanced">Advanced options</key>
+
+		<key alias="hideAdvanced">Collapse advanced Options</key>
+		<key alias="hideAdvancedDesc">Puts all but the basic options behind an 'Advanced Options' toggle. For simpler UI</key>
+
+		<key alias="partialLangWarning">
+			<![CDATA[<p>If you only publish some languages then only the language specific values will be sent.</p>
+			<p>Values shared by all languages will not be updated</p>]]>
+		</key>
+
+		<key alias="noLangAlert">
+			<![CDATA[<p>You have to select at least one language for content to be published</p>
+				<p>Select a language from the list above</p>]]>
+		</key>
+
+
+		<key alias="remotesetup"><![CDATA[<p>Setup the connection between this server and your target site</p>
+		<p><em>This is a one time setup, you cannot setup a connection with a server that already has an AppId and AppKey setting</em></p>]]></key>
+
+		<key alias="systemReportWarning"><![CDATA[
+		<p>There are changes to system files included in this update. These may cause your target site to reboot</p>
+		]]></key>
+		<key alias="systemApplyWarning"><![CDATA[
+		<p>There are pending changes to system files, if you apply these changes now your target site may reboot, and if the 
+		changes are not compatibly with the site, it may cause it to become unresponsive.</p>
+		]]></key>
+
+		<key alias="emptyLink"><![CDATA[This site has no content or media. You can quickly sync it with another site from the <a href="#/settings/uSyncPublisher/dashboard">uSyncPublisher dashboard</a>.]]></key>
+		<key alias="suggestBatch"><![CDATA[If you are syncing a large site, you might want to use the batch publisher - to breakup the requests and download sizes]]></key>
+
+		<key alias="blankHeading">Blank Site</key>
+		<key alias="blankMessage"><![CDATA[<p>This site has no content or media, but you can pull the content and media from a connected site to get started.</p>]]></key>
+
+		<key alias="nonBlankHeading">This site has content and media</key>
+		<key alias="nonBlankMessage"><![CDATA[<p>Performing a full sync might overwrite and delete content on this site</p>]]></key>
+
+		<key alias="reportChanges"><![CDATA[%0% change(s) detected]]></key>
+		<key alias="resultChanges"><![CDATA[%0% item(s) have been updated]]></key>
+		<key alias="resultPending"></key>
+
+		<key alias="filespush"><![CDATA[<p>This process will <strong>push</strong> all the templates settings <strong>and</strong> and all of the webiste files.<p>]]></key>
+		<key alias="filespull"><![CDATA[<p>This process will <strong>pull</strong> all the templates settings <strong>and</strong> and all of the webiste files.<p>]]></key>
+
+	</area>
+	<area alias="actions">
+		<key alias="pushContent">Push content</key>
+		<key alias="pullContent">Pull content</key>
+		<key alias="pushContentButton">Publish to Server button</key>
+		<key alias="usyncAddServer">Add server</key>
+		<key alias="usyncDeploy">Sync Settings</key>
+	</area>
+	<area alias="actionDescriptions">
+		<key alias="pushContent">Push content to other Umbraco sites/servers</key>
+		<key alias="pullContent">Pull content from other Umbraco sites/servers</key>
+		<key alias="pushContentButton">Add 'Publish to Server' option in the stardard Save and Publish button</key>
+	</area>
+	<area alias="actionCategories">
+		<key alias="publisher">uSync Publisher</key>
+	</area>
+
+</language>

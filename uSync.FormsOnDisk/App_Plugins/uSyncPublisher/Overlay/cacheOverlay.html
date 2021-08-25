@@ -1,0 +1,64 @@
+﻿<div ng-controller="uSyncCacheOverlayController as vm">
+
+    <div ng-if="content">
+        {{content}}
+    </div>
+
+
+    <div ng-if="vm.rebuilding || model.rebuilt">
+
+        <div class="usync-icon-box">
+            <div class="usync-icon-carousel" ng-style="vm.offsetStyle">
+                <div class="text-center usync-handler-icon" ng-repeat="item in vm.cacheTypes"
+                     ng-class="{'active' : item.active }">
+                    <i class="icon {{item.icon}} color-green"></i>
+                </div>
+            </div>
+            <div class="fade-left"></div>
+            <div class="fade-right"></div>
+        </div>
+
+        <div class="text-center usync-handler-icon" style="padding-top: 0;">
+            <div class="usync-handler-name">{{vm.status.Title}}</div>
+            <div>{{vm.status.Message}}</div>
+
+            <div class="progress" style="height: 5px;margin: .5rem 20px">
+                <div class="bar" role="progressbar" style="width:{{vm.status.Progress}}%;" aria-valuenow="{{vm.status.Progress}}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+    </div>
+
+    <div ng-if="!model.rebuilt">
+        <div ng-if="!vm.rebuilding">
+
+            <div class="flex justify-center">
+                <div class="text-center usync-handler-icon">
+                    <i class="icon icon-settings color-blue"></i>
+                    <div class="usync-handler-name">Settings</div>
+                </div>
+                <div class="text-center usync-handler-icon">
+                    <i class="icon icon-document color-orange"></i>
+                    <div class="usync-handler-name">Content</div>
+                </div>
+                <div class="text-center usync-handler-icon">
+                    <i class="icon icon-picture color-purple"></i>
+                    <div class="usync-handler-name">Media</div>
+                </div>
+            </div>
+
+            <p>
+                <strong>
+                    Under normal operation the caches will remain insync with your
+                    settings, content and media, you shouldn't need to rebuild them.
+                </strong>
+            </p>
+            <p>
+                Rebuilding the cache will refresh all settings, content and media
+                stored in the dependency cache. It might take some time,
+                but it will make publishing much faster.
+            </p>
+
+        </div>
+    </div>
+
+</div>

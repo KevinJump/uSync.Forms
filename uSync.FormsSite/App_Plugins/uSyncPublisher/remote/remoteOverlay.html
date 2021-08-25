@@ -1,0 +1,50 @@
+﻿<div ng-controller="uSyncPublisherRemoteOverlayController as vm"
+     class="form-horizontal">
+
+
+    <div ng-if="!model.busy">
+
+        <form name="usyncremoteserver">
+            <localize key="usyncpublish_remotesetup"></localize>
+
+            <hr />
+
+            <div class="control-group">
+                <label for="username"><localize key="general_username"></localize></label>
+                <input type="text"
+                       name="username"
+                       class="-full-width-input"
+                       localize="placeholder"
+                       placeholder="@placeholders_enterusername"
+                       ng-model="model.username" required />
+            </div>
+
+            <div class="control-group">
+                <label for="password"><localize key="general_password"></localize></label>
+
+                    <input type="password"
+                           name="password"
+                           localize="placeholder"
+                           placeholder="@placeholders_password"
+                           class="-full-width-input"
+                           ng-model="model.password" required />
+
+                    <div class="password-toggle">
+                        <a href="#" prevent-default ng-click="vm.togglePassword()">
+                            <span class="password-text show"><localize key="login_showPassword">Show password</localize></span>
+                            <span class="password-text hide"><localize key="login_hidePassword">Hide password</localize></span>
+                        </a>
+                    </div>
+
+            </div>
+        </form>
+
+        <div ng-if="model.showError" class="alert alert-danger">
+            {{model.error}}
+        </div>
+
+    </div>
+    <div ng-if="model.busy" class="mb6 mt7">
+        <umb-load-indicator></umb-load-indicator>
+    </div>
+</div>

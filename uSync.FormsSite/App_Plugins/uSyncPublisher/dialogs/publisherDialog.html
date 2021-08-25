@@ -1,0 +1,63 @@
+﻿<div ng-controller="uSyncPublisherDialogController as vm">
+    <umb-editor-panel>
+        <umb-editor-header name="vm.ui.headings.title"
+                           description="vm.ui.headings.description"
+                           description-locked="true"
+                           name-locked="true"
+                           hide-alias="true"
+                           hide-icon="true">
+        </umb-editor-header>
+        <umb-editor-container>
+
+            <div ng-if="vm.showItems()" class="usync-node-box-list">
+                <h5>Selected items</h5>
+                <div class="flex flex-wrap">
+                    <div ng-repeat="item in vm.items | limitTo:5" class="usync-node-box">
+                        <i class="icon {{item.icon}}"></i> {{item.name}}
+                    </div>
+                    <div ng-if="vm.items.length > 5" class="usync-node-box clear-box">&amp; {{vm.items.length - 5}} more...</div>
+                </div>
+            </div>
+
+            <usync-publishing-action mode="vm.mode"
+                                     single="vm.single"
+                                     items="vm.items"
+                                     options="vm.options"
+                                     state="vm.state"
+                                     action-button="vm.ui.button" 
+                                     headings="vm.ui.headings"
+                                     is-modal="false">
+            </usync-publishing-action>
+
+        </umb-editor-container>
+
+        <umb-editor-footer>
+            <umb-editor-footer-content-left>
+                <em class="muted">
+                    <small>{{vm.state.actionName}} - {{vm.state.stepIndex}} - {{vm.state.pageNumber}} - {{vm.state.folder}}</small>
+                </em>
+            </umb-editor-footer-content-left>
+
+            <umb-editor-footer-content-right>
+
+                <umb-button ng-if="!vm.state.hideClose"
+                            type="button"
+                            button-style="link"
+                            label-key="general_close"
+                            action="vm.close()"
+                            disabled="vm.state.working">
+                </umb-button>
+
+                <umb-button ng-if="!vm.state.complete && !vm.state.loading"
+                            type="button"
+                            button-style="action"
+                            label="{{vm.ui.button.name}}"
+                            button-state="vm.ui.button.state"
+                            action="vm.performAction()"
+                            disabled="vm.state.working || !vm.state.valid">
+                </umb-button>
+
+            </umb-editor-footer-content-right>
+        </umb-editor-footer>
+    </umb-editor-panel>
+</div>         

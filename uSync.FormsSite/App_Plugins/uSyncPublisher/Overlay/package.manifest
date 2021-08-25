@@ -1,0 +1,8 @@
+{
+  "javascript": [
+    "~/App_Plugins/uSyncPublisher/Overlay/loader.js",
+    "~/App_Plugins/uSyncPublisher/Overlay/overlayManager.js",
+    "~/App_Plugins/uSyncPublisher/Overlay/overlayController.js",
+    "~/App_Plugins/uSyncPublisher/Overlay/cacheOverlayController.js"
+  ]
+}

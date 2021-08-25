@@ -1,0 +1,45 @@
+<div ng-controller="uSyncPublisherOptionsController as pvm">
+    <div class="usync-publish-options">
+
+        <usync-send-option label="@usyncpublish_includeChildren"
+                           description="@usyncpublish_includeChildrenDesc"
+                           option="pvm.flags.includeChildren">
+        </usync-send-option>
+
+        <div class="usync-child-option" ng-if="pvm.items.length <= 1">
+            <usync-send-option label="@usyncpublish_deleteMissing"
+                               description="@usyncpublish_deleteMissingDesc"
+                               option="pvm.flags.deleteMissing"
+                               disabled="!pvm.flags.includeChildren.value"
+                               disabled-value="false">
+            </usync-send-option>
+        </div>
+
+        <usync-send-option label="@usyncpublish_includeMedia"
+                           description="@usyncpublish_includeMediaDesc"
+                           option="pvm.flags.includeMedia">
+        </usync-send-option>
+
+
+        <usync-send-option label="@usyncpublish_includeLinked"
+                           description="@usyncpublish_includeLinkedDesc"
+                           option="pvm.flags.includeLinked">
+        </usync-send-option>
+
+        <usync-send-option label="@usyncpublish_includeAncestors"
+                           description="@usyncpublish_includeAncestorsDesc"
+                           option="pvm.flags.includeAncestors">
+        </usync-send-option>
+
+        <usync-send-option label="@usyncpublish_includeDependencies"
+                           description="@usyncpublish_includeDependenciesDesc"
+                           option="pvm.flags.includeDependencies">
+        </usync-send-option>
+
+        <usync-send-option label="@usyncpublish_includeFiles"
+                           description="@usyncpublish_includeFilesDesc"
+                           option="pvm.flags.includeFiles">
+        </usync-send-option>
+
+
+    </div>
