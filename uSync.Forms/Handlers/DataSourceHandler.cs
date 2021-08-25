@@ -24,10 +24,12 @@ using uSync8.BackOffice.SyncHandlers;
 using uSync8.Core;
 using uSync8.Core.Serialization;
 
+using static Umbraco.Core.Constants;
+
 namespace uSync.Forms.Handlers
 {
     [SyncHandler("formsDataSourceHandler", "DataSource", "Forms-DataSource", uSyncFormPriorities.DataSources,
-    Icon = "icon-box usync-addon-icon", EntityType = "DataSource")]
+    Icon = "icon-box usync-addon-icon", EntityType = UdiEntityType.FormsDataSource)]
     public class DataSourceHandler : SyncHandlerRoot<FormDataSource, FormDataSource>,
         ISyncExtendedHandler, ISyncItemHandler
     {

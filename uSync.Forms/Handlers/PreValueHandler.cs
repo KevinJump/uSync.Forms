@@ -19,10 +19,12 @@ using uSync8.BackOffice.SyncHandlers;
 using uSync8.Core;
 using uSync8.Core.Serialization;
 
+using static Umbraco.Core.Constants;
+
 namespace uSync.Forms.Handlers
 {
     [SyncHandler("formsPreValueHandler", "PreValue", "Forms-PreValues", uSyncFormPriorities.PreValues,
-        Icon = "icon-box usync-addon-icon", EntityType = "PreValue")]
+        Icon = "icon-box usync-addon-icon", EntityType = UdiEntityType.FormsPreValue)]
     public class PreValueHandler : SyncHandlerRoot<FieldPreValueSource, FieldPreValueSource>,
         ISyncExtendedHandler, ISyncItemHandler
     {

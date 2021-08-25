@@ -18,7 +18,7 @@ using uSync8.Core.Serialization;
 namespace uSync.Forms.Serializers
 {
     [SyncSerializer("880817EB-BE5C-4540-ABDE-82010846F039", "DataSource", "DataSource", IsTwoPass = false)]
-    public class DataSourceSerializer : SyncSerializerRoot<FormDataSource>, ISyncSerializer<FormDataSource>
+    public class DataSourceSerializer : SyncSerializerRoot<FormDataSource>, ISyncNodeSerializer<FormDataSource>
     {
         private SyncFormService syncFormService;
 

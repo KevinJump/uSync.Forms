@@ -28,10 +28,17 @@ namespace uSync.Forms.Services
 
         public FieldPreValueSource GetPreValueSource(Guid id)
         {
-            if (Configuration.StoreUmbracoFormsInDb)
-                return (FieldPreValueSource)prevalueSourceService.Get(id);
-            else
-                return (FieldPreValueSource)prevalueSourceStorage.GetPrevalueSource(id);
+            try
+            {
+                if (Configuration.StoreUmbracoFormsInDb)
+                    return (FieldPreValueSource)prevalueSourceService.Get(id);
+                else
+                    return (FieldPreValueSource)prevalueSourceStorage.GetPrevalueSource(id);
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         public FieldPreValueSource GetPreValueSource(string name)

@@ -26,7 +26,7 @@ using uSync8.Core.Serialization;
 namespace uSync.Forms.Serializers
 {
     [SyncSerializer("A8A00EFF-795E-4D89-BA8F-7871FB9BD459", "PreValue", "PreValue", IsTwoPass = false)]
-    public class PreValueSerializer : SyncSerializerRoot<FieldPreValueSource>, ISyncSerializer<FieldPreValueSource>
+    public class PreValueSerializer : SyncSerializerRoot<FieldPreValueSource>, ISyncNodeSerializer<FieldPreValueSource>
     {
         private SyncFormService SyncFormService;
         private FieldPreValueSourceCollection fieldPreValueSourceTypes;
@@ -73,7 +73,6 @@ namespace uSync.Forms.Serializers
             var info = node.Element("Info");
             if (info != null)
             {
-
                 // validate that the prevalue source type exists (can be added in custom code)
                 var fieldTypeId = info.Element("FieldPreValueSourceTypeId").ValueOrDefault(Guid.Empty);
                 if (!fieldPreValueSourceTypes.Any(x => x.Id == fieldTypeId))

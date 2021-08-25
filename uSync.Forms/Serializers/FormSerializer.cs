@@ -25,7 +25,7 @@ using static Umbraco.Core.Constants;
 namespace uSync.Forms.Serializers
 {
     [SyncSerializer("AFB4DECC-2828-4414-B85F-ADC1BF711521", "Forms Serializer", UdiEntityType.FormsForm, IsTwoPass = false)]
-    public class FormSerializer : SyncSerializerRoot<Form>, ISyncSerializer<Form>
+    public class FormSerializer : SyncSerializerRoot<Form>, ISyncNodeSerializer<Form>
     {
         private readonly IEntityService entityService;
         private readonly SyncFormService syncFormService;
