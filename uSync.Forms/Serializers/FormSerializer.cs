@@ -20,9 +20,11 @@ using uSync8.Core.Extensions;
 using uSync8.Core.Models;
 using uSync8.Core.Serialization;
 
+using static Umbraco.Core.Constants;
+
 namespace uSync.Forms.Serializers
 {
-    [SyncSerializer("AFB4DECC-2828-4414-B85F-ADC1BF711521", "Forms Serializer", "Form", IsTwoPass = false)]
+    [SyncSerializer("AFB4DECC-2828-4414-B85F-ADC1BF711521", "Forms Serializer", UdiEntityType.FormsForm, IsTwoPass = false)]
     public class FormSerializer : SyncSerializerRoot<Form>, ISyncSerializer<Form>
     {
         private readonly IEntityService entityService;

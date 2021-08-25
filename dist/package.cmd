@@ -8,6 +8,7 @@ call dotnet build ..\uSync.Forms\uSync.Forms.csproj -p:Configuration=%config% -c
 
 @Echo Packaging for %config%
 nuget pack ..\uSync.Forms\uSync.Forms.nuspec -build  -OutputDirectory .\dist\%1 -version %1 -properties "depends=%1;Configuration=%config%"
+nuget pack ..\uSync.Forms\uSync.Forms.Binaries.nuspec -build  -OutputDirectory .\dist\%1 -version %1 -properties "depends=%1;Configuration=%config%"
 
 REM call .\dist\CreatePackages %1
 

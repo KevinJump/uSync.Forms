@@ -25,10 +25,12 @@ using uSync8.Core.Dependency;
 using uSync8.Core.Serialization;
 using uSync8.Core.Tracking;
 
+using static Umbraco.Core.Constants;
+
 namespace uSync.Forms.Handlers
 {
     [SyncHandler("formsHandler", "Forms", "Forms", uSyncFormPriorities.Forms, 
-        Icon = "icon-umb-contour usync-addon-icon", EntityType = "Form")]
+        Icon = "icon-umb-contour usync-addon-icon", EntityType = UdiEntityType.FormsForm)]
     public class FormHandler : SyncHandlerRoot<Form, Form>, ISyncExtendedHandler, ISyncItemHandler
     {
         public override string Group => "Forms";
