@@ -1,5 +1,5 @@
 ﻿<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\uSync.8.10.0-beta101.20210825.2\build\uSync.props" Condition="Exists('..\packages\uSync.8.10.0-beta101.20210825.2\build\uSync.props')" />
+  <Import Project="..\packages\uSync.8.10.0\build\uSync.props" Condition="Exists('..\packages\uSync.8.10.0\build\uSync.props')" />
   <Import Project="..\packages\UmbracoCms.8.6.0\build\UmbracoCms.props" Condition="Exists('..\packages\UmbracoCms.8.6.0\build\UmbracoCms.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -279,34 +279,34 @@
       <HintPath>..\packages\UmbracoCms.Web.8.6.0\lib\net472\Umbraco.Web.UI.dll</HintPath>
     </Reference>
     <Reference Include="uSync.Expansions.Core, Version=8.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\uSync.Expansions.Core.8.11.0-beta1\lib\net472\uSync.Expansions.Core.dll</HintPath>
+      <HintPath>..\packages\uSync.Expansions.Core.8.11.0\lib\net472\uSync.Expansions.Core.dll</HintPath>
     </Reference>
     <Reference Include="uSync.Exporter, Version=8.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\uSync.Exporter.8.11.0-beta1\lib\net472\uSync.Exporter.dll</HintPath>
+      <HintPath>..\packages\uSync.Exporter.8.11.0\lib\net472\uSync.Exporter.dll</HintPath>
     </Reference>
-    <Reference Include="uSync.PeopleEdition, Version=8.10.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\uSync.PeopleEdition.8.11.0-beta1\lib\net472\uSync.PeopleEdition.dll</HintPath>
+    <Reference Include="uSync.PeopleEdition, Version=8.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\uSync.PeopleEdition.8.11.0\lib\net472\uSync.PeopleEdition.dll</HintPath>
     </Reference>
     <Reference Include="uSync.Publisher, Version=8.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\uSync.Publisher.8.11.0-beta1\lib\net472\uSync.Publisher.dll</HintPath>
+      <HintPath>..\packages\uSync.Publisher.8.11.0\lib\net472\uSync.Publisher.dll</HintPath>
     </Reference>
-    <Reference Include="uSync.Snapshots, Version=8.10.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\uSync.Snapshots.8.11.0-beta1\lib\net472\uSync.Snapshots.dll</HintPath>
+    <Reference Include="uSync.Snapshots, Version=8.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\uSync.Snapshots.8.11.0\lib\net472\uSync.Snapshots.dll</HintPath>
     </Reference>
     <Reference Include="uSync8.BackOffice, Version=8.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\uSync.8.10.0-beta101.20210825.2\lib\net472\uSync8.BackOffice.dll</HintPath>
+      <HintPath>..\packages\uSync.8.10.0\lib\net472\uSync8.BackOffice.dll</HintPath>
     </Reference>
     <Reference Include="uSync8.Community.Contrib, Version=8.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\uSync.Community.Contrib.8.10.0-beta1\lib\net472\uSync8.Community.Contrib.dll</HintPath>
+      <HintPath>..\packages\uSync.Community.Contrib.8.10.0\lib\net472\uSync8.Community.Contrib.dll</HintPath>
     </Reference>
     <Reference Include="uSync8.ContentEdition, Version=8.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\uSync.ContentEdition.8.10.0-beta1\lib\net472\uSync8.ContentEdition.dll</HintPath>
+      <HintPath>..\packages\uSync.ContentEdition.8.10.0\lib\net472\uSync8.ContentEdition.dll</HintPath>
     </Reference>
     <Reference Include="uSync8.Core, Version=8.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\uSync.Core.8.10.0-beta101.20210825.2\lib\net472\uSync8.Core.dll</HintPath>
+      <HintPath>..\packages\uSync.Core.8.10.0\lib\net472\uSync8.Core.dll</HintPath>
     </Reference>
     <Reference Include="uSync8.HistoryView, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\uSync.History.8.10.0-beta101.20210825.2\lib\net472\uSync8.HistoryView.dll</HintPath>
+      <HintPath>..\packages\uSync.History.8.10.0\lib\net472\uSync8.HistoryView.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -467,8 +467,8 @@
     <Content Include="App_Plugins\uSync8\usync.css" />
     <Content Include="App_Plugins\uSync8\uSyncHub.js" />
     <Content Include="App_Plugins\uSync8\uSyncService.js" />
-    <Content Include="App_Plugins\uSync8\usync_891.css" />
-    <Content Include="App_Plugins\uSync8\uSync_891.js" />
+    <Content Include="App_Plugins\uSync8\usync_8_10.css" />
+    <Content Include="App_Plugins\uSync8\uSync_8_10.js" />
     <Content Include="App_Plugins\uSyncExpansions\components\licenceComponent.html" />
     <Content Include="App_Plugins\uSyncExpansions\components\licenceComponent.js" />
     <Content Include="App_Plugins\uSyncExpansions\components\uSyncErrorComponent.html" />
@@ -661,19 +661,19 @@
     <Content Include="App_Plugins\UmbracoForms\Data\Web.config" />
     <Content Include="App_Plugins\UmbracoForms\Data\Templates\contactform.json" />
     <Content Include="App_Plugins\UmbracoForms\Data\Templates\commentform.json" />
+    <Content Include="config\uSync.Publish.config" />
     <Content Include="App_Plugins\uSyncExpansions\package.manifest" />
     <Content Include="App_Plugins\uSyncExporter\package.manifest" />
+    <Content Include="App_Plugins\uSyncHistory\package.manifest" />
+    <Content Include="App_Plugins\uSync8\package.manifest" />
+    <Content Include="App_Plugins\uSync8\addons.json" />
     <Content Include="App_Plugins\uSyncPeopleEdition\package.manifest" />
-    <Content Include="config\uSync.Publish.config" />
     <Content Include="App_Plugins\uSyncPublisher\publishers\realtime\package.manifest" />
     <Content Include="App_Plugins\uSyncPublisher\publishers\realtime\modes.json" />
     <Content Include="App_Plugins\uSyncPublisher\package.manifest" />
     <Content Include="App_Plugins\uSyncPublisher\Overlay\package.manifest" />
     <Content Include="App_Plugins\uSyncPublisher\backoffice\uSyncPublisher\templates.json" />
     <Content Include="App_Plugins\uSyncSnapshots\package.manifest" />
-    <Content Include="App_Plugins\uSyncHistory\package.manifest" />
-    <Content Include="App_Plugins\uSync8\package.manifest" />
-    <Content Include="App_Plugins\uSync8\addons.json" />
     <None Include="packages.config" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Partials\Grid\Editors\Textstring.cshtml" />
@@ -770,12 +770,12 @@
     <Error Condition="!Exists('..\packages\Umbraco.SqlServerCE.4.0.0.1\build\Umbraco.SqlServerCE.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Umbraco.SqlServerCE.4.0.0.1\build\Umbraco.SqlServerCE.targets'))" />
     <Error Condition="!Exists('..\packages\UmbracoCms.8.6.0\build\UmbracoCms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\UmbracoCms.8.6.0\build\UmbracoCms.props'))" />
     <Error Condition="!Exists('..\packages\UmbracoCms.8.6.0\build\UmbracoCms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\UmbracoCms.8.6.0\build\UmbracoCms.targets'))" />
-    <Error Condition="!Exists('..\packages\uSync.8.10.0-beta101.20210825.2\build\uSync.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\uSync.8.10.0-beta101.20210825.2\build\uSync.props'))" />
-    <Error Condition="!Exists('..\packages\uSync.8.10.0-beta101.20210825.2\build\uSync.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\uSync.8.10.0-beta101.20210825.2\build\uSync.targets'))" />
+    <Error Condition="!Exists('..\packages\uSync.8.10.0\build\uSync.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\uSync.8.10.0\build\uSync.props'))" />
+    <Error Condition="!Exists('..\packages\uSync.8.10.0\build\uSync.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\uSync.8.10.0\build\uSync.targets'))" />
   </Target>
   <Import Project="..\packages\Umbraco.SqlServerCE.4.0.0.1\build\Umbraco.SqlServerCE.targets" Condition="Exists('..\packages\Umbraco.SqlServerCE.4.0.0.1\build\Umbraco.SqlServerCE.targets')" />
   <Import Project="..\packages\UmbracoCms.8.6.0\build\UmbracoCms.targets" Condition="Exists('..\packages\UmbracoCms.8.6.0\build\UmbracoCms.targets')" />
-  <Import Project="..\packages\uSync.8.10.0-beta101.20210825.2\build\uSync.targets" Condition="Exists('..\packages\uSync.8.10.0-beta101.20210825.2\build\uSync.targets')" />
+  <Import Project="..\packages\uSync.8.10.0\build\uSync.targets" Condition="Exists('..\packages\uSync.8.10.0\build\uSync.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

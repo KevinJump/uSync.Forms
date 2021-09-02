@@ -2,8 +2,7 @@
     'use strict';
 
     function dialogManager($rootScope, $timeout,
-        editorService, navigationService, uSyncItemManager)
-    {
+        editorService, navigationService, uSyncItemManager) {
 
         var emptyGuid = '00000000-0000-0000-0000-000000000000';
 
@@ -30,12 +29,8 @@
 
         /////////////////
 
-        function getTreeItem(options) {
-            return {
-                Id: options.entity.id,
-                treeAlias: options.treeAlias,
-                sectionAlias: options.section
-            };
+        function getLocalItem(options) {
+            return JSON.parse(options.action.metaData._syncLocalItem)
         }
 
         // settings 
@@ -96,18 +91,12 @@
 
             if (options.items.length === 1) {
 
-                var treeItem = getTreeItem(options);
+                var localItem = getLocalItem(options);
+                var dialogOptions = {
+                    items: [localItem],
+                };
 
-                uSyncItemManager.getEntity(treeItem)
-                    .then(function (result) {
-
-                        var dialogOptions = {
-                            items: [result.data],
-                            treeItem: treeItem,
-                        };
-
-                        openDialog(dialogTitle, dialogView, dialogOptions, cb, mode, size);
-                    });
+                openDialog(dialogTitle, dialogView, dialogOptions, cb, mode, size);
             }
             else {
                 openDialog(dialogTitle, dialogView, options, cb, mode, size);

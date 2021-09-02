@@ -89,7 +89,6 @@
         /// setup
         vm.$onInit = function () {
 
-            vm.treeItem = vm.options.treeItem; // item on the tree
             vm.entityType = vm.items[0].entityType; // entity type of the item. 
 
             vm.headings = {
