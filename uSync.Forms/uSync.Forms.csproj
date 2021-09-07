@@ -1,18 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
-    <AssemblyVersion>8.0.0.0</AssemblyVersion>
-    <FileVersion>8.0.0.0</FileVersion>
-    <Version>8.0.0</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net472</TargetFramework>
+		<AssemblyVersion>8.0.0.0</AssemblyVersion>
+		<FileVersion>8.0.0.0</FileVersion>
+		<Version>8.0.0</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Web.Xdt" Version="3.1.0" />
-    <PackageReference Include="UmbracoCms.Core" Version="8.6.0" />
-    <PackageReference Include="UmbracoForms.Core" Version="8.8.0-rc001" />
-    <PackageReference Include="uSync.Backoffice.Core" Version="8.10.0" />
-    <PackageReference Include="uSync.Core" Version="8.10.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Web.Xdt" Version="3.1.0" />
+		<PackageReference Include="UmbracoCms.Core" Version="8.6.0" />
+		<PackageReference Include="UmbracoForms.Core" Version="8.8.0-rc001" />
+		<PackageReference Include="uSync.Backoffice.Core" Version="8.10.1" />
+		<PackageReference Include="uSync.ContentEdition.Core" Version="8.10.1" />
+		<PackageReference Include="uSync.Core" Version="8.10.1" />
+	</ItemGroup>
 
 </Project>
