@@ -257,17 +257,17 @@
     <Reference Include="Umbraco.Examine, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\UmbracoCms.Web.8.6.0\lib\net472\Umbraco.Examine.dll</HintPath>
     </Reference>
-    <Reference Include="Umbraco.Forms.Core, Version=8.7.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UmbracoForms.Core.8.7.6\lib\net472\Umbraco.Forms.Core.dll</HintPath>
+    <Reference Include="Umbraco.Forms.Core, Version=8.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UmbracoForms.Core.8.8.0-rc001\lib\net472\Umbraco.Forms.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Umbraco.Forms.Core.Providers, Version=8.7.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UmbracoForms.Core.8.7.6\lib\net472\Umbraco.Forms.Core.Providers.dll</HintPath>
+    <Reference Include="Umbraco.Forms.Core.Providers, Version=8.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UmbracoForms.Core.8.8.0-rc001\lib\net472\Umbraco.Forms.Core.Providers.dll</HintPath>
     </Reference>
-    <Reference Include="Umbraco.Forms.Web, Version=8.7.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UmbracoForms.Core.8.7.6\lib\net472\Umbraco.Forms.Web.dll</HintPath>
+    <Reference Include="Umbraco.Forms.Web, Version=8.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UmbracoForms.Core.8.8.0-rc001\lib\net472\Umbraco.Forms.Web.dll</HintPath>
     </Reference>
     <Reference Include="Umbraco.Licensing, Version=2.0.33.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UmbracoForms.Core.8.7.6\lib\net472\Umbraco.Licensing.dll</HintPath>
+      <HintPath>..\packages\UmbracoForms.Core.8.8.0-rc001\lib\net472\Umbraco.Licensing.dll</HintPath>
     </Reference>
     <Reference Include="Umbraco.ModelsBuilder.Embedded, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\UmbracoCms.Web.8.6.0\lib\net472\Umbraco.ModelsBuilder.Embedded.dll</HintPath>
@@ -315,139 +315,141 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Plugins\UmbracoForms\Assets\aspnet-validation\dist\aspnet-validation.min.js" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\BaremetricsCalendar\public\css\application.css" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\BaremetricsCalendar\public\js\Calendar.js" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\datepicker.init.js" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\defaultform.css" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\Email-Example\sample-image.jpg" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\Email-Example\umbraco-logo.png" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\moment\min\moment-with-locales.min.js" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\pikaday\pikaday.css" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\pikaday\pikaday.js" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\promise-polyfill\dist\polyfill.min.js" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\themes\default\style.css" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\themes\default\umbracoforms.js" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\umbracoforms-conditions.js" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\umbracoforms-dependencies.js" />
-    <Content Include="App_Plugins\UmbracoForms\Assets\umbracoforms.js" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\checkbox.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\checkboxlist.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\dataconsent.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\datepicker.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\dropdownlist.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\fileupload.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\hiddenfield.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\password.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\radiobuttonlist.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\recaptcha.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\Recaptcha2.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\recaptcha3.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\text.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\textarea.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\FieldTypes\textfield.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\RenderTypes\date.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\RenderTypes\file.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\RenderTypes\member.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\RenderTypes\text.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\checkbox.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\documentmapper.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\dropdownlist.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\emailtemplatepicker.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\fieldmapper.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\file-upload.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\file.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\numericfield.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\password.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\passwordnoautocomplete.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\pickers.connectionstring.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\pickers.content.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\pickers.contentwithxpath.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\pickers.datatype.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\pickers.documenttype.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\range.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\textarea.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\textfield.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\textfieldnoautocomplete.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Common\SettingTypes\textstring.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Dashboards\forms.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\DataSource\delete.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\DataSource\dialogs\wizard.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\DataSource\edit.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\FormSecurity\edit.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\copy.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\create.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\delete.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\dialogs\additem.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\dialogs\entriesdetail.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\dialogs\entriessettings.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\dialogs\fieldsetsettings.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\dialogs\fieldsettings.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\dialogs\formsettings.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\edit.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\entries.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\overlays\fieldsetsettings\fieldset-settings.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\overlays\fieldsettings\field-settings.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\overlays\fieldtypepicker\field-type-picker.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\overlays\formpicker\formpicker.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\overlays\themepicker\themepicker.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\overlays\workflows\submit-message-workflow-settings.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\overlays\workflows\workflow-settings.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\overlays\workflows\workflow-types.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\overlays\workflows\workflows-overview.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\views\design\design.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\views\settings\settings.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\Form\workflows.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\GridEditors\FormPicker.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\PreValueSource\delete.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\PreValueSource\edit.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\PropertyEditors\formpicker.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\PropertyEditors\formpicker.prevalues.html" />
-    <Content Include="App_Plugins\UmbracoForms\Backoffice\PropertyEditors\themepicker.html" />
-    <Content Include="App_Plugins\UmbracoForms\css\umbraco.forms.css" />
-    <Content Include="App_Plugins\UmbracoForms\Directives\umb-forms-content-picker.html" />
-    <Content Include="App_Plugins\UmbracoForms\Directives\umb-forms-designer-new.html" />
-    <Content Include="App_Plugins\UmbracoForms\Directives\umb-forms-entry-detail.html" />
-    <Content Include="App_Plugins\UmbracoForms\Directives\umb-forms-file-upload-editor.html" />
-    <Content Include="App_Plugins\UmbracoForms\Directives\umb-forms-inline-prevalue-editor.html" />
-    <Content Include="App_Plugins\UmbracoForms\Directives\umb-forms-prevalue-editor.html" />
-    <Content Include="App_Plugins\UmbracoForms\Directives\umb-forms-regexpicker.html" />
-    <Content Include="App_Plugins\UmbracoForms\Directives\umb-forms-render-type.html" />
-    <Content Include="App_Plugins\UmbracoForms\Fonts\icomoon.svg" />
-    <Content Include="App_Plugins\UmbracoForms\Images\close.png" />
-    <Content Include="App_Plugins\UmbracoForms\Images\recaptcha.png" />
-    <Content Include="App_Plugins\UmbracoForms\Images\recaptcha2.png" />
-    <Content Include="App_Plugins\UmbracoForms\Images\recaptcha3.png" />
-    <Content Include="App_Plugins\UmbracoForms\Images\succes-green.png" />
-    <Content Include="App_Plugins\UmbracoForms\Images\workflows\slack\icon.svg" />
-    <Content Include="App_Plugins\UmbracoForms\js\umbraco.forms.js" />
-    <Content Include="App_Plugins\UmbracoForms\lang\cs-CZ.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\da-DK.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\de-DE.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\en-GB.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\en-US.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\es-ES.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\fr-FR.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\he-IL.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\it-IT.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\ja-JP.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\ko-KR.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\nb-NO.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\nl-NL.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\pl-PL.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\pt-BR.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\ru-RU.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\sv-SE.xml" />
-    <Content Include="App_Plugins\UmbracoForms\lang\zh-CN.xml" />
-    <Content Include="App_Plugins\UmbracoForms\Xslt\DataTables_json.xslt" />
-    <Content Include="App_Plugins\UmbracoForms\Xslt\DataTables_json_medtrust.xslt" />
-    <Content Include="App_Plugins\UmbracoForms\Xslt\excel.xslt" />
-    <Content Include="App_Plugins\UmbracoForms\Xslt\Html.xslt" />
-    <Content Include="App_Plugins\UmbracoForms\Xslt\postAsXmlSample.xslt" />
-    <Content Include="App_Plugins\UmbracoForms\Xslt\sendXsltEmailSample.xslt" />
-    <Content Include="App_Plugins\UmbracoForms\Xslt\Templates\Schema2\UmbracoContourListComments.xslt" />
-    <Content Include="App_Plugins\UmbracoForms\Xslt\Templates\UmbracoContourListComments.xslt" />
-    <Content Include="App_Plugins\UmbracoForms\Xslt\xml.xslt" />
+    <Content Include="App_Plugins\umbracoforms\Assets\aspnet-validation\dist\aspnet-validation.min.js" />
+    <Content Include="App_Plugins\umbracoforms\Assets\BaremetricsCalendar\public\css\application.css" />
+    <Content Include="App_Plugins\umbracoforms\Assets\BaremetricsCalendar\public\js\Calendar.js" />
+    <Content Include="App_Plugins\umbracoforms\Assets\datepicker.init.js" />
+    <Content Include="App_Plugins\umbracoforms\Assets\defaultform.css" />
+    <Content Include="App_Plugins\umbracoforms\Assets\Email-Example\sample-image.jpg" />
+    <Content Include="App_Plugins\umbracoforms\Assets\Email-Example\umbraco-logo.png" />
+    <Content Include="App_Plugins\umbracoforms\Assets\moment\min\moment-with-locales.min.js" />
+    <Content Include="App_Plugins\umbracoforms\Assets\pikaday\pikaday.css" />
+    <Content Include="App_Plugins\umbracoforms\Assets\pikaday\pikaday.js" />
+    <Content Include="App_Plugins\umbracoforms\Assets\promise-polyfill\dist\polyfill.min.js" />
+    <Content Include="App_Plugins\umbracoforms\Assets\themes\default\style.css" />
+    <Content Include="App_Plugins\umbracoforms\Assets\themes\default\umbracoforms.js" />
+    <Content Include="App_Plugins\umbracoforms\Assets\umbracoforms-conditions.js" />
+    <Content Include="App_Plugins\umbracoforms\Assets\umbracoforms-dependencies.js" />
+    <Content Include="App_Plugins\umbracoforms\Assets\umbracoforms.js" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\checkbox.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\checkboxlist.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\dataconsent.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\datepicker.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\dropdownlist.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\fileupload.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\hiddenfield.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\password.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\radiobuttonlist.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\recaptcha.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\Recaptcha2.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\recaptcha3.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\text.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\textarea.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\FieldTypes\textfield.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\RenderTypes\date.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\RenderTypes\file.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\RenderTypes\member.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\RenderTypes\text.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\checkbox.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\documentmapper.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\dropdownlist.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\emailtemplatepicker.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\fieldmapper.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\file-upload.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\file.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\numericfield.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\password.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\passwordnoautocomplete.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\pickers.connectionstring.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\pickers.content.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\pickers.contentwithxpath.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\pickers.datatype.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\pickers.documenttype.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\range.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\textarea.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\textfield.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\textfieldnoautocomplete.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Common\SettingTypes\textstring.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Dashboards\forms.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\DataSource\delete.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\DataSource\dialogs\wizard.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\DataSource\edit.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\FormSecurity\edit.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\copy.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\create.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\delete.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\dialogs\additem.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\dialogs\entriesdetail.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\dialogs\entriessettings.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\dialogs\fieldsetsettings.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\dialogs\fieldsettings.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\dialogs\formsettings.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\edit.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\entries.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\move.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\overlays\fieldsetsettings\fieldset-settings.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\overlays\fieldsettings\field-settings.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\overlays\fieldtypepicker\field-type-picker.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\overlays\formpicker\formpicker.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\overlays\themepicker\themepicker.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\overlays\workflows\submit-message-workflow-settings.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\overlays\workflows\workflow-settings.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\overlays\workflows\workflow-types.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\overlays\workflows\workflows-overview.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\rename.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\views\design\design.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\views\settings\settings.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\Form\workflows.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\GridEditors\FormPicker.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\PreValueSource\delete.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\PreValueSource\edit.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\PropertyEditors\formpicker.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\PropertyEditors\formpicker.prevalues.html" />
+    <Content Include="App_Plugins\umbracoforms\Backoffice\PropertyEditors\themepicker.html" />
+    <Content Include="App_Plugins\umbracoforms\css\umbraco.forms.css" />
+    <Content Include="App_Plugins\umbracoforms\Directives\umb-forms-content-picker.html" />
+    <Content Include="App_Plugins\umbracoforms\Directives\umb-forms-designer-new.html" />
+    <Content Include="App_Plugins\umbracoforms\Directives\umb-forms-entry-detail.html" />
+    <Content Include="App_Plugins\umbracoforms\Directives\umb-forms-file-upload-editor.html" />
+    <Content Include="App_Plugins\umbracoforms\Directives\umb-forms-inline-prevalue-editor.html" />
+    <Content Include="App_Plugins\umbracoforms\Directives\umb-forms-prevalue-editor.html" />
+    <Content Include="App_Plugins\umbracoforms\Directives\umb-forms-regexpicker.html" />
+    <Content Include="App_Plugins\umbracoforms\Directives\umb-forms-render-type.html" />
+    <Content Include="App_Plugins\umbracoforms\Fonts\icomoon.svg" />
+    <Content Include="App_Plugins\umbracoforms\Images\close.png" />
+    <Content Include="App_Plugins\umbracoforms\Images\recaptcha.png" />
+    <Content Include="App_Plugins\umbracoforms\Images\recaptcha2.png" />
+    <Content Include="App_Plugins\umbracoforms\Images\recaptcha3.png" />
+    <Content Include="App_Plugins\umbracoforms\Images\succes-green.png" />
+    <Content Include="App_Plugins\umbracoforms\Images\workflows\slack\icon.svg" />
+    <Content Include="App_Plugins\umbracoforms\js\umbraco.forms.js" />
+    <Content Include="App_Plugins\umbracoforms\lang\cs-CZ.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\da-DK.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\de-DE.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\en-GB.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\en-US.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\es-ES.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\fr-FR.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\he-IL.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\it-IT.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\ja-JP.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\ko-KR.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\nb-NO.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\nl-NL.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\pl-PL.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\pt-BR.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\ru-RU.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\sv-SE.xml" />
+    <Content Include="App_Plugins\umbracoforms\lang\zh-CN.xml" />
+    <Content Include="App_Plugins\umbracoforms\Xslt\DataTables_json.xslt" />
+    <Content Include="App_Plugins\umbracoforms\Xslt\DataTables_json_medtrust.xslt" />
+    <Content Include="App_Plugins\umbracoforms\Xslt\excel.xslt" />
+    <Content Include="App_Plugins\umbracoforms\Xslt\Html.xslt" />
+    <Content Include="App_Plugins\umbracoforms\Xslt\postAsXmlSample.xslt" />
+    <Content Include="App_Plugins\umbracoforms\Xslt\sendXsltEmailSample.xslt" />
+    <Content Include="App_Plugins\umbracoforms\Xslt\Templates\Schema2\UmbracoContourListComments.xslt" />
+    <Content Include="App_Plugins\umbracoforms\Xslt\Templates\UmbracoContourListComments.xslt" />
+    <Content Include="App_Plugins\umbracoforms\Xslt\xml.xslt" />
     <Content Include="App_Plugins\uSync8\backoffice\uSync8\dashboard.html" />
     <Content Include="App_Plugins\uSync8\backoffice\uSync8\uSyncDashboardController.js" />
     <Content Include="App_Plugins\uSync8\changeDialog.html" />
@@ -652,15 +654,6 @@
     <Content Include="config\ClientDependency.config" />
     <Content Include="config\BackOfficeTours\getting-started.json" />
     <Content Include="config\uSync8.config" />
-    <Content Include="App_Plugins\UmbracoForms\UmbracoForms.config" />
-    <Content Include="App_Plugins\UmbracoForms\RazorTemplates\HtmlTable.cshtml" />
-    <Content Include="App_Plugins\UmbracoForms\package.manifest" />
-    <Content Include="App_Plugins\UmbracoForms\Fonts\icomoon.woff" />
-    <Content Include="App_Plugins\UmbracoForms\Fonts\icomoon.ttf" />
-    <Content Include="App_Plugins\UmbracoForms\Fonts\icomoon.eot" />
-    <Content Include="App_Plugins\UmbracoForms\Data\Web.config" />
-    <Content Include="App_Plugins\UmbracoForms\Data\Templates\contactform.json" />
-    <Content Include="App_Plugins\UmbracoForms\Data\Templates\commentform.json" />
     <Content Include="config\uSync.Publish.config" />
     <Content Include="App_Plugins\uSyncExpansions\package.manifest" />
     <Content Include="App_Plugins\uSyncExporter\package.manifest" />
@@ -674,6 +667,15 @@
     <Content Include="App_Plugins\uSyncPublisher\Overlay\package.manifest" />
     <Content Include="App_Plugins\uSyncPublisher\backoffice\uSyncPublisher\templates.json" />
     <Content Include="App_Plugins\uSyncSnapshots\package.manifest" />
+    <Content Include="App_Plugins\umbracoforms\UmbracoForms.config" />
+    <Content Include="App_Plugins\umbracoforms\RazorTemplates\HtmlTable.cshtml" />
+    <Content Include="App_Plugins\umbracoforms\package.manifest" />
+    <Content Include="App_Plugins\umbracoforms\Fonts\icomoon.woff" />
+    <Content Include="App_Plugins\umbracoforms\Fonts\icomoon.ttf" />
+    <Content Include="App_Plugins\umbracoforms\Fonts\icomoon.eot" />
+    <Content Include="App_Plugins\umbracoforms\Data\Web.config" />
+    <Content Include="App_Plugins\umbracoforms\Data\Templates\contactform.json" />
+    <Content Include="App_Plugins\umbracoforms\Data\Templates\commentform.json" />
     <None Include="packages.config" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Partials\Grid\Editors\Textstring.cshtml" />
@@ -737,6 +739,7 @@
       <Name>uSync.Forms</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

@@ -235,6 +235,13 @@ select.-full-width {
 .form-search {
   margin-right: 5px;
 }
+.umb-forms-grid-picker .umb-card-grid i {
+  font-size: 30px;
+  line-height: 20px;
+  margin-top: 6px;
+  margin-bottom: 10px;
+  display: block;
+}
 .umb-forms-grid-picker .umb-card-grid .umb-card-grid-item {
   padding: 20% 4px;
   height: 80px;
@@ -333,6 +340,15 @@ textarea.-full-width-input {
 }
 .umb-forms-entry-sidebar .umb-control-group {
   padding-bottom: 5px;
+}
+.umb-export-type-select h5 {
+  margin-top: 0;
+}
+.umb-export-type-select li {
+  margin-bottom: 12px;
+}
+.umb-export-type-select li a:hover {
+  text-decoration: none;
 }
 .umb-dashboard-control hr {
   clear: both;

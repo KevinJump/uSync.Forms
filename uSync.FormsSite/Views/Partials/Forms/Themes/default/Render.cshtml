@@ -34,7 +34,7 @@
     @*Standard form and wrapper *@
     <div id="umbraco_form_@Model.FormClientId" class="umbraco-forms-form @Model.CssClass umbraco-forms-@Model.Theme">
 
-        @using (Html.BeginUmbracoForm<Umbraco.Forms.Web.Controllers.UmbracoFormsController>("HandleForm"))
+        @using (Html.BeginUmbracoForm<Umbraco.Forms.Web.Controllers.UmbracoFormsController>("HandleForm", null, Model.HtmlAttributes ))
         {
             @* Standard form meta data *@
 

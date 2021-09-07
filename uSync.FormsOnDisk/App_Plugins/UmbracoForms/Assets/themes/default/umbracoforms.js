@@ -76,7 +76,7 @@
             });
             */
            
-            function required(value, element, params) {
+            var required = function (value, element) {
                 // Handle single and multiple checkboxes:
                 if(element.type.toLowerCase() === "checkbox" || element.type.toLowerCase() === "radio") {
                     var allCheckboxesOfThisName = element.form.querySelectorAll("input[name='"+element.name+"']");
@@ -93,7 +93,7 @@
             validationService.addProvider("required", required);// this will go instead of the build-in required.
 
 
-            function umbracoforms_regex(value, element, params) {
+            var umbracoforms_regex = function (value, element, params) {
                 if (!value || !params.pattern) {
                     return true;
                 }
@@ -103,7 +103,7 @@
             }
             validationService.addProvider("umbracoforms_regex", umbracoforms_regex);
 
-            function wrapProviderWithIgnorerBehaviour(provider) {
+            var wrapProviderWithIgnorerBehaviour = function (provider) {
                 return function(value, element, params) {
                     
                     // If field is hidden we ignorer the validation.
@@ -162,7 +162,7 @@
             $.validator.unobtrusive.adapters.addBool("regex", "umbracoforms_regex");
 
             var submitInputs = document.querySelectorAll(".umbraco-forms-form input[type=submit]:not(.cancel)");
-            for (var i = 0; i < submitInputs.length; i++) {
+            for (let i = 0; i < submitInputs.length; i++) {
                 var input = submitInputs[i];
                 input.addEventListener("click", function (evt) {
                     evt.preventDefault();
@@ -258,31 +258,31 @@
         function populateFieldValues(page, formValues, dataTypes) {
 
             var selectFields = page.querySelectorAll("select");
-            for(var i=0; i<selectFields.length; i++) {
-                var field = selectFields[i];
+            for (let i = 0; i < selectFields.length; i++) {
+                const field = selectFields[i];
                 formValues[field.getAttribute("id")] = field.value ? field.querySelector("option[value='" + field.value.replace(/'/g, "\\'") + "']").innerText : null;
                 dataTypes[field.getAttribute("id")] = "select";
             }
 
             var textareaFields = page.querySelectorAll("textarea");
-            for(var i=0; i<textareaFields.length; i++) {
-                var field = textareaFields[i];
+            for (let i=0; i<textareaFields.length; i++) {
+                const field = textareaFields[i];
                 formValues[field.getAttribute("id")] = field.value;
                 dataTypes[field.getAttribute("id")] = "textarea";
             }
 
             // clear out all saved checkbox values to we can safely append
             var checkboxFields = page.querySelectorAll("input[type=checkbox]");
-            for(var i=0; i<checkboxFields.length; i++) {
-                var field = checkboxFields[i];
+            for (let i=0; i<checkboxFields.length; i++) {
+                const field = checkboxFields[i];
                 formValues[field.getAttribute("name")] = null;
                 dataTypes[field.getAttribute("id")] = "checkbox";
             }
 
             //$page.find("input").each(function () {
             var inputFields = page.querySelectorAll("input");
-            for(var i=0; i<inputFields.length; i++) {
-                var field = inputFields[i];
+            for (let i=0; i<inputFields.length; i++) {
+                const field = inputFields[i];
 
                 if (field.getAttribute('type') === "text" || field.getAttribute("type") === "hidden") {
                     formValues[field.getAttribute("id")] = field.value;
@@ -359,19 +359,19 @@
                 }
                 return (value || "") !== unexpected && matchingUnexpected.length === 0;
             },
-            GreaterThen: function (value, limit, dataType) {
+            GreaterThen: function (value, limit) {
                 return parseInt(value) > parseInt(limit);
             },
-            LessThen: function (value, limit, dataType) {
+            LessThen: function (value, limit) {
                 return parseInt(value) < parseInt(limit);
             },
-            StartsWith: function (value, criteria, dataType) {
+            StartsWith: function (value, criteria) {
                 return value && value.indexOf(criteria) === 0;
             },
-            EndsWith: function (value, criteria, dataType) {
+            EndsWith: function (value, criteria) {
                 return value && value.indexOf(criteria) === value.length - criteria.length;
             },
-            Contains: function (value, criteria, dataType) {
+            Contains: function (value, criteria) {
                 return value && value.indexOf(criteria) > -1;
             }
         };
@@ -381,8 +381,8 @@
             // The only way around to pickup the value, for now, is to 
             // subscribe to blur events 
             var datepickerfields = self.form.querySelectorAll('.datepickerfield');
-            for(var i = 0; i < datepickerfields.length; i++) {
-                var field = datepickerfields[i];
+            for(let i = 0; i < datepickerfields.length; i++) {
+                const field = datepickerfields[i];
                 field.addEventListener('blur', function () {
                     if(this.value===""){
                         // Here comes the hack
@@ -400,8 +400,8 @@
             }
             //subscribe to change events
             var changeablefields = self.form.querySelectorAll("input, textarea, select");
-            for(var i = 0; i < changeablefields.length; i++) {
-                var field = changeablefields[i];
+            for(let i = 0; i < changeablefields.length; i++) {
+                const field = changeablefields[i];
                 field.addEventListener("change", function () {
                     populateFieldValues(self.form, self.values, self.dataTypes);
                     //process the conditions
@@ -533,7 +533,7 @@
                 return true;
             }
 
-            function handleCondition(element, id, condition, type) {
+            function handleCondition(element, id, condition) {
                 var shouldShow = isVisible(id, condition);
                 if (element) {
                     if (shouldShow) {
@@ -546,13 +546,13 @@
             }
 
             for (fsId in self.fieldsetConditions) {
-                if (self.fieldsetConditions.hasOwnProperty(fsId)) {
+                if (Object.prototype.hasOwnProperty.call(self.fieldsetConditions, fsId)) {
                     handleCondition(document.getElementById(fsId), fsId, self.fieldsetConditions[fsId], "Fieldset");// sadly we cant use querySelector with current mark-up (would need to prefix IDs)
                 }
             }
 
             for (fieldId in self.fieldConditions) {
-                if (self.fieldConditions.hasOwnProperty(fieldId)) {
+                if (Object.prototype.hasOwnProperty.call(self.fieldConditions, fieldId)) {
                     if (document.getElementById(fieldId)) {
                         handleCondition(document.getElementById(fieldId).closest(".umbraco-forms-field"),// sadly we cant use querySelector with current mark-up (would need to prefix IDs)
                             fieldId,

@@ -18,8 +18,9 @@
 
             <umb-editor-container ng-if="!vm.showEntryDetails">
 
-
                 <umb-editor-sub-header>
+
+                    <umb-load-indicator ng-show="recordSetActionExecuting"></umb-load-indicator>
 
                     <umb-editor-sub-header-content-left>
 
@@ -103,6 +104,7 @@
                                     button-style="link"
                                     label="{{action.name}}"
                                     icon="{{action.icon}}"
+                                    disabled="recordSetActionExecuting"
                                     action="executeRecordSetAction(action)">
                             </umb-button>
 

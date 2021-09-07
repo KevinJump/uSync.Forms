@@ -35,7 +35,7 @@
                             <div class="umb-forms-workflows__sortable-wrapper" ui-sortable="vm.workflowsSortableOptions" ng-model="model.formWorkflows.onSubmit">
                                 <div class="umb-forms-workflow sortable"
                                      ng-repeat="workflow in model.formWorkflows.onSubmit | filter:{isDeleted:'false'}"
-                                     ng-click="vm.editWorkflow(workflow)">
+                                     ng-click="vm.editWorkflow(workflow, 'onSubmit', $index)">
                                     <div class="umb-forms-workflow__icon-wrapper sortable-handle">
                                         <i class="umb-forms-workflow__icon" ng-class="workflow.workflowTypeIcon"></i>
                                     </div>
@@ -73,7 +73,7 @@
                             <div class="umb-forms-workflows__sortable-wrapper" ui-sortable="vm.workflowsSortableOptions" ng-model="model.formWorkflows.onApprove">
                                 <div class="umb-forms-workflow sortable"
                                      ng-repeat="workflow in model.formWorkflows.onApprove | filter:{isDeleted:'false'}"
-                                     ng-click="vm.editWorkflow(workflow)">
+                                     ng-click="vm.editWorkflow(workflow, 'onApprove', $index)">
                                     <div class="umb-forms-workflow__icon-wrapper sortable-handle">
                                         <i class="umb-forms-workflow__icon" ng-class="workflow.workflowTypeIcon"></i> 
                                     </div>

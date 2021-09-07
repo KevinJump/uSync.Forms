@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.Xdt" Version="3.1.0" />
     <PackageReference Include="UmbracoCms.Core" Version="8.6.0" />
-    <PackageReference Include="UmbracoForms.Core" Version="8.7.6" />
+    <PackageReference Include="UmbracoForms.Core" Version="8.8.0-rc001" />
     <PackageReference Include="uSync.Backoffice.Core" Version="8.10.0" />
     <PackageReference Include="uSync.Core" Version="8.10.0" />
   </ItemGroup>
