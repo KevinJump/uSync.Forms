@@ -24,6 +24,20 @@ namespace uSync.Forms
         public string DisplayName => "FormsEdition";
 
         public int SortOrder => 100;
+
+
+        public static bool HasFolders()
+        {
+            if (Semver.SemVersion.TryParse(Umbraco.Forms.Core.Configuration.GetVersion(), out Semver.SemVersion formsVersion))
+            {
+                if (formsVersion >= new Semver.SemVersion(8, 8))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 
     public static class uSyncFormPriorities

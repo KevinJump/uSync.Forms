@@ -96,6 +96,27 @@
                 </div>
             </div>
         </umb-control-group>
+
+        <!--Autocomplete-->
+        <umb-control-group label="Autocomplete" description="Add an attribute to control the overall form's autocompletion behaviour.">
+          <div class="block-form">
+            <div class="control-row">
+              <label class="control-label -block">Attribute value</label>
+              <umb-radiobutton value=""
+                               model="model.autocompleteAttribute"
+                               text="None">
+              </umb-radiobutton>
+              <umb-radiobutton value="on"
+                               model="model.autocompleteAttribute"
+                               text="On">
+              </umb-radiobutton>
+              <umb-radiobutton value="off"
+                               model="model.autocompleteAttribute"
+                               text="Off">
+              </umb-radiobutton>
+            </div>
+          </div>
+        </umb-control-group>
         
         <!--Moderation-->
         <umb-control-group label="Moderation" description="Allow form submissions to be post moderated. Most use cases are for publicly shown entries such as blog post comments or submissions for a social campaign.">

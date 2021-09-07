@@ -65,6 +65,8 @@ namespace uSync.Forms.Handlers
 
             foreach(var item in items)
             {
+                
+
                 callback?.Invoke(GetItemName(item), 2, 4);
                 actions.AddRange(Export(item, folder, config));
             }

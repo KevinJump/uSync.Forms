@@ -237,6 +237,15 @@
 
     </div>
 
+    <div class="umb-forms__footer">
+        <umb-button
+            ng-if="!sortingMode && formHasFields(form)"
+            type="button"
+            action="addPage(form)"
+            label="Add new page">
+        </umb-button>
+    </div>
+
     <div class="umb-forms-workflow-actions" ng-if="!sortingMode">
 
         <div class="umb-forms-workflow-flows">
@@ -258,7 +267,7 @@
                 </span>
 
                 <span class="umb-forms-workflow-preview" ng-repeat="workflow in form.formWorkflows.onSubmit | filter:{isDeleted:'false'}" data-umb="on_submit_workflow_{{$index}}">
-                    <a class="umb-forms-workflow-preview__item" ng-class="{'umb-forms-workflow-preview__item--inactive': !workflow.active}" ng-if="security.userSecurity.manageWorkflows" href="" ng-click="editWorkflowSettings(workflow)" data-umb="{{ workflow.name }}">{{ workflow.name }}</a>
+                    <a class="umb-forms-workflow-preview__item" ng-class="{'umb-forms-workflow-preview__item--inactive': !workflow.active}" ng-if="security.userSecurity.manageWorkflows" href="" ng-click="editWorkflowSettings(workflow, 'onSubmit', $index)" data-umb="{{ workflow.name }}">{{ workflow.name }}</a>
                     <span class="umb-forms-workflow-preview__item" ng-if="security.userSecurity.manageWorkflows === false">{{ workflow.name }}</span>
                     <span ng-if="!$last">and</span>
                 </span>
@@ -275,7 +284,7 @@
                 </span>
 
                 <span class="umb-forms-workflow-preview" ng-repeat="workflow in form.formWorkflows.onApprove | filter:{isDeleted:'false'}" data-umb="onapprove_workflow_{{$index}}">
-                    <a class="umb-forms-workflow-preview__item" ng-class="{'umb-forms-workflow-preview__item--inactive': !workflow.active}" ng-if="security.userSecurity.manageWorkflows" href="" ng-click="editWorkflowSettings(workflow)">{{ workflow.name }}</a>
+                    <a class="umb-forms-workflow-preview__item" ng-class="{'umb-forms-workflow-preview__item--inactive': !workflow.active}" ng-if="security.userSecurity.manageWorkflows" href="" ng-click="editWorkflowSettings(workflow, 'onApprove', $index)">{{ workflow.name }}</a>
                     <span class="umb-forms-workflow-preview__item" ng-if="security.userSecurity.manageWorkflows === false">{{ workflow.name }}</span>
                     <span ng-if="!$last">and</span>
                 </span>
@@ -290,15 +299,6 @@
             <a href="" ng-click="editWorkflows()">configure workflow</a>
         </div>
 
-    </div>
-
-    <div class="umb-forms__footer">
-        <umb-button
-            ng-if="!sortingMode && formHasFields(form)"
-            type="button"
-            action="addPage(form)"
-            label="Add new page">
-        </umb-button>
     </div>
 
     <umb-overlay

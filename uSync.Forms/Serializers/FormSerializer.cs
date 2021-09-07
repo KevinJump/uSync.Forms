@@ -70,6 +70,9 @@ namespace uSync.Forms.Serializers
             info.Add(SerializeWorkflows(item));
             info.Add(SerializeDataSource(item.DataSource));
 
+            // forms v8.8 - has folder ids 
+            SerializeFolderInfo(info, item);
+
             info.Add(new XElement("SubmitLabel", item.SubmitLabel));
             info.Add(new XElement("NextLabel", item.NextLabel));
             info.Add(new XElement("PreVLabel", item.PrevLabel));
@@ -79,6 +82,28 @@ namespace uSync.Forms.Serializers
             node.Add(SerializePages(item.Pages));
             
             return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export);
+        }
+
+        private void SerializeFolderInfo(XElement node, Form form)
+        {
+            var folderId = form?.GetType()?.GetProperty("FolderId");
+            if (folderId != null)
+            {
+                var value = folderId.GetValue(form);
+
+                var attemt = value.TryConvertTo<Guid?>();
+                if (attemt.Success)
+                {
+                    if (attemt.Result != null)
+                    {
+                        var folderPath = syncFormService.GetFolderPath(attemt.Result.Value);
+                        node.Add(new XElement("Folder", folderPath));
+                    }
+                    else {
+                        node.Add(new XElement("Folder", string.Empty));
+                    }
+                }
+            }
         }
 
         private XElement SerializePages(IEnumerable<Page> pages)
@@ -198,7 +223,7 @@ namespace uSync.Forms.Serializers
             return SyncAttempt<Form>.Succeed(item.Name, item, ChangeType.Import);
         }
 
-        private void DeserializeInfo(XElement node, Form item) 
+        private void DeserializeInfo(XElement node, Form item)
         {
             var info = node.Element("Info");
             if (info == null) return;
@@ -213,7 +238,7 @@ namespace uSync.Forms.Serializers
             item.RequiredErrorMessage = info.Element("RequireErrorMessage").ValueOrDefault(string.Empty);
             item.InvalidErrorMessage = info.Element("InvalidErrorMessage").ValueOrDefault(string.Empty);
             item.MessageOnSubmit = info.Element("MessageOnSubmit").ValueOrDefault(string.Empty);
-            
+
             item.GoToPageOnSubmit = GetContentId(info.Element("GoToPageOnSubmit").ValueOrDefault(Guid.Empty));
 
             item.XPathOnSubmit = info.Element("XPathOnSubmit").ValueOrDefault(string.Empty);
@@ -232,6 +257,23 @@ namespace uSync.Forms.Serializers
 
             DeserializeWorkdlows(info, item);
             DesersilizeDataSource(info, item);
+
+            DeserializeFolders(info, item);
+        }
+
+        private void DeserializeFolders(XElement info, Form item)
+        {
+            var folderPath = info.Element("Folder").ValueOrDefault(string.Empty);
+
+            if (!string.IsNullOrWhiteSpace(folderPath))
+            {
+                var folderId = syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
+
+                if (folderId != Guid.Empty)
+                {
+                    item.FolderId = folderId;
+                }
+            }
         }
 
 

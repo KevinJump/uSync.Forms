@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Umbraco.Core;
+using Umbraco.Core.Composing;
 using Umbraco.Forms.Core;
 using Umbraco.Forms.Core.Data.Storage;
 using Umbraco.Forms.Core.Models;
@@ -28,6 +30,9 @@ namespace uSync.Forms.Services
         private readonly IWorkflowServices workflowServices;
         private readonly IWorkflowStorage workflowStorage;
 
+        private IFolderService folderService;
+        private bool _hasFolders; 
+
         public SyncFormService(
             IPrevalueSourceService prevalueSourceService,
             IPrevalueSourceStorage prevalueSourceStorage,
@@ -36,7 +41,8 @@ namespace uSync.Forms.Services
             IFormService formService,
             IFormStorage formStorage,
             IWorkflowServices workflowServices,
-            IWorkflowStorage workflowStorage)
+            IWorkflowStorage workflowStorage,
+            IFactory factory)
         {
             this.prevalueSourceStorage = prevalueSourceStorage;
             this.prevalueSourceService = prevalueSourceService;
@@ -49,6 +55,21 @@ namespace uSync.Forms.Services
 
             this.workflowServices = workflowServices;
             this.workflowStorage = workflowStorage;
+
+            LoadFolderService(factory);
+        }
+
+        private void LoadFolderService(IFactory factory)
+        {
+            try
+            {
+                this.folderService = factory.GetInstance<IFolderService>();
+                this._hasFolders = true;
+            }
+            catch
+            {
+                this._hasFolders = false;
+            }
         }
 
         public IEnumerable<Form> GetAllForms()
@@ -81,6 +102,7 @@ namespace uSync.Forms.Services
                 return null;
             }
         }
+
 
         public Form GetForm(string name)
         {

@@ -37,6 +37,12 @@
         <div title="{{entry.updated  | momentDateTimeZone : 'LLL' }}">{{entry.updated | relativeDate }}</div>
       </div>
 
+      <div class="umb-control-group -no-border" ng-if="entry.umbracoPage.name">
+        <label class="control-label">From Page</label>
+        <div ng-if="canLinkToContent"><a ng-click="openContent(entry.umbracoPage.id)">{{entry.umbracoPage.name}}</a></div>
+        <div ng-if="!canLinkToContent">{{entry.umbracoPage.name}}</div>
+      </div>
+
       <div class="umb-control-group -no-border">
         <label class="control-label">State</label>
         <div>{{entry.state}}</div>
