@@ -66,12 +66,12 @@ namespace uSync.Forms.Serializers
             info.Add(new XElement("CssClass", item.CssClass ?? string.Empty));
             info.Add(new XElement("DisabledDefaultStylesheet", item.DisableDefaultStylesheet));
             info.Add(new XElement("UseClientDependency", item.UseClientDependency));
-            
+
             info.Add(SerializeWorkflows(item));
             info.Add(SerializeDataSource(item.DataSource));
 
             // forms v8.8 - has folder ids 
-            SerializeFolderInfo(info, item);
+            if (syncFormService.FormsInDb) SerializeFolderInfo(info, item);
 
             info.Add(new XElement("SubmitLabel", item.SubmitLabel));
             info.Add(new XElement("NextLabel", item.NextLabel));
@@ -80,7 +80,7 @@ namespace uSync.Forms.Serializers
             node.Add(info);
 
             node.Add(SerializePages(item.Pages));
-            
+
             return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export);
         }
 
@@ -99,7 +99,8 @@ namespace uSync.Forms.Serializers
                         var folderPath = syncFormService.GetFolderPath(attemt.Result.Value);
                         node.Add(new XElement("Folder", folderPath));
                     }
-                    else {
+                    else
+                    {
                         node.Add(new XElement("Folder", string.Empty));
                     }
                 }
@@ -121,10 +122,10 @@ namespace uSync.Forms.Serializers
 
         private string MapPropertyValueIdToNames(JArray jArray)
         {
-            foreach(var item in jArray.Cast<JObject>())
+            foreach (var item in jArray.Cast<JObject>())
             {
                 var fieldSets = GetArray(item, "fieldSets");
-                foreach(var fieldSet in fieldSets.Cast<JObject>())
+                foreach (var fieldSet in fieldSets.Cast<JObject>())
                 {
                     var containers = GetArray(fieldSet, "containers");
                     foreach (var container in containers.Cast<JObject>())
@@ -258,7 +259,7 @@ namespace uSync.Forms.Serializers
             DeserializeWorkdlows(info, item);
             DesersilizeDataSource(info, item);
 
-            DeserializeFolders(info, item);
+            if (syncFormService.FormsInDb) DeserializeFolders(info, item);
         }
 
         private void DeserializeFolders(XElement info, Form item)
@@ -267,11 +268,12 @@ namespace uSync.Forms.Serializers
 
             if (!string.IsNullOrWhiteSpace(folderPath))
             {
-                var folderId = syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
-
-                if (folderId != Guid.Empty)
+                var folderIdProperty = item?.GetType()?.GetProperty("FolderId");
+                if (folderIdProperty != null)
                 {
-                    item.FolderId = folderId;
+                    var folderId = syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
+
+                    if (folderId != Guid.Empty) folderIdProperty.SetValue(item, folderId);
                 }
             }
         }
@@ -312,7 +314,7 @@ namespace uSync.Forms.Serializers
 
                 int n = 0;
 
-                foreach(var wNode in node.Elements("Workflow"))
+                foreach (var wNode in node.Elements("Workflow"))
                 {
                     n++;
 
@@ -413,7 +415,7 @@ namespace uSync.Forms.Serializers
             item.DataSource = dataSourceDefinition;
         }
 
-        private void DeserializePages(XElement node, Form item) 
+        private void DeserializePages(XElement node, Form item)
         {
             var pagesJson = node.Element("Pages").ValueOrDefault(string.Empty);
             if (!string.IsNullOrWhiteSpace(pagesJson))
@@ -462,7 +464,8 @@ namespace uSync.Forms.Serializers
 
         private Guid GetContentKey(int id)
         {
-            if (id > 0) {
+            if (id > 0)
+            {
                 var attempt = entityService.GetKey(id, Umbraco.Core.Models.UmbracoObjectTypes.Document);
                 if (attempt.Success) return attempt.Result;
             }

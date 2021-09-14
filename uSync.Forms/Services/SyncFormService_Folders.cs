@@ -50,6 +50,8 @@ namespace uSync.Forms.Services
 
         public Guid CreateOrFindFolders(Guid parent, string folderPath)
         {
+            if (!this.FormsInDb) return Guid.Empty;
+
             var folderPathClean = folderPath.Trim("/");
 
             IEnumerable<Folder> folders; 

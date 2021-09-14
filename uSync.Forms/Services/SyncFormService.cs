@@ -59,6 +59,8 @@ namespace uSync.Forms.Services
             LoadFolderService(factory);
         }
 
+        public bool FormsInDb => Configuration.StoreUmbracoFormsInDb;
+
         private void LoadFolderService(IFactory factory)
         {
             try
