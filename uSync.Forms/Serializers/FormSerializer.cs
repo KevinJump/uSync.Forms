@@ -483,8 +483,9 @@ namespace uSync.Forms.Serializers
 
         protected override XElement CleanseNode(XElement node)
         {
-            node.Attribute("Key").Value = Guid.Empty.ToString();
-            return node;
+            var clensed = XElement.Parse(node.ToString());
+            clensed.Attribute("Key").Value = Guid.Empty.ToString();
+            return clensed;
         }
 
 

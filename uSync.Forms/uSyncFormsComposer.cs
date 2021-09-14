@@ -23,6 +23,8 @@ namespace uSync.Forms
         {
             composition.RegisterUnique<SyncFormService>();
 
+            composition.RegisterUnique<FormsMapperHelper>();
+
             composition.Register<ISyncSerializer<Form>, FormSerializer>();
             composition.Register<ISyncSerializer<FieldPreValueSource>, PreValueSerializer>();
             composition.Register<ISyncSerializer<FormDataSource>, DataSourceSerializer>();
