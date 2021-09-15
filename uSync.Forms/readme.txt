@@ -5,8 +5,6 @@
               \__,_//____/\__, /_/ /_/\___/  
                          /____/  FormsEdition
 
-                   *** RELEASE CANDIDATE ***
-
     !!!! Thanks for installing uSync.Forms Edition !!!!
 
 Forms edition adds syncing for Umbraco Forms - you can now sync:
@@ -16,7 +14,8 @@ Forms edition adds syncing for Umbraco Forms - you can now sync:
     - Prevalues
 
     uSync.FormsEdition has been tested against Umbraco forms 8.6.1 
-    with both disk and database Storage. 
+    with both disk and database Storage. It supports folders from 
+    Umbraco forms v8.8 onwards.
 
 Repo: https://github.com/KevinJump/uSync.Forms
 Docs: (soon)

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Umbraco.Core;
 using Umbraco.Forms.Core.Models;
+using Umbraco.Forms.Core.Services;
 
 namespace uSync.Forms.Services
 {
@@ -15,23 +16,19 @@ namespace uSync.Forms.Services
         {
             try
             {
-                if (_hasFolders && folderService != null)
-                {
-                    return folderService.Get(folderId);
-                }
+                return ((IFolderService)folderService).Get(folderId);
             }
             catch
             {
                 return null;
             }
-
-            return null;
         }
 
         public string GetFolderPath(Guid folderId)
         {
-            var path = "";
+            if (!_hasFolders) return string.Empty;
 
+            var path = "";
             var folder = FindFolder(folderId);
             if (folder != null)
             {
@@ -50,16 +47,22 @@ namespace uSync.Forms.Services
 
         public Guid CreateOrFindFolders(Guid parent, string folderPath)
         {
+            if (!_hasFolders) return Guid.Empty;
+            return CreateOrFindFoldersInternal(parent, folderPath);
+        }
+
+        private Guid CreateOrFindFoldersInternal(Guid parent, string folderPath) 
+        { 
             var folderPathClean = folderPath.Trim("/");
 
             IEnumerable<Folder> folders; 
             if (parent == Guid.Empty)
             {
-                folders = folderService.GetAtRoot();
+                folders = ((IFolderService)folderService).GetAtRoot();
             }
             else
             {
-                folders = folderService.GetChildren(parent);
+                folders = ((IFolderService)folderService).GetChildren(parent);
             }
 
             var folder = folderPathClean;
@@ -81,7 +84,7 @@ namespace uSync.Forms.Services
 
                 try
                 {
-                    formFolder = folderService.Insert(formFolder);
+                    formFolder = ((IFolderService)folderService).Insert(formFolder);
                 }
                 catch(Exception ex)
                 {

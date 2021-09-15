@@ -1196,11 +1196,12 @@ IFRAME {
   opacity: 1;
 }
 input.umb-forms__page-name {
-  border: none;
+  border: 1px solid #d8d7d9;
   color: #000000;
-  background-color: transparent;
+  background-color: #ffffff;
   margin: 0 0 0 3px;
-  padding: 0;
+  padding: 4px 6px;
+  font-weight: 700;
 }
 input.umb-forms__page-name::-webkit-input-placeholder {
   color: #68676b;
@@ -1288,12 +1289,12 @@ input.umb-forms__page-name::-webkit-input-placeholder {
   align-items: center;
 }
 .umb-forms__fieldset-name {
-  border: none;
+  border: 1px solid #d8d7d9;
   background-color: transparent;
   color: #000000;
   font-weight: 700;
   font-size: 14px;
-  padding: 0;
+  padding: 2px 4px;
 }
 .umb-forms__fieldset-name:focus {
   outline: none;

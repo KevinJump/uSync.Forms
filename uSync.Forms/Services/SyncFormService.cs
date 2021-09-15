@@ -30,7 +30,7 @@ namespace uSync.Forms.Services
         private readonly IWorkflowServices workflowServices;
         private readonly IWorkflowStorage workflowStorage;
 
-        private IFolderService folderService;
+        private object folderService;
         private bool _hasFolders; 
 
         public SyncFormService(
@@ -56,19 +56,35 @@ namespace uSync.Forms.Services
             this.workflowServices = workflowServices;
             this.workflowStorage = workflowStorage;
 
+           
+
+
             LoadFolderService(factory);
         }
 
+        public bool FormsInDb => Configuration.StoreUmbracoFormsInDb;
+
         private void LoadFolderService(IFactory factory)
         {
-            try
+            if (this.FormsInDb)
             {
-                this.folderService = factory.GetInstance<IFolderService>();
-                this._hasFolders = true;
+                try
+                {
+                    var folderServiceType = Type.GetType("Umbraco.Forms.Core.Services.IFolderService, Umbraco.Forms.Core");
+                    if (folderServiceType != null)
+                    {
+                        this.folderService = factory.GetInstance(folderServiceType);
+                        this._hasFolders = true;
+                    }
+                }
+                catch
+                {
+                    this._hasFolders = false;
+                }
             }
-            catch
+            else
             {
-                this._hasFolders = false;
+                this._hasFolders = false; 
             }
         }
 

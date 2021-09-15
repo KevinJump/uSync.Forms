@@ -14,7 +14,7 @@
 		</releaseNotes>
 		<dependencies>
 			<group targetFramework=".NETFramework4.7.2">
-				<dependency id="uSync.BackOffice.Core" version="8.10.0-beta1"/>
+				<dependency id="uSync.ContentEdition" version="8.10.1" />
 			</group>
 		</dependencies>
 		<tags>umbraco usync</tags>
