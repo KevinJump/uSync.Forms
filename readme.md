@@ -3,7 +3,7 @@
 Synchronize Umbraco forms between umbraco installations as part of uSync 8
 
 ```
-Install-Package uSync.Forms -pre
+Install-Package uSync.Forms
 ```
 https://www.nuget.org/packages/uSync.Forms
 
