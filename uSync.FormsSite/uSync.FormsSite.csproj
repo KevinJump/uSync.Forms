@@ -258,16 +258,16 @@
       <HintPath>..\packages\UmbracoCms.Web.8.6.0\lib\net472\Umbraco.Examine.dll</HintPath>
     </Reference>
     <Reference Include="Umbraco.Forms.Core, Version=8.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UmbracoForms.Core.8.8.0-rc001\lib\net472\Umbraco.Forms.Core.dll</HintPath>
+      <HintPath>..\packages\UmbracoForms.Core.8.8.0\lib\net472\Umbraco.Forms.Core.dll</HintPath>
     </Reference>
     <Reference Include="Umbraco.Forms.Core.Providers, Version=8.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UmbracoForms.Core.8.8.0-rc001\lib\net472\Umbraco.Forms.Core.Providers.dll</HintPath>
+      <HintPath>..\packages\UmbracoForms.Core.8.8.0\lib\net472\Umbraco.Forms.Core.Providers.dll</HintPath>
     </Reference>
     <Reference Include="Umbraco.Forms.Web, Version=8.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UmbracoForms.Core.8.8.0-rc001\lib\net472\Umbraco.Forms.Web.dll</HintPath>
+      <HintPath>..\packages\UmbracoForms.Core.8.8.0\lib\net472\Umbraco.Forms.Web.dll</HintPath>
     </Reference>
     <Reference Include="Umbraco.Licensing, Version=2.0.33.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UmbracoForms.Core.8.8.0-rc001\lib\net472\Umbraco.Licensing.dll</HintPath>
+      <HintPath>..\packages\UmbracoForms.Core.8.8.0\lib\net472\Umbraco.Licensing.dll</HintPath>
     </Reference>
     <Reference Include="Umbraco.ModelsBuilder.Embedded, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\UmbracoCms.Web.8.6.0\lib\net472\Umbraco.ModelsBuilder.Embedded.dll</HintPath>
@@ -656,14 +656,6 @@
     <Content Include="App_Plugins\UmbracoForms\UmbracoForms.config" />
     <Content Include="config\uSync8.config" />
     <Content Include="config\uSync.Publish.config" />
-    <Content Include="App_Plugins\UmbracoForms\RazorTemplates\HtmlTable.cshtml" />
-    <Content Include="App_Plugins\UmbracoForms\package.manifest" />
-    <Content Include="App_Plugins\UmbracoForms\Fonts\icomoon.woff" />
-    <Content Include="App_Plugins\UmbracoForms\Fonts\icomoon.ttf" />
-    <Content Include="App_Plugins\UmbracoForms\Fonts\icomoon.eot" />
-    <Content Include="App_Plugins\UmbracoForms\Data\Web.config" />
-    <Content Include="App_Plugins\UmbracoForms\Data\Templates\contactform.json" />
-    <Content Include="App_Plugins\UmbracoForms\Data\Templates\commentform.json" />
     <Content Include="App_Plugins\uSyncExpansions\package.manifest" />
     <Content Include="App_Plugins\uSyncExporter\package.manifest" />
     <Content Include="App_Plugins\uSyncHistory\package.manifest" />
@@ -676,6 +668,14 @@
     <Content Include="App_Plugins\uSyncPublisher\Overlay\package.manifest" />
     <Content Include="App_Plugins\uSyncPublisher\backoffice\uSyncPublisher\templates.json" />
     <Content Include="App_Plugins\uSyncSnapshots\package.manifest" />
+    <Content Include="App_Plugins\UmbracoForms\RazorTemplates\HtmlTable.cshtml" />
+    <Content Include="App_Plugins\UmbracoForms\package.manifest" />
+    <Content Include="App_Plugins\UmbracoForms\Fonts\icomoon.woff" />
+    <Content Include="App_Plugins\UmbracoForms\Fonts\icomoon.ttf" />
+    <Content Include="App_Plugins\UmbracoForms\Fonts\icomoon.eot" />
+    <Content Include="App_Plugins\UmbracoForms\Data\Web.config" />
+    <Content Include="App_Plugins\UmbracoForms\Data\Templates\contactform.json" />
+    <Content Include="App_Plugins\UmbracoForms\Data\Templates\commentform.json" />
     <None Include="packages.config" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Partials\Grid\Editors\Textstring.cshtml" />
