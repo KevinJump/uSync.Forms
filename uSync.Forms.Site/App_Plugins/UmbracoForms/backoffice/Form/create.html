@@ -1,0 +1,66 @@
+<div ng-controller="UmbracoForms.Editors.Form.CreateController">
+  <div class="umbracoDialog umb-dialog-body with-footer" ng-cloak>
+
+    <div class="umb-pane" ng-show="!model.creatingFolder">
+      <h5>Create a new form or folder</h5>
+
+      <ul class="umb-actions umb-actions-child">
+        <li class="umb-action">
+          <button class="umb-action-link umb-outline btn-reset" ng-click="createEmptyForm()">
+            <i class="large icon-autofill"></i>
+            <span class="menu-label">
+              Empty form
+              <small>Starting from scratch</small>
+            </span>
+          </button>
+        </li>
+
+        <li class="umb-action" ng-repeat="template in model.formTemplates | orderBy:'name':false">
+          <button class="umb-action-link umb-outline btn-reset" ng-click="createTemplateForm(template.alias)">
+            <i class="large icon-autofill"></i>
+            <span class="menu-label">
+              {{template.name}}
+              <small>{{template.description}}</small>
+            </span>
+          </button>
+        </li>
+
+        <li class="umb-action">
+          <button class="umb-action-link umb-outline btn-reset" ng-click="showCreateFolderForm()">
+            <i class="large icon-folder"></i>
+            <span class="menu-label">
+              Folder
+              <small>Used to organise forms</small>
+            </span>
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="umb-pane" ng-show="model.creatingFolder">
+      <form novalidate name="createFolderForm"
+            ng-submit="createFolder()"
+            val-form-manager>
+
+        <div ng-show="model.errorMessage">
+          <div class="alert alert-error">
+            <div>{{model.errorMessage}}</div>
+          </div>
+        </div>
+
+        <umb-control-group label="Enter a folder name" hide-label="false">
+          <input type="text" name="folderName" maxlength="255" ng-model="model.folderName" class="umb-textstring textstring input-block-level" umb-auto-focus required />
+        </umb-control-group>
+
+        <button type="submit" class="btn btn-primary"><localize key="general_create">Create</localize></button>
+      </form>
+    </div>
+
+  </div>
+
+  <div class="umb-dialog-footer btn-toolbar umb-btn-toolbar" ng-show="!model.creatingFolder">
+    <button class="btn" ng-click="hideDialog()">
+      <localize key="buttons_somethingElse">Do something else</localize>
+    </button>
+  </div>
+</div>
