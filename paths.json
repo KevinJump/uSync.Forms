@@ -1,8 +1,7 @@
 {
     "library": "uSync.Forms",
     "sites": [
-        "uSync.FormsOnDisk",
-        "uSync.FormsSite"
+        "uSync.Forms.Site"
     ],
     "plugins": [
         { "library": "uSync.Forms", "pluginFolder" : "uSync.Forms" }
