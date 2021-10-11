@@ -2,7 +2,7 @@
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Extensions;
-using Umbraco.Forms.Core.Extensions;
+using Umbraco.Forms;
 using Umbraco.Forms.Core.Services.Notifications;
 
 using uSync.BackOffice;
@@ -11,6 +11,7 @@ using uSync.Forms.Services;
 
 namespace uSync.Forms
 {
+    [ComposeAfter(typeof(UmbracoFormsComposer))]
     public class uSyncFormsComposer : IComposer
     {
         public void Compose(IUmbracoBuilder builder)
@@ -24,7 +25,7 @@ namespace uSync.Forms
         public static IUmbracoBuilder AdduSyncForms(this IUmbracoBuilder builder) 
         {
 
-            builder.AddUmbracoFormsCore();
+            // builder.AddUmbracoFormsCore();
             builder.AdduSync();
 
             builder.Services.AddUnique<SyncFormService>();

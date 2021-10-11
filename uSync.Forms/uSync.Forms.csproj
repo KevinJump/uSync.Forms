@@ -9,7 +9,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.0" />
-		<PackageReference Include="Umbraco.Forms.Core" Version="9.0.0" />
+		<PackageReference Include="Umbraco.Forms" Version="9.0.0">
+			<ExcludeAssets>buildTransitive;build</ExcludeAssets>
+		</PackageReference>
 		<PackageReference Include="uSync.Backoffice" Version="9.0.2" />
 	</ItemGroup>
 
