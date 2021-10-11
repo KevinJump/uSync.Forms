@@ -22,6 +22,8 @@ namespace uSync.Forms
 
         // v9 has folders 
         public static bool HasFolders() => true;
+
+        public const string FolderEntityType = "forms-folder";
     }
 
     public static class uSyncFormPriorities
@@ -29,6 +31,7 @@ namespace uSync.Forms
         public const int DataSources = uSyncConstants.Priorites.USYNC_RESERVED_UPPER + 2;
         public const int PreValues = uSyncConstants.Priorites.USYNC_RESERVED_UPPER + 1;
         public const int Workflows = uSyncConstants.Priorites.USYNC_RESERVED_UPPER + 5;
+        public const int Folders = uSyncConstants.Priorites.USYNC_RESERVED_UPPER + 5;
         public const int Forms = uSyncConstants.Priorites.USYNC_RESERVED_UPPER + 10;
     }
 }

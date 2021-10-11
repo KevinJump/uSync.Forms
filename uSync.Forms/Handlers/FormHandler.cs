@@ -30,6 +30,13 @@ namespace uSync.Forms.Handlers
         INotificationHandler<FormDeletedNotification>
 
     {
+        /*
+        public string[] EntityTypes => new string[]
+        {
+            UdiEntityType.FormsForm,
+            uSyncForms.FolderEntityType
+        };*/
+
         public override string Group => "Forms";
 
         private readonly SyncFormService syncFormService;

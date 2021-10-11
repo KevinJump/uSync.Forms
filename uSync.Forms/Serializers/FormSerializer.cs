@@ -267,9 +267,9 @@ namespace uSync.Forms.Serializers
                 var folderIdProperty = item?.GetType()?.GetProperty("FolderId");
                 if (folderIdProperty != null)
                 {
-                    var folderId = syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
+                    var folder = syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
 
-                    if (folderId != Guid.Empty) folderIdProperty.SetValue(item, folderId);
+                    if (folder != null) folderIdProperty.SetValue(item, folder.Id);
                 }
             }
         }

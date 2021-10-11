@@ -1,4 +1,4 @@
-﻿<language alias="en" intName="English (US)" localName="English (US)" lcid="" culture="en-US">
+<language alias="en" intName="English (US)" localName="English (US)" lcid="" culture="en-US">
 
 	<area alias="usync">
 		<key alias="import-forms">Import Forms settings</key>

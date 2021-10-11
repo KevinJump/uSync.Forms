@@ -10,7 +10,46 @@ namespace uSync.Forms.Services
 {
     public partial class SyncFormService
     {
-        private Folder FindFolder(Guid folderId) 
+        private bool IsNew(Folder folder)
+            => folder.Id == Guid.Empty || folderService.Get(folder.Id) == null;
+
+        public void SaveFolder(Folder item)
+        {
+            _ = IsNew(item) ? folderService.Insert(item) : folderService.Update(item);
+        }
+
+        public void DeleteFolder(Folder item)
+            => folderService.Delete(item);
+
+        public IEnumerable<Folder> GetChildFolders(Guid? parent = null)
+        {
+            if (parent == null)
+                return folderService.GetAtRoot();
+
+            return folderService.GetChildren(parent.Value);
+        }
+
+        public IEnumerable<Folder> GetAllFolders(Guid? parent = null)
+        {
+            var folders = new List<Folder>();
+
+            if (parent != null)
+            {
+                folders.AddRange(folderService.GetChildren(parent.Value));
+            }
+            else
+            {
+                folders.AddRange(folderService.GetAtRoot());
+            }
+
+            foreach (var folder in folders) {
+                folders.AddRange(GetAllFolders(folder.Id));
+            }
+
+            return folders;
+        }
+
+        public Folder GetFolder(Guid folderId) 
         {
             try
             {
@@ -22,10 +61,25 @@ namespace uSync.Forms.Services
             }
         }
 
+        // return all the forms in a folder or its children.
+        public IEnumerable<Form> GetFolderForms(Guid folderId)
+        {
+            var ids = new List<Guid>()
+            {
+                folderId
+            };
+
+            ids.AddRange(folderService.GetChildren(folderId)
+                .Select(x => x.Id));
+
+            // all forms who live in a folder that is either this folder or a child folder
+            return formService.Get().Where(x => x.FolderId != null && ids.Contains(x.FolderId.Value));
+        }
+
         public string GetFolderPath(Guid folderId)
         {
             var path = "";
-            var folder = FindFolder(folderId);
+            var folder = GetFolder(folderId);
             if (folder != null)
             {
                 if (folder.ParentId != null)
@@ -40,13 +94,12 @@ namespace uSync.Forms.Services
             return path;
         }
 
-
-        public Guid CreateOrFindFolders(Guid parent, string folderPath)
+        public Folder CreateOrFindFolders(Guid parent, string folderPath)
         {
             return CreateOrFindFoldersInternal(parent, folderPath);
         }
 
-        private Guid CreateOrFindFoldersInternal(Guid parent, string folderPath) 
+        private Folder CreateOrFindFoldersInternal(Guid parent, string folderPath) 
         { 
             var folderPathClean = folderPath.Trim('/');
 
@@ -85,7 +138,7 @@ namespace uSync.Forms.Services
                 {
                     // error (could be we are importing to something that doesn't 
                     // support folders)
-                    return Guid.Empty;
+                    return null;
                 }
             };
 
@@ -96,7 +149,7 @@ namespace uSync.Forms.Services
             }
             else
             {
-                return formFolder.Id;
+                return formFolder;
             }
         }
     }
