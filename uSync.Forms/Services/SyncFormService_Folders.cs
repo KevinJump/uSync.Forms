@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using Umbraco.Core;
+using Umbraco.Extensions;
 using Umbraco.Forms.Core.Models;
 using Umbraco.Forms.Core.Services;
 
@@ -12,11 +10,11 @@ namespace uSync.Forms.Services
 {
     public partial class SyncFormService
     {
-        private Folder FindFolder(Guid folderId)
+        private Folder FindFolder(Guid folderId) 
         {
             try
             {
-                return ((IFolderService)folderService).Get(folderId);
+                return folderService.Get(folderId);
             }
             catch
             {
@@ -26,8 +24,6 @@ namespace uSync.Forms.Services
 
         public string GetFolderPath(Guid folderId)
         {
-            if (!_hasFolders) return string.Empty;
-
             var path = "";
             var folder = FindFolder(folderId);
             if (folder != null)
@@ -47,22 +43,21 @@ namespace uSync.Forms.Services
 
         public Guid CreateOrFindFolders(Guid parent, string folderPath)
         {
-            if (!_hasFolders) return Guid.Empty;
             return CreateOrFindFoldersInternal(parent, folderPath);
         }
 
         private Guid CreateOrFindFoldersInternal(Guid parent, string folderPath) 
         { 
-            var folderPathClean = folderPath.Trim("/");
+            var folderPathClean = folderPath.Trim('/');
 
             IEnumerable<Folder> folders; 
             if (parent == Guid.Empty)
             {
-                folders = ((IFolderService)folderService).GetAtRoot();
+                folders = folderService.GetAtRoot();
             }
             else
             {
-                folders = ((IFolderService)folderService).GetChildren(parent);
+                folders = folderService.GetChildren(parent);
             }
 
             var folder = folderPathClean;

@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using Umbraco.Core;
-using Umbraco.Core.Models;
+using Umbraco.Cms.Core;
+using Umbraco.Cms.Core.Models;
+using Umbraco.Extensions;
 using Umbraco.Forms.Core.Models;
 
-using uSync8.Core.Dependency;
+using uSync.Core.Dependency;
 
-using static Umbraco.Core.Constants;
+using static Umbraco.Cms.Core.Constants;
 
 namespace uSync.Forms.Dependencies
 {

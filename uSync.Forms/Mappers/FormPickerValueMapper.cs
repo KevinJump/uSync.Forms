@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using Umbraco.Core;
-using Umbraco.Core.Services;
+using Umbraco.Cms.Core;
+using Umbraco.Cms.Core.Services;
+using Umbraco.Extensions;
 
+using uSync.Core.Dependency;
+using uSync.Core.Mapping;
 using uSync.Forms.Services;
 
-using uSync8.ContentEdition.Mapping;
-using uSync8.Core.Dependency;
-
-using static Umbraco.Core.Constants;
+using static Umbraco.Cms.Core.Constants;
 
 namespace uSync.Forms.Mappers
 {

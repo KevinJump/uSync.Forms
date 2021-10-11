@@ -13,14 +13,7 @@ namespace uSync.Forms.Services
 
         public void SaveWorkflow(Workflow workflow, Form form)
         {
-            if (Configuration.StoreUmbracoFormsInDb)
-            {
-                _ = IsNew(workflow, form) ? workflowServices.Insert(workflow) : workflowServices.Update(workflow);
-            }
-            else
-            {
-                _ = IsNew(workflow, form) ? workflowStorage.InsertWorkflow(form, workflow) : workflowStorage.UpdateWorkflow(workflow);
-            }
+            _ = IsNew(workflow, form) ? workflowService.Insert(workflow) : workflowService.Update(workflow);
         }
 
         /// <summary>
@@ -37,17 +30,6 @@ namespace uSync.Forms.Services
             return (Workflow)workflows.FirstOrDefault(x => x.Id == id);
         }
 
-
-        public List<IWorkflow> GetWorkflows(Form form)
-        {
-            if (Configuration.StoreUmbracoFormsInDb)
-            {
-                return workflowServices.Get(form);
-            }
-            else
-            {
-                return workflowStorage.GetAllWorkFlows(form);
-            }
-        }
+        public List<IWorkflow> GetWorkflows(Form form) => workflowService.Get(form);
     }
 }

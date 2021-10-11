@@ -8,26 +8,20 @@ using System.Xml.Linq;
 using Newtonsoft.Json;
 
 using Umbraco.Core;
-using Umbraco.Core.Logging;
-using Umbraco.Core.Services;
 using Umbraco.Forms.Core;
-using Umbraco.Forms.Core.Interfaces;
-using Umbraco.Forms.Core.Models;
 using Umbraco.Forms.Core.Providers;
-using Umbraco.Forms.Core.Services;
-using Umbraco.Forms.Data.Storage;
 
+using uSync.Core.Serialization;
 using uSync.Forms.Services;
 
-using uSync8.Core;
-using uSync8.Core.Extensions;
-using uSync8.Core.Models;
-using uSync8.Core.Serialization;
+using uSync.Core;
+using uSync.Core.Models;
+using Microsoft.Extensions.Logging;
 
 namespace uSync.Forms.Serializers
 {
     [SyncSerializer("A8A00EFF-795E-4D89-BA8F-7871FB9BD459", "PreValue", "PreValue", IsTwoPass = false)]
-    public class PreValueSerializer : SyncSerializerRoot<FieldPreValueSource>, ISyncNodeSerializer<FieldPreValueSource>
+    public class PreValueSerializer : SyncSerializerRoot<FieldPreValueSource>, ISyncSerializer<FieldPreValueSource>
     {
         private FormsMapperHelper _mapperHelper;
 
@@ -38,7 +32,7 @@ namespace uSync.Forms.Serializers
             SyncFormService syncFormService,
             FormsMapperHelper formsMapperHelper,
             FieldPreValueSourceCollection fieldPreValueSourceTypes,
-            ILogger logger) : base(logger)
+            ILogger<PreValueSerializer> logger) : base(logger)
         {
             this.fieldPreValueSourceTypes = fieldPreValueSourceTypes;
             this.SyncFormService = syncFormService;
@@ -62,7 +56,7 @@ namespace uSync.Forms.Serializers
             var settingsJson = JsonConvert.SerializeObject(MapExportSettings(item.Settings), Formatting.Indented);
             node.Add(new XElement("Settings", settingsJson));
 
-            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export);
+            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, Array.Empty<uSyncChange>());
         }
 
         protected override SyncAttempt<FieldPreValueSource> DeserializeCore(XElement node, SyncSerializerOptions options)
@@ -84,7 +78,7 @@ namespace uSync.Forms.Serializers
                 if (!fieldPreValueSourceTypes.Any(x => x.Id == fieldTypeId))
                 {
                     return SyncAttempt<FieldPreValueSource>.Fail(node.GetAlias(), ChangeType.Fail,
-                        new Exception("FieldType cannot be found (missing a PreValueProvider?)"));
+                        "FieldType cannot be found (missing a PreValueProvider?)");
                 }
 
                 item.Name = info.Element("Name").ValueOrDefault(node.GetAlias());
@@ -96,7 +90,7 @@ namespace uSync.Forms.Serializers
                 item.Settings = MapImportSettings(JsonConvert.DeserializeObject<Dictionary<string, string>>(settings));
             }
             
-            return SyncAttempt<FieldPreValueSource>.Succeed(item.Name, item, ChangeType.Import);
+            return SyncAttempt<FieldPreValueSource>.Succeed(item.Name, item, ChangeType.Import, Array.Empty<uSyncChange>());
         }
 
         private Dictionary<string, string> MapExportSettings(Dictionary<string, string> settings)
@@ -123,22 +117,24 @@ namespace uSync.Forms.Serializers
             return settings;
         }
 
-        protected override void DeleteItem(FieldPreValueSource item)
+        public override FieldPreValueSource FindItem(int id) => null;
+
+        public override void DeleteItem(FieldPreValueSource item)
             => SyncFormService.DeletePreValueSource(item);
 
-        protected override FieldPreValueSource FindItem(Guid key)
+        public override FieldPreValueSource FindItem(Guid key)
             => SyncFormService.GetPreValueSource(key);
 
-        protected override FieldPreValueSource FindItem(string alias)
+        public override FieldPreValueSource FindItem(string alias)
             => SyncFormService.GetPreValueSource(alias);
 
-        protected override string ItemAlias(FieldPreValueSource item)
+        public override string ItemAlias(FieldPreValueSource item)
             => item.Name;
 
-        protected override Guid ItemKey(FieldPreValueSource item)
+        public override Guid ItemKey(FieldPreValueSource item)
             => item.Id;
 
-        protected override void SaveItem(FieldPreValueSource item)
+        public override void SaveItem(FieldPreValueSource item)
             => SyncFormService.SavePreValueSource(item);
 
 

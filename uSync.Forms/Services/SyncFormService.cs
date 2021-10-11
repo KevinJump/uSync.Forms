@@ -2,13 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Umbraco.Core;
-using Umbraco.Core.Composing;
-using Umbraco.Forms.Core;
-using Umbraco.Forms.Core.Data.Storage;
 using Umbraco.Forms.Core.Models;
 using Umbraco.Forms.Core.Services;
-using Umbraco.Forms.Data.Storage;
 
 namespace uSync.Forms.Services
 {
@@ -19,136 +14,38 @@ namespace uSync.Forms.Services
     public partial class SyncFormService
     {
         private readonly IPrevalueSourceService prevalueSourceService;
-        private readonly IPrevalueSourceStorage prevalueSourceStorage;
 
         private readonly IDataSourceService dataSourceService;
-        private readonly IDataSourceStorage dataSourceStorage;
 
         private readonly IFormService formService;
-        private readonly IFormStorage formStorage;
+        private readonly IFolderService folderService;
 
-        private readonly IWorkflowServices workflowServices;
-        private readonly IWorkflowStorage workflowStorage;
-
-        private object folderService;
-        private bool _hasFolders; 
+        private readonly IWorkflowService workflowService;
 
         public SyncFormService(
             IPrevalueSourceService prevalueSourceService,
-            IPrevalueSourceStorage prevalueSourceStorage,
             IDataSourceService dataSourceService,
-            IDataSourceStorage dataSourceStorage,
             IFormService formService,
-            IFormStorage formStorage,
-            IWorkflowServices workflowServices,
-            IWorkflowStorage workflowStorage,
-            IFactory factory)
+            IFolderService folderService,
+            IWorkflowService workflowService)
         {
-            this.prevalueSourceStorage = prevalueSourceStorage;
             this.prevalueSourceService = prevalueSourceService;
 
             this.dataSourceService = dataSourceService;
-            this.dataSourceStorage = dataSourceStorage;
 
             this.formService = formService;
-            this.formStorage = formStorage;
+            this.folderService = folderService;
 
-            this.workflowServices = workflowServices;
-            this.workflowStorage = workflowStorage;
-
-           
-
-
-            LoadFolderService(factory);
+            this.workflowService = workflowService;
         }
 
-        public bool FormsInDb => Configuration.StoreUmbracoFormsInDb;
+        public IEnumerable<Form> GetAllForms() => formService.Get();
 
-        private void LoadFolderService(IFactory factory)
-        {
-            if (this.FormsInDb)
-            {
-                try
-                {
-                    var folderServiceType = Type.GetType("Umbraco.Forms.Core.Services.IFolderService, Umbraco.Forms.Core");
-                    if (folderServiceType != null)
-                    {
-                        this.folderService = factory.GetInstance(folderServiceType);
-                        this._hasFolders = true;
-                    }
-                }
-                catch
-                {
-                    this._hasFolders = false;
-                }
-            }
-            else
-            {
-                this._hasFolders = false; 
-            }
-        }
-
-        public IEnumerable<Form> GetAllForms()
-        {
-            if (Configuration.StoreUmbracoFormsInDb)
-            {
-                return formService.Get();
-            }
-            else
-            {
-                return formStorage.GetAllForms();
-            }
-        }
-
-        public Form GetForm(Guid key)
-        {
-            try
-            {
-                if (Configuration.StoreUmbracoFormsInDb)
-                {
-                    return formService.Get(key);
-                }
-                else
-                {
-                    return formStorage.GetForm(key);
-                }
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-
-        public Form GetForm(string name)
-        {
-            try
-            {
-                if (Configuration.StoreUmbracoFormsInDb)
-                {
-                    return formService.Get(name);
-                }
-                else
-                {
-                    return formStorage.GetAll().FirstOrDefault(x => x.Name == name);
-                }
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
+        public Form GetForm(Guid key) => formService.Get(key);
+        public Form GetForm(string name) => formService.Get(name);
         public void SaveForm(Form item)
         {
-            if (Configuration.StoreUmbracoFormsInDb)
-            {
-                _ = IsNew(item) ? formService.Insert(item) : formService.Update(item);
-            }
-            else
-            {
-                _ = IsNew(item) ? formStorage.InsertForm(item) : formStorage.UpdateForm(item);
-            }
+            _ = IsNew(item) ? formService.Insert(item) : formService.Update(item);
         }
 
         private bool IsNew(Form item)
@@ -157,14 +54,7 @@ namespace uSync.Forms.Services
 
         public void DeleteForm(Form item)
         {
-            if (Configuration.StoreUmbracoFormsInDb)
-            {
-                formService.Delete(item);
-            }
-            else
-            {
-                formStorage.DeleteForm(item);
-            }
+            formService.Delete(item);
         }
 
     }

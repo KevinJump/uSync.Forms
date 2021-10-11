@@ -7,37 +7,36 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using Umbraco.Core;
-using Umbraco.Core.Logging;
-using Umbraco.Core.Services;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Forms.Core;
 using Umbraco.Forms.Core.Enums;
 using Umbraco.Forms.Core.Models;
 
 using uSync.Forms.Services;
 
-using uSync8.Core;
-using uSync8.Core.Extensions;
-using uSync8.Core.Models;
-using uSync8.Core.Serialization;
+using uSync.Core;
+using uSync.Core.Models;
+using uSync.Core.Serialization;
 
-using static Umbraco.Core.Constants;
+using static Umbraco.Cms.Core.Constants;
+using Microsoft.Extensions.Logging;
+using Umbraco.Cms.Core;
+using Umbraco.Extensions;
+using Umbraco.Cms.Core.Models;
 
 namespace uSync.Forms.Serializers
 {
     [SyncSerializer("AFB4DECC-2828-4414-B85F-ADC1BF711521", "Forms Serializer", UdiEntityType.FormsForm, IsTwoPass = false)]
-    public class FormSerializer : SyncSerializerRoot<Form>, ISyncNodeSerializer<Form>
+    public class FormSerializer : SyncSerializerRoot<Form>, ISyncSerializer<Form>
     {
         private readonly IEntityService entityService;
         private readonly SyncFormService syncFormService;
 
-        public FormSerializer(
-            SyncFormService syncFormService,
-            IEntityService entityService,
-            ILogger logger)
-            : base(logger)
+        public FormSerializer(ILogger<SyncSerializerRoot<Form>> logger, IEntityService entityService, SyncFormService formService) : base(logger)
         {
             this.entityService = entityService;
-            this.syncFormService = syncFormService;
+            this.syncFormService = formService;
+            
         }
 
         protected override SyncAttempt<XElement> SerializeCore(Form item, SyncSerializerOptions options)
@@ -65,13 +64,11 @@ namespace uSync.Forms.Serializers
             info.Add(new XElement("StoreRecordsLocally", item.StoreRecordsLocally));
             info.Add(new XElement("CssClass", item.CssClass ?? string.Empty));
             info.Add(new XElement("DisabledDefaultStylesheet", item.DisableDefaultStylesheet));
-            info.Add(new XElement("UseClientDependency", item.UseClientDependency));
 
             info.Add(SerializeWorkflows(item));
             info.Add(SerializeDataSource(item.DataSource));
 
-            // forms v8.8 - has folder ids 
-            if (syncFormService.FormsInDb) SerializeFolderInfo(info, item);
+            SerializeFolderInfo(info, item);
 
             info.Add(new XElement("SubmitLabel", item.SubmitLabel));
             info.Add(new XElement("NextLabel", item.NextLabel));
@@ -81,7 +78,7 @@ namespace uSync.Forms.Serializers
 
             node.Add(SerializePages(item.Pages));
 
-            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export);
+            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, Array.Empty<uSyncChange>());
         }
 
         private void SerializeFolderInfo(XElement node, Form form)
@@ -221,7 +218,7 @@ namespace uSync.Forms.Serializers
 
             // SaveItem(item);
 
-            return SyncAttempt<Form>.Succeed(item.Name, item, ChangeType.Import);
+            return SyncAttempt<Form>.Succeed(item.Name, item, ChangeType.Import, Array.Empty<uSyncChange>());
         }
 
         private void DeserializeInfo(XElement node, Form item)
@@ -247,7 +244,6 @@ namespace uSync.Forms.Serializers
             item.StoreRecordsLocally = info.Element("StoreRecordsLocally").ValueOrDefault(false);
             item.CssClass = info.Element("CssClass").ValueOrDefault(string.Empty);
             item.DisableDefaultStylesheet = info.Element("DisabledDefaultStylesheet").ValueOrDefault(false);
-            item.UseClientDependency = info.Element("UseClientDependency").ValueOrDefault(false);
 
             item.SubmitLabel = info.Element("SubmitLabel").ValueOrDefault(string.Empty);
             item.NextLabel = info.Element("NextLabel").ValueOrDefault(string.Empty);
@@ -259,7 +255,7 @@ namespace uSync.Forms.Serializers
             DeserializeWorkdlows(info, item);
             DesersilizeDataSource(info, item);
 
-            if (syncFormService.FormsInDb) DeserializeFolders(info, item);
+            DeserializeFolders(info, item);
         }
 
         private void DeserializeFolders(XElement info, Form item)
@@ -444,29 +440,31 @@ namespace uSync.Forms.Serializers
             => SyncAttempt<Form>.Succeed(alias, ChangeType.NoChange);
 
 
-        protected override void DeleteItem(Form item)
+        public override void DeleteItem(Form item)
             => syncFormService.DeleteForm(item);
 
-        protected override Form FindItem(Guid key)
+        public override Form FindItem(Guid key)
             => syncFormService.GetForm(key);
 
-        protected override Form FindItem(string alias)
+        public override Form FindItem(string alias)
             => syncFormService.GetForm(alias);
 
-        protected override string ItemAlias(Form item)
+        public override string ItemAlias(Form item)
             => item.Name;
 
-        protected override Guid ItemKey(Form item)
+        public override Guid ItemKey(Form item)
             => item.Id;
 
-        protected override void SaveItem(Form item)
+        public override void SaveItem(Form item)
             => syncFormService.SaveForm(item);
+
+        public override Form FindItem(int id) => null;
 
         private Guid GetContentKey(int id)
         {
             if (id > 0)
             {
-                var attempt = entityService.GetKey(id, Umbraco.Core.Models.UmbracoObjectTypes.Document);
+                var attempt = entityService.GetKey(id, UmbracoObjectTypes.Document);
                 if (attempt.Success) return attempt.Result;
             }
             return Guid.Empty;
@@ -476,7 +474,7 @@ namespace uSync.Forms.Serializers
         {
             if (key != Guid.Empty)
             {
-                var attempt = entityService.GetId(key, Umbraco.Core.Models.UmbracoObjectTypes.Document);
+                var attempt = entityService.GetId(key, UmbracoObjectTypes.Document);
                 if (attempt.Success) return attempt.Result;
             }
 

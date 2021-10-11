@@ -1,33 +1,45 @@
 ﻿
-using Umbraco.Core;
-using Umbraco.Core.Composing;
-using Umbraco.Forms.Core;
-using Umbraco.Forms.Core.Components;
-using Umbraco.Forms.Core.Models;
+using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Extensions;
+using Umbraco.Forms.Core.Extensions;
+using Umbraco.Forms.Core.Services.Notifications;
 
-using uSync.Forms.Serializers;
+using uSync.BackOffice;
+using uSync.Forms.Handlers;
 using uSync.Forms.Services;
-
-using uSync8.BackOffice;
-using uSync8.Core;
-using uSync8.Core.Serialization;
 
 namespace uSync.Forms
 {
-    [ComposeAfter(typeof(UmbracoFormsComposer))] // after forms 
-    [ComposeAfter(typeof(uSyncCoreComposer))] // after core usync
-    [ComposeBefore(typeof(uSyncBackOfficeComposer))] // before usync.backoffice loads the handlers.
-    public class uSyncFormsComposer : IUserComposer
+    public class uSyncFormsComposer : IComposer
     {
-        public void Compose(Composition composition)
+        public void Compose(IUmbracoBuilder builder)
         {
-            composition.RegisterUnique<SyncFormService>();
+            builder.AdduSyncForms();
+        }
+    }
 
-            composition.RegisterUnique<FormsMapperHelper>();
+    public static class BuilderuSyncFormsExtension
+    {
+        public static IUmbracoBuilder AdduSyncForms(this IUmbracoBuilder builder) 
+        {
 
-            composition.Register<ISyncSerializer<Form>, FormSerializer>();
-            composition.Register<ISyncSerializer<FieldPreValueSource>, PreValueSerializer>();
-            composition.Register<ISyncSerializer<FormDataSource>, DataSourceSerializer>();
+            builder.AddUmbracoFormsCore();
+            builder.AdduSync();
+
+            builder.Services.AddUnique<SyncFormService>();
+            builder.Services.AddUnique<FormsMapperHelper>();
+
+            builder.AddNotificationHandler<FormSavedNotification, FormHandler>();
+            builder.AddNotificationHandler<FormDeletedNotification, FormHandler>();
+
+            builder.AddNotificationHandler<PrevalueSourceSavedNotification, PreValueHandler>();
+            builder.AddNotificationHandler<PrevalueSourceDeletedNotification, PreValueHandler>();
+
+            builder.AddNotificationHandler<DataSourceSavedNotification, DataSourceHandler>();
+            builder.AddNotificationHandler<DataSourceDeletedNotification, DataSourceHandler>();
+
+            return builder;
         }
     }
 }

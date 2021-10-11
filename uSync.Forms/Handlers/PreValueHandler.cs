@@ -1,54 +1,50 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Umbraco.Core;
-using Umbraco.Core.Cache;
-using Umbraco.Core.Logging;
+using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Events;
+using Umbraco.Cms.Core.Strings;
+using Umbraco.Extensions;
 using Umbraco.Forms.Core;
 using Umbraco.Forms.Core.Services;
-using Umbraco.Forms.Data.Storage;
+using Umbraco.Forms.Core.Services.Notifications;
 
+using uSync.BackOffice;
+using uSync.BackOffice.Configuration;
+using uSync.BackOffice.Services;
+using uSync.BackOffice.SyncHandlers;
+using uSync.Core;
 using uSync.Forms.Services;
 
-using uSync8.BackOffice;
-using uSync8.BackOffice.Configuration;
-using uSync8.BackOffice.Services;
-using uSync8.BackOffice.SyncHandlers;
-using uSync8.Core;
-using uSync8.Core.Serialization;
-
-using static Umbraco.Core.Constants;
+using static Umbraco.Cms.Core.Constants;
 
 namespace uSync.Forms.Handlers
 {
     [SyncHandler("formsPreValueHandler", "PreValue", "Forms-PreValues", uSyncFormPriorities.PreValues,
         Icon = "icon-box usync-addon-icon", EntityType = UdiEntityType.FormsPreValue)]
-    public class PreValueHandler : SyncHandlerRoot<FieldPreValueSource, FieldPreValueSource>,
-        ISyncExtendedHandler, ISyncItemHandler
+    public class PreValueHandler : SyncHandlerRoot<FieldPreValueSource, FieldPreValueSource>, ISyncHandler,
+        INotificationHandler<PrevalueSourceSavedNotification>,
+        INotificationHandler<PrevalueSourceDeletedNotification>
     {
         public override string Group => "Forms";
 
         private readonly SyncFormService syncFormService;
 
-        private readonly IPrevalueSourceStorage prevalueSourceStorage;
-        private readonly IPrevalueSourceService prevalueSourceService;
-
-        public PreValueHandler(IProfilingLogger logger, 
-            SyncFormService syncFormService,
-            IPrevalueSourceService prevalueSourceService,
-            IPrevalueSourceStorage prevalueSourceStorage,
+        public PreValueHandler(ILogger<SyncHandlerRoot<FieldPreValueSource, FieldPreValueSource>> logger, 
             AppCaches appCaches, 
-            ISyncSerializer<FieldPreValueSource> serializer, 
-            ISyncItemFactory itemFactory, 
-            SyncFileService syncFileService) 
-            : base(logger, appCaches, serializer, itemFactory, syncFileService)
+            IShortStringHelper shortStringHelper, 
+            SyncFileService syncFileService, 
+            uSyncEventService mutexService, 
+            uSyncConfigService uSyncConfig, 
+            ISyncItemFactory itemFactory,
+            SyncFormService syncFormService) 
+            : base(logger, appCaches, shortStringHelper, syncFileService, mutexService, uSyncConfig, itemFactory)
         {
             this.syncFormService = syncFormService;
-
-            this.prevalueSourceService = prevalueSourceService;
-            this.prevalueSourceStorage = prevalueSourceStorage;
         }
 
         public override IEnumerable<uSyncAction> ExportAll(string folder, HandlerSettings config, SyncUpdateCallback callback)
@@ -80,73 +76,60 @@ namespace uSync.Forms.Handlers
         protected override IEnumerable<FieldPreValueSource> GetFolders(FieldPreValueSource parent)
             => Enumerable.Empty<FieldPreValueSource>();
 
-        protected override FieldPreValueSource GetFromService(int id)
-            => null;
-
-        protected override FieldPreValueSource GetFromService(Guid key)
-            => syncFormService.GetPreValueSource(key);
-
-        protected override FieldPreValueSource GetFromService(string alias)
-            => syncFormService.GetPreValueSource(alias);
-
-        protected override FieldPreValueSource GetFromService(FieldPreValueSource item)
-            => syncFormService.GetPreValueSource(item.Id);
-
-        protected override Guid GetItemKey(FieldPreValueSource item)
-            => item.Id;
-
+     
         protected override string GetItemName(FieldPreValueSource item)
             => item.Name;
 
         protected override string GetItemPath(FieldPreValueSource item, bool useGuid, bool isFlat)
-            => item.Name.ToSafeFileName();
+            => item.Name.ToSafeFileName(shortStringHelper);
 
-        protected override void InitializeEvents(HandlerSettings settings)
+        private bool ShouldProcess()
         {
-            if (Configuration.StoreUmbracoFormsInDb)
+            if (_mutexService.IsPaused) return false;
+            if (!DefaultConfig.Enabled) return false;
+            return true;
+        }
+
+        protected override FieldPreValueSource GetFromService(FieldPreValueSource item)
+            => syncFormService.GetPreValueSource(item.Id);
+
+        public void Handle(PrevalueSourceDeletedNotification notification)
+        {
+            if (!ShouldProcess()) return;
+
+            foreach (var preValue in notification.DeletedEntities.Cast<FieldPreValueSource>())
             {
-                prevalueSourceService.Saved += PrevalueSource_Saved;
-                prevalueSourceService.Deleted += PrevalueSource_Deleted;
-            }
-            else
-            {
-                prevalueSourceStorage.Saved += PrevalueSource_Saved;
-                prevalueSourceStorage.Deleted += PrevalueSource_Deleted;
+                var filename = GetPath(Path.Combine(rootFolder, this.DefaultFolder), preValue, DefaultConfig.GuidNames, DefaultConfig.UseFlatStructure);
+
+                var attempt = serializer.SerializeEmpty(preValue, SyncActionType.Delete, string.Empty);
+                if (attempt.Success)
+                {
+                    syncFileService.SaveXElement(attempt.Item, filename);
+                    this.CleanUp(preValue, filename, Path.Combine(rootFolder, DefaultFolder));
+                }
             }
         }
 
-        private void PrevalueSource_Deleted(object sender, FieldPreValueSourceEventArgs e)
+        public void Handle(PrevalueSourceSavedNotification notification)
         {
-            if (uSync8BackOffice.eventsPaused || e.FieldPreValueSource == null) return;
-
-            var filename = GetPath(Path.Combine(rootFolder, this.DefaultFolder), (FieldPreValueSource)e.FieldPreValueSource, DefaultConfig.GuidNames, DefaultConfig.UseFlatStructure);
-
-            var attempt = serializer.SerializeEmpty((FieldPreValueSource)e.FieldPreValueSource, SyncActionType.Delete, string.Empty);
-            if (attempt.Success)
-            {
-                syncFileService.SaveXElement(attempt.Item, filename);
-                this.CleanUp((FieldPreValueSource)e.FieldPreValueSource, filename, Path.Combine(rootFolder, DefaultFolder));
-            }
-        }
-
-        private void PrevalueSource_Saved(object sender, FieldPreValueSourceEventArgs e)
-        {
-            if (uSync8BackOffice.eventsPaused) return;
-
+            if (!ShouldProcess()) return;
             try
             {
-                var attempts = this.Export((FieldPreValueSource)e.FieldPreValueSource,
-                    Path.Combine(rootFolder, this.DefaultFolder), this.DefaultConfig);
-
-                foreach (var attempt in attempts.Where(x => x.Success))
+                foreach (var preValue in notification.SavedEntities.Cast<FieldPreValueSource>())
                 {
-                    this.CleanUp((FieldPreValueSource)e.FieldPreValueSource, attempt.FileName, Path.Combine(rootFolder, this.DefaultFolder));
+                    var attempts = this.Export(preValue,
+                        Path.Combine(rootFolder, this.DefaultFolder), this.DefaultConfig);
+
+                    foreach (var attempt in attempts.Where(x => x.Success))
+                    {
+                        this.CleanUp(preValue, attempt.FileName, Path.Combine(rootFolder, this.DefaultFolder));
+                    }
                 }
 
             }
             catch (Exception ex)
             {
-                logger.Warn<PreValueHandler>(ex, "uSync Save error");
+                logger.LogWarning(ex, "uSync Save error");
             }
         }
     }

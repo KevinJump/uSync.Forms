@@ -1,28 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using Umbraco.Core;
+using Umbraco.Extensions;
 using Umbraco.Forms.Core;
 
 namespace uSync.Forms.Services
 {
     public partial class SyncFormService
     {
-        public IEnumerable<FormDataSource> GetAllDataSources()
-            => Configuration.StoreUmbracoFormsInDb
-                ? dataSourceService.Get()
-                : dataSourceStorage.GetAllDataSources();
+        public IEnumerable<FormDataSource> GetAllDataSources() => dataSourceService.Get();
 
-        public FormDataSource GetDataSource(Guid key)
-        {
+        public FormDataSource GetDataSource(Guid key)         
+        { 
             try
             {
-                return Configuration.StoreUmbracoFormsInDb
-                ? dataSourceService.Get(key)
-                : dataSourceStorage.GetDataSource(key);
+                return dataSourceService.Get(key);
             }
             catch
             {
@@ -41,29 +34,13 @@ namespace uSync.Forms.Services
 
         public void SaveDataSource(FormDataSource item)
         {
-            if (Configuration.StoreUmbracoFormsInDb)
-            {
-                _ = IsNew(item) ? dataSourceService.Insert(item) : dataSourceService.Update(item);
-            }
-            else
-            {
-                _ = IsNew(item) ? dataSourceStorage.InsertDataSource(item) : dataSourceStorage.UpdateDataSource(item);
-            }
+            _ = IsNew(item) ? dataSourceService.Insert(item) : dataSourceService.Update(item);
         }
 
         private bool IsNew(FormDataSource item)
             => item.Id == Guid.Empty || !GetAllDataSources().Any(x => x.Id == item.Id);
 
-        public void DeleteDataSource(FormDataSource item)
-        {
-            if (Configuration.StoreUmbracoFormsInDb)
-            {
-                dataSourceService.Delete(item);
-            }
-            else
-            {
-                dataSourceStorage.DeleteDataSource(item);
-            }
-        }
+        public void DeleteDataSource(FormDataSource item) => dataSourceService.Delete(item);
     }
 }
+    

@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Umbraco.Core;
+using Umbraco.Cms.Core;
 
+using uSync.Core.Dependency;
+using uSync.Core.Sync;
 using uSync.Forms.Services;
 
-using uSync8.Core.Dependency;
-using uSync8.Core.Sync;
-
-using static Umbraco.Core.Constants;
+using static Umbraco.Cms.Core.Constants;
 
 namespace uSync.Forms.Sync
 {

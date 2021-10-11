@@ -1,61 +1,52 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using Umbraco.Core;
-using Umbraco.Core.Cache;
-using Umbraco.Core.Logging;
-using Umbraco.Core.Services;
-using Umbraco.Forms.Core;
-using Umbraco.Forms.Core.Data.Storage;
+using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Events;
+using Umbraco.Cms.Core.Strings;
+using Umbraco.Extensions;
 using Umbraco.Forms.Core.Models;
-using Umbraco.Forms.Core.Services;
+using Umbraco.Forms.Core.Services.Notifications;
 
+using uSync.BackOffice;
+using uSync.BackOffice.Configuration;
+using uSync.BackOffice.Services;
+using uSync.BackOffice.SyncHandlers;
+using uSync.Core;
 using uSync.Forms.Services;
 
-using uSync8.BackOffice;
-using uSync8.BackOffice.Configuration;
-using uSync8.BackOffice.Services;
-using uSync8.BackOffice.SyncHandlers;
-using uSync8.Core;
-using uSync8.Core.Dependency;
-using uSync8.Core.Serialization;
-using uSync8.Core.Tracking;
-
-using static Umbraco.Core.Constants;
+using static Umbraco.Cms.Core.Constants;
 
 namespace uSync.Forms.Handlers
 {
     [SyncHandler("formsHandler", "Forms", "Forms", uSyncFormPriorities.Forms, 
         Icon = "icon-umb-contour usync-addon-icon", EntityType = UdiEntityType.FormsForm)]
-    public class FormHandler : SyncHandlerRoot<Form, Form>, ISyncExtendedHandler, ISyncItemHandler
+    public class FormHandler : SyncHandlerRoot<Form, Form>, ISyncHandler,
+        INotificationHandler<FormSavedNotification>,
+        INotificationHandler<FormDeletedNotification>
+
     {
         public override string Group => "Forms";
 
-
         private readonly SyncFormService syncFormService;
 
-        private readonly IFormService formService;
-        private readonly IFormStorage formStorage;
-
-        public FormHandler(IProfilingLogger logger,
-            SyncFormService syncFormService,
-            IFormService formService,
-            IFormStorage formStorage,
+        public FormHandler(ILogger<SyncHandlerRoot<Form, Form>> logger,
             AppCaches appCaches, 
-            ISyncSerializer<Form> serializer, 
-            ISyncItemFactory itemFactory, 
-            SyncFileService syncFileService) 
-            : base(logger, appCaches, serializer, itemFactory, syncFileService)
+            IShortStringHelper shortStringHelper,
+            SyncFileService syncFileService,
+            uSyncEventService mutexService,
+            uSyncConfigService uSyncConfig,
+            ISyncItemFactory itemFactory,
+            SyncFormService syncFormService)
+            : base(logger, appCaches, shortStringHelper, syncFileService, mutexService, uSyncConfig, itemFactory)
         {
             this.syncFormService = syncFormService;
-
-            this.formService = formService;
-            this.formStorage = formStorage;
         }
+
 
         public override IEnumerable<uSyncAction> ExportAll(string folder, HandlerSettings config, SyncUpdateCallback callback)
         {
@@ -79,70 +70,50 @@ namespace uSync.Forms.Handlers
             return Enumerable.Empty<uSyncAction>();
         }
 
-        protected override void DeleteViaService(Form item)
-            => syncFormService.DeleteForm(item);
-
-        protected override Form GetFromService(int id)
-            => null;
-        protected override Form GetFromService(Guid key)
-            => syncFormService.GetForm(key);
-
-        protected override Form GetFromService(string alias)
-            => syncFormService.GetForm(alias);
-
-        protected override Guid GetItemKey(Form item)
-            => item.Id;
-
         protected override string GetItemName(Form item)
             => item.Name;
 
         protected override string GetItemPath(Form item, bool useGuid, bool isFlat)
-            => item.Name.ToSafeFileName();
+            => item.Name.ToSafeFileName(shortStringHelper);
 
-        protected override void InitializeEvents(HandlerSettings settings)
+
+        public void Handle(FormDeletedNotification notification)
         {
+            if (!ShouldProcess()) return;
 
-            if (Configuration.StoreUmbracoFormsInDb)
+            foreach (var form in notification.DeletedEntities)
             {
-                formService.Saved += Form_Saved;
-                formService.Deleted += Form_Deleted;
-            }
-            else
-            {
-                formStorage.Saved += Form_Saved;
-                formStorage.Deleted += Form_Deleted;
-            }
-        }
+                var filename = GetPath(Path.Combine(rootFolder, this.DefaultFolder), form,
+                    DefaultConfig.GuidNames, DefaultConfig.UseFlatStructure);
 
-        private void Form_Deleted(object sender, FormEventArgs e)
-        {
-            if (uSync8BackOffice.eventsPaused) return;
-
-            var filename = GetPath(Path.Combine(rootFolder, this.DefaultFolder), e.Form,
-                DefaultConfig.GuidNames, DefaultConfig.UseFlatStructure);
-
-            var attempt = serializer.SerializeEmpty(e.Form, SyncActionType.Delete, string.Empty);
-            if (attempt.Success)
-            {
-                syncFileService.SaveXElement(attempt.Item, filename);
-                this.CleanUp(e.Form, filename, Path.Combine(rootFolder, DefaultFolder));
+                var attempt = serializer.SerializeEmpty(form, SyncActionType.Delete, string.Empty);
+                if (attempt.Success)
+                {
+                    syncFileService.SaveXElement(attempt.Item, filename);
+                    this.CleanUp(form, filename, Path.Combine(rootFolder, DefaultFolder));
+                }
             }
         }
 
-        private void Form_Saved(object sender, FormEventArgs e)
+        public void Handle(FormSavedNotification notification)
         {
-            if (uSync8BackOffice.eventsPaused) return;
+            if (!ShouldProcess()) return;
 
             try
             {
-                var attempts = this.Export(e.Form, Path.Combine(rootFolder, this.DefaultFolder), DefaultConfig);
-                foreach (var attempt in attempts.Where(x => x.Success)) {
-                    this.CleanUp(e.Form, attempt.FileName, Path.Combine(rootFolder, this.DefaultFolder));
+                foreach (var form in notification.SavedEntities)
+                {
+
+                    var attempts = this.Export(form, Path.Combine(rootFolder, this.DefaultFolder), DefaultConfig);
+                    foreach (var attempt in attempts.Where(x => x.Success))
+                    {
+                        this.CleanUp(form, attempt.FileName, Path.Combine(rootFolder, this.DefaultFolder));
+                    }
                 }
             }
             catch (Exception ex)
             {
-                logger.Warn<FormHandler>(ex, "uSync Save error");
+                logger.LogWarning(ex, "uSync Save error");
             }
         }
 
@@ -154,5 +125,12 @@ namespace uSync.Forms.Handlers
 
         protected override Form GetFromService(Form item)
             => syncFormService.GetForm(item.Id);
+
+        private bool ShouldProcess()
+        {
+            if (_mutexService.IsPaused) return false;
+            if (!DefaultConfig.Enabled) return false;
+            return true;
+        }
     }
 }

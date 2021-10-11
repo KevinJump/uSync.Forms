@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Umbraco.Core;
+using Umbraco.Extensions;
 using Umbraco.Forms.Core;
 using Umbraco.Forms.Core.Interfaces;
 
@@ -14,32 +15,9 @@ namespace uSync.Forms.Services
     public partial class SyncFormService
     {
 
-        public IEnumerable<IFieldPreValueSource> GetAllPreValues()
-        {
-            if (Configuration.StoreUmbracoFormsInDb)
-            {
-                return prevalueSourceService.Get();
-            }
-            else
-            {
-                return prevalueSourceStorage.GetAllPrevalueSources();
-            }
-        }
+        public IEnumerable<IFieldPreValueSource> GetAllPreValues() => prevalueSourceService.Get();
 
-        public FieldPreValueSource GetPreValueSource(Guid id)
-        {
-            try
-            {
-                if (Configuration.StoreUmbracoFormsInDb)
-                    return (FieldPreValueSource)prevalueSourceService.Get(id);
-                else
-                    return (FieldPreValueSource)prevalueSourceStorage.GetPrevalueSource(id);
-            }
-            catch(Exception ex)
-            {
-                return null;
-            }
-        }
+        public FieldPreValueSource GetPreValueSource(Guid id) => (FieldPreValueSource)prevalueSourceService.Get(id);
 
         public FieldPreValueSource GetPreValueSource(string name)
         {
@@ -52,14 +30,7 @@ namespace uSync.Forms.Services
 
         public void SavePreValueSource(FieldPreValueSource item)
         {
-            if (Configuration.StoreUmbracoFormsInDb)
-            {
-                _ = IsNew(item) ? prevalueSourceService.Insert(item) : prevalueSourceService.Update(item);
-            }
-            else
-            {
-                _ = IsNew(item) ? prevalueSourceStorage.InsertPrevalueSource(item) : prevalueSourceStorage.UpdatePreValueSource(item);
-            }
+            _ = IsNew(item) ? prevalueSourceService.Insert(item) : prevalueSourceService.Update(item);
         }
 
         private bool IsNew(FieldPreValueSource item)
@@ -67,17 +38,6 @@ namespace uSync.Forms.Services
             return item.Id == Guid.Empty || GetAllPreValues().FirstOrDefault(x => x.Id == item.Id) == null;
         }
 
-        public void DeletePreValueSource(FieldPreValueSource item)
-        {
-            if (Configuration.StoreUmbracoFormsInDb)
-            {
-                prevalueSourceService.Delete(item);
-            }
-            else
-            {
-                prevalueSourceStorage.DeletePrevalueSource(item);
-            }
-        }
-
+        public void DeletePreValueSource(FieldPreValueSource item) => prevalueSourceService.Delete(item);
     }
 }

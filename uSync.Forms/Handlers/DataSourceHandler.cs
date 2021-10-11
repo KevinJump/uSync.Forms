@@ -1,58 +1,52 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using Umbraco.Core;
-using Umbraco.Core.Cache;
-using Umbraco.Core.Logging;
-using Umbraco.Core.Scoping;
+using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Events;
+using Umbraco.Cms.Core.Strings;
+using Umbraco.Extensions;
 using Umbraco.Forms.Core;
-using Umbraco.Forms.Core.Models;
-using Umbraco.Forms.Core.Persistence.Repositories;
-using Umbraco.Forms.Core.Services;
-using Umbraco.Forms.Data.Storage;
+using Umbraco.Forms.Core.Services.Notifications;
 
+using uSync.BackOffice;
+using uSync.BackOffice.Configuration;
+using uSync.BackOffice.Services;
+using uSync.BackOffice.SyncHandlers;
+using uSync.Core;
 using uSync.Forms.Services;
 
-using uSync8.BackOffice;
-using uSync8.BackOffice.Configuration;
-using uSync8.BackOffice.Services;
-using uSync8.BackOffice.SyncHandlers;
-using uSync8.Core;
-using uSync8.Core.Serialization;
-
-using static Umbraco.Core.Constants;
+using static Umbraco.Cms.Core.Constants;
 
 namespace uSync.Forms.Handlers
 {
     [SyncHandler("formsDataSourceHandler", "DataSource", "Forms-DataSource", uSyncFormPriorities.DataSources,
     Icon = "icon-box usync-addon-icon", EntityType = UdiEntityType.FormsDataSource)]
-    public class DataSourceHandler : SyncHandlerRoot<FormDataSource, FormDataSource>,
-        ISyncExtendedHandler, ISyncItemHandler
+    public class DataSourceHandler : SyncHandlerRoot<FormDataSource, FormDataSource>, ISyncHandler,
+        INotificationHandler<DataSourceSavedNotification>,
+        INotificationHandler<DataSourceDeletedNotification>
     {
         public override string Group => "Forms";
 
         private readonly SyncFormService syncFormService;
-        private readonly IDataSourceService dataSourceService;
-        private readonly IDataSourceStorage dataSourceStorage;
 
-        public DataSourceHandler(IProfilingLogger logger,
-            SyncFormService syncFormService,
-            IDataSourceStorage dataSourceStorage,
-            IDataSourceService dataSourceService,
+        public DataSourceHandler(
+            ILogger<SyncHandlerRoot<FormDataSource, FormDataSource>> logger, 
             AppCaches appCaches, 
-            ISyncSerializer<FormDataSource> serializer, 
-            ISyncItemFactory itemFactory, 
-            SyncFileService syncFileService) 
-            : base(logger, appCaches, serializer, itemFactory, syncFileService)
+            IShortStringHelper shortStringHelper, 
+            SyncFileService syncFileService, 
+            uSyncEventService mutexService, 
+            uSyncConfigService uSyncConfig, 
+            ISyncItemFactory itemFactory,
+            SyncFormService syncFormService)
+            : base(logger, appCaches, shortStringHelper, syncFileService, mutexService, uSyncConfig, itemFactory)
         {
             this.syncFormService = syncFormService;
-            this.dataSourceService = dataSourceService;
-            this.dataSourceStorage = dataSourceStorage;
         }
+
 
         public override IEnumerable<uSyncAction> ExportAll(string folder, HandlerSettings config, SyncUpdateCallback callback)
         {
@@ -81,65 +75,53 @@ namespace uSync.Forms.Handlers
         protected override IEnumerable<FormDataSource> GetFolders(FormDataSource parent)
             => Enumerable.Empty<FormDataSource>();
 
-        protected override FormDataSource GetFromService(int id)
-            => null;
-
-        protected override FormDataSource GetFromService(Guid key)
-            => syncFormService.GetDataSource(key);
-
-        protected override FormDataSource GetFromService(string alias)
-            => syncFormService.GetDataSource(alias);
+        protected override string GetItemPath(FormDataSource item, bool useGuid, bool isFlat)
+            => item.Name.ToSafeFileName(shortStringHelper);
 
         protected override FormDataSource GetFromService(FormDataSource item)
             => syncFormService.GetDataSource(item.Id);
 
-        protected override Guid GetItemKey(FormDataSource item)
-            => item.Id;
-
         protected override string GetItemName(FormDataSource item)
             => item.Name;
 
-        protected override string GetItemPath(FormDataSource item, bool useGuid, bool isFlat)
-            => item.Name.ToSafeFileName();
-
-        protected override void InitializeEvents(HandlerSettings settings)
+        public void Handle(DataSourceDeletedNotification notification)
         {
-            if (Configuration.StoreUmbracoFormsInDb)
+            if (!ShouldProcess()) return;
+
+            foreach (var dataSource in notification.DeletedEntities)
             {
-                dataSourceService.Saved += DataSource_Saved;
-                dataSourceService.Deleted += DataSource_Deleted;
-            }
-            else
-            {
-                dataSourceStorage.Saved += DataSource_Saved;
-                dataSourceStorage.Deleted += DataSource_Deleted;
+
+                var filename = GetPath(Path.Combine(rootFolder, this.DefaultFolder), dataSource, DefaultConfig.GuidNames, DefaultConfig.UseFlatStructure);
+
+                var attempt = serializer.SerializeEmpty(dataSource, SyncActionType.Delete, string.Empty);
+                if (attempt.Success)
+                {
+                    syncFileService.SaveXElement(attempt.Item, filename);
+                    this.CleanUp(dataSource, filename, Path.Combine(rootFolder, DefaultFolder));
+                }
             }
         }
 
-        private void DataSource_Deleted(object sender, FormDataSourceEventArgs e)
+        public void Handle(DataSourceSavedNotification notification)
         {
-            if (uSync8BackOffice.eventsPaused || e.FormDataSource == null) return;
+            if (!ShouldProcess()) return;
 
-            var filename = GetPath(Path.Combine(rootFolder, this.DefaultFolder), e.FormDataSource, DefaultConfig.GuidNames, DefaultConfig.UseFlatStructure);
-
-            var attempt = serializer.SerializeEmpty(e.FormDataSource, SyncActionType.Delete, string.Empty);
-            if (attempt.Success)
+            foreach(var dataSource in notification.SavedEntities)
             {
-                syncFileService.SaveXElement(attempt.Item, filename);
-                this.CleanUp(e.FormDataSource, filename, Path.Combine(rootFolder, DefaultFolder));
+                var attempts = this.Export(dataSource, Path.Combine(rootFolder, this.DefaultFolder), this.DefaultConfig);
+
+                foreach (var attempt in attempts.Where(x => x.Success))
+                {
+                    this.CleanUp(dataSource, attempt.FileName, Path.Combine(rootFolder, this.DefaultFolder));
+                }
             }
         }
 
-        private void DataSource_Saved(object sender, FormDataSourceEventArgs e)
+        private bool ShouldProcess()
         {
-            if (uSync8BackOffice.eventsPaused) return;
-
-            var attempts = this.Export(e.FormDataSource, Path.Combine(rootFolder, this.DefaultFolder), this.DefaultConfig);
-
-            foreach(var attempt in attempts.Where(x => x.Success))
-            {
-                this.CleanUp(e.FormDataSource, attempt.FileName, Path.Combine(rootFolder, this.DefaultFolder));
-            }
+            if (_mutexService.IsPaused) return false;
+            if (!DefaultConfig.Enabled) return false;
+            return true;
         }
     }
 }

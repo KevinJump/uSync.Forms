@@ -4,28 +4,24 @@ using System.Xml.Linq;
 
 using Newtonsoft.Json;
 
-using Umbraco.Core;
-using Umbraco.Core.Logging;
+using Umbraco.Cms.Core;
 using Umbraco.Forms.Core;
 
 using uSync.Forms.Services;
 
-using uSync8.Core;
-using uSync8.Core.Extensions;
-using uSync8.Core.Models;
-using uSync8.Core.Serialization;
+using uSync.Core;
+using uSync.Core.Models;
+using uSync.Core.Serialization;
+using Microsoft.Extensions.Logging;
 
 namespace uSync.Forms.Serializers
 {
     [SyncSerializer("880817EB-BE5C-4540-ABDE-82010846F039", "DataSource", "DataSource", IsTwoPass = false)]
-    public class DataSourceSerializer : SyncSerializerRoot<FormDataSource>, ISyncNodeSerializer<FormDataSource>
+    public class DataSourceSerializer : SyncSerializerRoot<FormDataSource>, ISyncSerializer<FormDataSource>
     {
         private SyncFormService syncFormService;
 
-        
-        public DataSourceSerializer(
-            SyncFormService syncFormService,
-            ILogger logger) : base(logger)
+        public DataSourceSerializer(ILogger<SyncSerializerRoot<FormDataSource>> logger, SyncFormService syncFormService) : base(logger)
         {
             this.syncFormService = syncFormService;
         }
@@ -43,7 +39,7 @@ namespace uSync.Forms.Serializers
             var settingsJson = JsonConvert.SerializeObject(item.Settings, Formatting.Indented);
             node.Add(new XElement("Settings", new XCData(settingsJson)));
 
-            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export);
+            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, Array.Empty<uSyncChange>());
         }
 
         protected override SyncAttempt<FormDataSource> DeserializeCore(XElement node, SyncSerializerOptions options)
@@ -71,27 +67,28 @@ namespace uSync.Forms.Serializers
 
             // SaveItem(item);
 
-            return SyncAttempt<FormDataSource>.Succeed(item.Name, item, ChangeType.Import);
+            return SyncAttempt<FormDataSource>.Succeed(item.Name, item, ChangeType.Import, Array.Empty<uSyncChange>());
         }
 
-        protected override void DeleteItem(FormDataSource item)
+        public override FormDataSource FindItem(int id) => null;
+
+        public override void DeleteItem(FormDataSource item)
             => syncFormService.DeleteDataSource(item);
 
-        protected override FormDataSource FindItem(Guid key)
+        public override FormDataSource FindItem(Guid key)
             => syncFormService.GetDataSource(key);
 
-        protected override FormDataSource FindItem(string alias)
+        public override FormDataSource FindItem(string alias)
             => syncFormService.GetDataSource(alias);
 
-        protected override string ItemAlias(FormDataSource item)
+        public override string ItemAlias(FormDataSource item)
             => item.Name;
 
-        protected override Guid ItemKey(FormDataSource item)
+        public override Guid ItemKey(FormDataSource item)
             => item.Id;
 
-        protected override void SaveItem(FormDataSource item)
+        public override void SaveItem(FormDataSource item)
             => syncFormService.SaveDataSource(item);
-
 
         protected override XElement CleanseNode(XElement node)
         {
@@ -99,5 +96,6 @@ namespace uSync.Forms.Serializers
             cleaned.Attribute("Key").Value = Guid.Empty.ToString();
             return cleaned;
         }
+
     }
 }
