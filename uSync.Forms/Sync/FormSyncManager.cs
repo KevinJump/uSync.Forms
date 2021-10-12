@@ -53,26 +53,19 @@ namespace uSync.Forms.Sync
 
         public SyncLocalItem GetEntity(SyncTreeItem treeItem)
         {
-            _logger.LogInformation("Tree Info {id} {section} {query} {alias} ", treeItem.Id, treeItem.SectionAlias, treeItem.QueryStrings, treeItem.TreeAlias);
-
             if (treeItem.Id == Constants.System.RootString)
                 return GetRootItem(treeItem);
-
-            
 
             if (treeItem.Id.StartsWith("folder-"))
             {
                 // folder
                 var folderId = treeItem.Id.Substring(7);
 
-                _logger.LogInformation("FolderId : {folderId}", folderId);
                 if (!Guid.TryParse(folderId, out Guid folderKey)) return null;
 
-                _logger.LogInformation("FolderKey: {folderKey}", folderKey);
                 var folder = _formService.GetFolder(folderKey);
                 if (folder == null) return null;
 
-                _logger.LogInformation("Found Folder: {name}", folder.Name);
                 return new SyncLocalItem
                 {
                     EntityType = EntityType,
@@ -128,8 +121,6 @@ namespace uSync.Forms.Sync
             }
             else
             {
-                _logger.LogInformation("GetDecendants: {item}", item.Udi);
-
                 switch(item.Udi.EntityType)
                 {
                     case UdiEntityType.FormsForm:
@@ -144,7 +135,7 @@ namespace uSync.Forms.Sync
                                     Flags = flags & ~DependencyFlags.IncludeChildren
                                 });
 
-                            _logger.LogInformation("Getting Forms in folder: {guid} {count}", guidUdi, forms.Count());
+                            _logger.LogDebug("Getting Forms in folder: {guid} {count}", guidUdi, forms.Count());
 
                             return forms;
                         }
