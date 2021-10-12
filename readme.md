@@ -1,9 +1,9 @@
-## uSync.FormsEdition (Umbraco v8)
+## uSync.FormsEdition (Umbraco v9)
 
-Synchronize Umbraco forms between umbraco installations as part of uSync 8
+Synchronize Umbraco forms between umbraco installations as part of uSync 9
 
 ```
-Install-Package uSync.Forms
+dotnet add package uSync.Forms --version 9.0.0
 ```
 https://www.nuget.org/packages/uSync.Forms
 
@@ -13,9 +13,9 @@ uSync.FormsEdition is an add on to uSync v8 that provides handlers and serialize
 so you can sync forms, datasources and prevaluesources between servers. 
 
 ### Requires Umbraco.Forms
-uSync.Forms Edition has been developed against Umbraco Forms v8.6.1 and should 
-work with both onDisk and Database setups of Forms. 
+uSync.Forms Edition has been developed against Umbraco Forms v9.
+
 
 ---
 
-![uSync.Forms](./dist/usync-forms.gif)
+![uSync.Forms](./screenshots/usync-dashboard.png)
