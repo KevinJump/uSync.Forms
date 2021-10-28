@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Cors.Infrastructure;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -41,8 +43,17 @@ namespace uSync.Forms.Services
 
         public IEnumerable<Form> GetAllForms() => formService.Get();
 
-        public Form GetForm(Guid key) => formService.Get(key);
-        public Form GetForm(string name) => formService.Get(name);
+        public Form GetForm(Guid key)
+        {
+            try { return formService.Get(key); }
+            catch { return null; }
+        }
+
+        public Form GetForm(string name) { 
+            try { return formService.Get(name); }
+            catch { return null; }
+        }
+
         public void SaveForm(Form item)
         {
             _ = IsNew(item) ? formService.Insert(item) : formService.Update(item);
