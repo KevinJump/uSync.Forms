@@ -17,10 +17,8 @@
 
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 
-		<!-- until .net 6 adding the readme breaks the symbols :( -->
-		<!--
 		<IncludeSymbols>true</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat> -->
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
 		
