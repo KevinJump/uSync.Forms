@@ -1,22 +1,11 @@
 {
+  "name": "uSync",
+  "version": "9.3.2",
   "javascript": [
-
-    "~/App_Plugins/uSync/usync_900.js",
-
-    "~/App_Plugins/uSync/usync.service.js",
-    "~/App_Plugins/uSync/usync.hub.js",
-
-    "~/App_Plugins/uSync/backoffice/usync/usync.dashboard.controller.js",
-    "~/App_Plugins/uSync/settings/settings.controller.js",
-    "~/App_Plugins/uSync/settings/expansion.controller.js",
-    "~/App_Plugins/uSync/settings/usync.controller.js",
-
-    "~/App_Plugins/uSync/changedialog.controller.js",
-    "~/App_Plugins/uSync/components/usync.reportview.component.js",
-    "~/App_Plugins/uSync/components/usync.progressview.component.js"
+    "~/App_Plugins/uSync/usync.9.3.2.min.js"
   ],
   "css": [
-    "~/App_Plugins/uSync/usync_900.css",
-    "~/App_Plugins/uSync/usync.css"
-  ]
+    "~/App_Plugins/uSync/usync.9.3.2.min.css"
+  ],
+  "bundleOptions": "None"
 }
