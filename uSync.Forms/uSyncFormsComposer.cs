@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.Extensions.DependencyInjection;
+
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
@@ -29,8 +31,8 @@ namespace uSync.Forms
             // builder.AddUmbracoFormsCore();
             builder.AdduSync();
 
-            builder.Services.AddUnique<SyncFormService>();
-            builder.Services.AddUnique<FormsMapperHelper>();
+            builder.Services.AddSingleton<SyncFormService>();
+            builder.Services.AddSingleton<FormsMapperHelper>();
 
             builder.AddNotificationHandler<FormSavedNotification, FormHandler>();
             builder.AddNotificationHandler<FormDeletedNotification, FormHandler>();

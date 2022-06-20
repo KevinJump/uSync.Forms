@@ -27,6 +27,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+
+		<None Include="readme.md" Pack="true" PackagePath="\" />
+		<None Include="readme.txt" Pack="true" PackagePath="\" />
+
 		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.0.0" />
 		<PackageReference Include="Umbraco.Forms" Version="10.0.0">
 			<ExcludeAssets>buildTransitive;build</ExcludeAssets>
