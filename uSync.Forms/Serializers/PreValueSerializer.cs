@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
+
+using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
 
-using Umbraco.Core;
 using Umbraco.Forms.Core;
 using Umbraco.Forms.Core.Providers;
 
-using uSync.Core.Serialization;
-using uSync.Forms.Services;
-
 using uSync.Core;
 using uSync.Core.Models;
-using Microsoft.Extensions.Logging;
+using uSync.Core.Serialization;
+using uSync.Forms.Services;
 
 namespace uSync.Forms.Serializers
 {

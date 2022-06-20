@@ -6,7 +6,6 @@ using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using Umbraco.Core;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Forms.Core;
 using Umbraco.Forms.Core.Enums;

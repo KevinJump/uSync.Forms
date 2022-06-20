@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Umbraco.Core;
 using Umbraco.Extensions;
 using Umbraco.Forms.Core;
 using Umbraco.Forms.Core.Interfaces;

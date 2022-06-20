@@ -1,9 +1,0 @@
-<language alias="en" intName="English (US)" localName="English (US)" lcid="" culture="en-US">
-
-	<area alias="usync">
-		<key alias="import-forms">Import Forms settings</key>
-		<key alias="report-forms">Report Forms settings</key>
-		<key alias="forms-description">Sync Umbraco forms and settings</key>
-	</area>
-
-</language>
