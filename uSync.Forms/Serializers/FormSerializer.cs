@@ -63,6 +63,7 @@ namespace uSync.Forms.Serializers
             info.Add(new XElement("StoreRecordsLocally", item.StoreRecordsLocally));
             info.Add(new XElement("CssClass", item.CssClass ?? string.Empty));
             info.Add(new XElement("DisabledDefaultStylesheet", item.DisableDefaultStylesheet));
+            info.Add(new XElement(nameof(item.AutocompleteAttribute), item.AutocompleteAttribute));
 
             info.Add(SerializeWorkflows(item));
             info.Add(SerializeDataSource(item.DataSource));
@@ -243,6 +244,8 @@ namespace uSync.Forms.Serializers
             item.StoreRecordsLocally = info.Element("StoreRecordsLocally").ValueOrDefault(false);
             item.CssClass = info.Element("CssClass").ValueOrDefault(string.Empty);
             item.DisableDefaultStylesheet = info.Element("DisabledDefaultStylesheet").ValueOrDefault(false);
+
+            item.AutocompleteAttribute = info.Element(nameof(item.AutocompleteAttribute)).ValueOrDefault(string.Empty);
 
             item.SubmitLabel = info.Element("SubmitLabel").ValueOrDefault(string.Empty);
             item.NextLabel = info.Element("NextLabel").ValueOrDefault(string.Empty);
