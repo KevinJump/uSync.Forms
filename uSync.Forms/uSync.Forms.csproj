@@ -11,7 +11,7 @@
 		
 		<Title>uSync Forms</Title>
 		<Description>uSync for Umbraco Forms and Settings</Description>
-		<PackageTags>umbraco usync</PackageTags>
+		<PackageTags>umbraco usync umbraco-marketplace</PackageTags>
 
 		<RepositoryUrl>https://github.com/KevinJump/uSync.Forms</RepositoryUrl>
 		<PackageProjectUrl>https://jumoo.co.uk/uSync</PackageProjectUrl>

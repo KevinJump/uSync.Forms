@@ -49,11 +49,13 @@ Write-Host "Config   :" $env
 Write-Host "Folder   :" $outFolder
 "----------------------------------"; ""
 
+$buildParams = "ContinuousIntegrationBuild=true,version=$fullVersion"
+
 dotnet restore ..
 
 ""; "##### Packaging"; "----------------------------------" ; ""
 
-dotnet pack ..\uSync.Forms\uSync.Forms.csproj --no-restore -c $env -o $outFolder /p:ContinuousIntegrationBuild=true,version=$fullVersion 
+dotnet pack ..\uSync.Forms\uSync.Forms.csproj --no-restore -c $env -o $outFolder /p:$buildParams
 
 ""; "##### Copying to LocalGit folder"; "----------------------------------" ; ""
 XCOPY "$outFolder\*.nupkg" "C:\Source\localgit" /Q /Y 
