@@ -27,9 +27,9 @@ namespace uSync.Forms.Services
         {
             var workflows = GetWorkflows(form);
             if (workflows == null) return null;
-            return (Workflow)workflows.FirstOrDefault(x => x.Id == id);
+            return workflows.FirstOrDefault(x => x.Id == id);
         }
 
-        public List<IWorkflow> GetWorkflows(Form form) => workflowService.Get(form);
+        public List<Workflow> GetWorkflows(Form form) => workflowService.Get(form);
     }
 }

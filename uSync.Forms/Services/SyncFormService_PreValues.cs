@@ -4,7 +4,6 @@ using System.Linq;
 
 using Umbraco.Extensions;
 using Umbraco.Forms.Core;
-using Umbraco.Forms.Core.Interfaces;
 
 namespace uSync.Forms.Services
 {
@@ -14,15 +13,15 @@ namespace uSync.Forms.Services
     public partial class SyncFormService
     {
 
-        public IEnumerable<IFieldPreValueSource> GetAllPreValues() => prevalueSourceService.Get();
+        public IEnumerable<FieldPreValueSource> GetAllPreValues() => prevalueSourceService.Get();
 
-        public FieldPreValueSource GetPreValueSource(Guid id) => (FieldPreValueSource)prevalueSourceService.Get(id);
+        public FieldPreValueSource GetPreValueSource(Guid id) => prevalueSourceService.Get(id);
 
         public FieldPreValueSource GetPreValueSource(string name)
         {
             var preValues = GetAllPreValues();
             if (preValues != null)
-                return (FieldPreValueSource)preValues.FirstOrDefault(x => x.Name.InvariantEquals(name));
+                return preValues.FirstOrDefault(x => x.Name.InvariantEquals(name));
 
             return default;
         }

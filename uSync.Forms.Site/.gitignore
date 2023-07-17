@@ -459,6 +459,7 @@ $RECYCLE.BIN/
 
 # JSON schema file for appsettings.json
 appsettings-schema.json
+appsettings-schema.*.json
 
 # Packages created from the backoffice (package.xml/package.zip)
 /umbraco/Data/CreatedPackages/
