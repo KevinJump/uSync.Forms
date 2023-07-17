@@ -134,7 +134,7 @@ namespace uSync.Forms.Services
                 {
                     formFolder = ((IFolderService)folderService).Insert(formFolder);
                 }
-                catch(Exception ex)
+                catch
                 {
                     // error (could be we are importing to something that doesn't 
                     // support folders)
