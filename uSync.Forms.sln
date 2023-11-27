@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "uSync.Forms", "uSync.Forms\uSync.Forms.csproj", "{89149F89-E7BE-45F2-9F22-7A8D7F77C6B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSync.Forms.Site", "uSync.Forms.Site\uSync.Forms.Site.csproj", "{DC33B3C0-A58F-438F-94C8-032D03C1039F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSync.Forms.Site", "uSync.Forms.Site\uSync.Forms.Site.csproj", "{13CCA827-D4C5-4E15-9ABA-4874E35317F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{89149F89-E7BE-45F2-9F22-7A8D7F77C6B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89149F89-E7BE-45F2-9F22-7A8D7F77C6B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89149F89-E7BE-45F2-9F22-7A8D7F77C6B9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DC33B3C0-A58F-438F-94C8-032D03C1039F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC33B3C0-A58F-438F-94C8-032D03C1039F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC33B3C0-A58F-438F-94C8-032D03C1039F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC33B3C0-A58F-438F-94C8-032D03C1039F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13CCA827-D4C5-4E15-9ABA-4874E35317F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13CCA827-D4C5-4E15-9ABA-4874E35317F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13CCA827-D4C5-4E15-9ABA-4874E35317F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13CCA827-D4C5-4E15-9ABA-4874E35317F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

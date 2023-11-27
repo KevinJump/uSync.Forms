@@ -4,13 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Extensions;
 using Umbraco.Forms;
 using Umbraco.Forms.Core.Services.Notifications;
 
 using uSync.BackOffice;
 using uSync.Forms.Handlers;
-using uSync.Forms.ServiceConnectors;
 using uSync.Forms.Services;
 
 namespace uSync.Forms
@@ -46,7 +44,7 @@ namespace uSync.Forms
             builder.AddNotificationHandler<FolderSavedNotification, FormsFolderHandler>();
             builder.AddNotificationHandler<FolderDeletedNotification, FormsFolderHandler>();
 
-            UdiParserServiceConnectors.RegisterServiceConnector<FormsFolderServiceConnector>();
+            UdiParser.RegisterUdiType(uSyncForms.FolderEntityType, UdiType.GuidUdi);
 
             return builder;
         }
