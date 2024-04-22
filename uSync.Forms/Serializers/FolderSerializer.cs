@@ -96,10 +96,10 @@ namespace uSync.Forms.Serializers
                 new XAttribute("Key", ItemKey(item)),
                 new XAttribute("Alias", ItemAlias(item)));
 
-            var info = new XElement("Info");
-            info.Add(new XElement("Name", item.Name));
-            info.Add(new XElement("Parent", item.ParentId));
-            info.Add(new XElement("Path", _syncFormService.GetFolderPath(item.Id)));
+            var info = new XElement("Info",
+                new XElement("Name", item.Name),
+                new XElement("Parent", item.ParentId),
+                new XElement("Path", _syncFormService.GetFolderPath(item.Id)));
 
             node.Add(info);
 

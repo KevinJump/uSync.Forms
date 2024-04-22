@@ -13,7 +13,7 @@ namespace uSync.Forms.Services
 
         public void SaveWorkflow(Workflow workflow, Form form)
         {
-            _ = IsNew(workflow, form) ? workflowService.Insert(workflow) : workflowService.Update(workflow);
+            _ = IsNew(workflow, form) ? _workflowService.Insert(workflow) : _workflowService.Update(workflow);
         }
 
         /// <summary>
@@ -30,6 +30,6 @@ namespace uSync.Forms.Services
             return workflows.FirstOrDefault(x => x.Id == id);
         }
 
-        public List<Workflow> GetWorkflows(Form form) => workflowService.Get(form);
+        public List<Workflow> GetWorkflows(Form form) => _workflowService.Get(form);
     }
 }

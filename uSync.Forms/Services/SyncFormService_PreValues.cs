@@ -13,9 +13,9 @@ namespace uSync.Forms.Services
     public partial class SyncFormService
     {
 
-        public IEnumerable<FieldPreValueSource> GetAllPreValues() => prevalueSourceService.Get();
+        public IEnumerable<FieldPreValueSource> GetAllPreValues() => _preValueSourceService.Get();
 
-        public FieldPreValueSource GetPreValueSource(Guid id) => prevalueSourceService.Get(id);
+        public FieldPreValueSource GetPreValueSource(Guid id) => _preValueSourceService.Get(id);
 
         public FieldPreValueSource GetPreValueSource(string name)
         {
@@ -28,7 +28,7 @@ namespace uSync.Forms.Services
 
         public void SavePreValueSource(FieldPreValueSource item)
         {
-            _ = IsNew(item) ? prevalueSourceService.Insert(item) : prevalueSourceService.Update(item);
+            _ = IsNew(item) ? _preValueSourceService.Insert(item) : _preValueSourceService.Update(item);
         }
 
         private bool IsNew(FieldPreValueSource item)
@@ -36,6 +36,6 @@ namespace uSync.Forms.Services
             return item.Id == Guid.Empty || GetAllPreValues().FirstOrDefault(x => x.Id == item.Id) == null;
         }
 
-        public void DeletePreValueSource(FieldPreValueSource item) => prevalueSourceService.Delete(item);
+        public void DeletePreValueSource(FieldPreValueSource item) => _preValueSourceService.Delete(item);
     }
 }

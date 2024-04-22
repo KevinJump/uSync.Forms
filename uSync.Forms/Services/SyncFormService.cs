@@ -15,48 +15,48 @@ namespace uSync.Forms.Services
     /// </summary>
     public partial class SyncFormService
     {
-        private readonly IPrevalueSourceService prevalueSourceService;
+        private readonly IPrevalueSourceService _preValueSourceService;
 
-        private readonly IDataSourceService dataSourceService;
+        private readonly IDataSourceService _dataSourceService;
 
-        private readonly IFormService formService;
-        private readonly IFolderService folderService;
+        private readonly IFormService _formService;
+        private readonly IFolderService _folderService;
 
-        private readonly IWorkflowService workflowService;
+        private readonly IWorkflowService _workflowService;
 
         public SyncFormService(
-            IPrevalueSourceService prevalueSourceService,
+            IPrevalueSourceService preValueSourceService,
             IDataSourceService dataSourceService,
             IFormService formService,
             IFolderService folderService,
             IWorkflowService workflowService)
         {
-            this.prevalueSourceService = prevalueSourceService;
+            _preValueSourceService = preValueSourceService;
 
-            this.dataSourceService = dataSourceService;
+            _dataSourceService = dataSourceService;
 
-            this.formService = formService;
-            this.folderService = folderService;
+            _formService = formService;
+            _folderService = folderService;
 
-            this.workflowService = workflowService;
+            _workflowService = workflowService;
         }
 
-        public IEnumerable<Form> GetAllForms() => formService.Get();
+        public IEnumerable<Form> GetAllForms() => _formService.Get();
 
         public Form GetForm(Guid key)
         {
-            try { return formService.Get(key); }
+            try { return _formService.Get(key); }
             catch { return null; }
         }
 
         public Form GetForm(string name) { 
-            try { return formService.Get(name); }
+            try { return _formService.Get(name); }
             catch { return null; }
         }
 
         public void SaveForm(Form item)
         {
-            _ = IsNew(item) ? formService.Insert(item) : formService.Update(item);
+            _ = IsNew(item) ? _formService.Insert(item) : _formService.Update(item);
         }
 
         private bool IsNew(Form item)
@@ -65,7 +65,7 @@ namespace uSync.Forms.Services
 
         public void DeleteForm(Form item)
         {
-            formService.Delete(item);
+            _formService.Delete(item);
         }
 
     }

@@ -11,22 +11,22 @@ namespace uSync.Forms.Services
     public partial class SyncFormService
     {
         private bool IsNew(Folder folder)
-            => folder.Id == Guid.Empty || folderService.Get(folder.Id) == null;
+            => folder.Id == Guid.Empty || _folderService.Get(folder.Id) == null;
 
         public void SaveFolder(Folder item)
         {
-            _ = IsNew(item) ? folderService.Insert(item) : folderService.Update(item);
+            _ = IsNew(item) ? _folderService.Insert(item) : _folderService.Update(item);
         }
 
         public void DeleteFolder(Folder item)
-            => folderService.Delete(item);
+            => _folderService.Delete(item);
 
         public IEnumerable<Folder> GetChildFolders(Guid? parent = null)
         {
             if (parent == null)
-                return folderService.GetAtRoot();
+                return _folderService.GetAtRoot();
 
-            return folderService.GetChildren(parent.Value);
+            return _folderService.GetChildren(parent.Value);
         }
 
         public IEnumerable<Folder> GetAllFolders(Guid? parent = null)
@@ -35,11 +35,11 @@ namespace uSync.Forms.Services
 
             if (parent != null)
             {
-                folders.AddRange(folderService.GetChildren(parent.Value));
+                folders.AddRange(_folderService.GetChildren(parent.Value));
             }
             else
             {
-                folders.AddRange(folderService.GetAtRoot());
+                folders.AddRange(_folderService.GetAtRoot());
             }
 
             foreach (var folder in folders) {
@@ -53,7 +53,7 @@ namespace uSync.Forms.Services
         {
             try
             {
-                return folderService.Get(folderId);
+                return _folderService.Get(folderId);
             }
             catch
             {
@@ -69,11 +69,11 @@ namespace uSync.Forms.Services
                 folderId
             };
 
-            ids.AddRange(folderService.GetChildren(folderId)
+            ids.AddRange(_folderService.GetChildren(folderId)
                 .Select(x => x.Id));
 
             // all forms who live in a folder that is either this folder or a child folder
-            return formService.Get().Where(x => x.FolderId != null && ids.Contains(x.FolderId.Value));
+            return _formService.Get().Where(x => x.FolderId != null && ids.Contains(x.FolderId.Value));
         }
 
         public string GetFolderPath(Guid folderId)
@@ -106,15 +106,15 @@ namespace uSync.Forms.Services
             IEnumerable<Folder> folders; 
             if (parent == Guid.Empty)
             {
-                folders = folderService.GetAtRoot();
+                folders = _folderService.GetAtRoot();
             }
             else
             {
-                folders = folderService.GetChildren(parent);
+                folders = _folderService.GetChildren(parent);
             }
 
             var folder = folderPathClean;
-            if(folderPathClean.IndexOf('/') != -1)
+            if(folderPathClean.Contains('/'))
             {
                 folder = folderPathClean.Substring(0, folderPathClean.IndexOf('/'));
             }
@@ -132,7 +132,7 @@ namespace uSync.Forms.Services
 
                 try
                 {
-                    formFolder = ((IFolderService)folderService).Insert(formFolder);
+                    formFolder = ((IFolderService)_folderService).Insert(formFolder);
                 }
                 catch
                 {
@@ -142,7 +142,7 @@ namespace uSync.Forms.Services
                 }
             };
 
-            if (folderPathClean.IndexOf('/') != -1)
+            if (folderPathClean.Contains('/'))
             {
                 var remaining = folderPathClean.Substring(folderPathClean.IndexOf('/'));
                 return CreateOrFindFolders(formFolder.Id, remaining);

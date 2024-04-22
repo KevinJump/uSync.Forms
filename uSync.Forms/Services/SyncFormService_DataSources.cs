@@ -9,13 +9,13 @@ namespace uSync.Forms.Services
 {
     public partial class SyncFormService
     {
-        public IEnumerable<FormDataSource> GetAllDataSources() => dataSourceService.Get();
+        public IEnumerable<FormDataSource> GetAllDataSources() => _dataSourceService.Get();
 
         public FormDataSource GetDataSource(Guid key)         
         { 
             try
             {
-                return dataSourceService.Get(key);
+                return _dataSourceService.Get(key);
             }
             catch
             {
@@ -34,13 +34,13 @@ namespace uSync.Forms.Services
 
         public void SaveDataSource(FormDataSource item)
         {
-            _ = IsNew(item) ? dataSourceService.Insert(item) : dataSourceService.Update(item);
+            _ = IsNew(item) ? _dataSourceService.Insert(item) : _dataSourceService.Update(item);
         }
 
         private bool IsNew(FormDataSource item)
             => item.Id == Guid.Empty || !GetAllDataSources().Any(x => x.Id == item.Id);
 
-        public void DeleteDataSource(FormDataSource item) => dataSourceService.Delete(item);
+        public void DeleteDataSource(FormDataSource item) => _dataSourceService.Delete(item);
     }
 }
     

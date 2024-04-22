@@ -20,10 +20,10 @@ namespace uSync.Forms.Serializers
     [SyncSerializer("A8A00EFF-795E-4D89-BA8F-7871FB9BD459", "PreValue", "PreValue", IsTwoPass = false)]
     public class PreValueSerializer : SyncSerializerRoot<FieldPreValueSource>, ISyncSerializer<FieldPreValueSource>
     {
-        private FormsMapperHelper _mapperHelper;
+        private readonly FormsMapperHelper _mapperHelper;
 
-        private SyncFormService SyncFormService;
-        private FieldPreValueSourceCollection fieldPreValueSourceTypes;
+        private readonly SyncFormService _syncFormService;
+        private readonly FieldPreValueSourceCollection _fieldPreValueSourceTypes;
 
         public PreValueSerializer(
             SyncFormService syncFormService,
@@ -31,9 +31,8 @@ namespace uSync.Forms.Serializers
             FieldPreValueSourceCollection fieldPreValueSourceTypes,
             ILogger<PreValueSerializer> logger) : base(logger)
         {
-            this.fieldPreValueSourceTypes = fieldPreValueSourceTypes;
-            this.SyncFormService = syncFormService;
-
+            _fieldPreValueSourceTypes = fieldPreValueSourceTypes;
+            _syncFormService = syncFormService;
             _mapperHelper = formsMapperHelper;
         }
 
@@ -44,35 +43,33 @@ namespace uSync.Forms.Serializers
                 new XAttribute("Alias", ItemAlias(item)));
 
 
-            var info = new XElement("Info");
+            var info = new XElement("Info",
+                new XElement ("Name", item.Name),
+                new XElement ("FieldPreValueSourceTypeId", item.FieldPreValueSourceTypeId));
 
-            info.Add(new XElement ("Name", item.Name));
-            info.Add(new XElement ("FieldPreValueSourceTypeId", item.FieldPreValueSourceTypeId));
             node.Add(info);
 
             var settingsJson = JsonConvert.SerializeObject(MapExportSettings(item.Settings), Formatting.Indented);
             node.Add(new XElement("Settings", settingsJson));
 
-            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, Array.Empty<uSyncChange>());
+            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, []);
         }
 
         protected override SyncAttempt<FieldPreValueSource> DeserializeCore(XElement node, SyncSerializerOptions options)
         {
 
-            var item = FindItem(node);
-
-            if (item == null)
-            {
-                item = new FieldPreValueSource();
-                item.Id = node.GetKey();
-            }
+            var item = FindItem(node) 
+                ?? new FieldPreValueSource
+                {
+                    Id = node.GetKey()
+                };
 
             var info = node.Element("Info");
             if (info != null)
             {
-                // validate that the prevalue source type exists (can be added in custom code)
+                // validate that the PreValue source type exists (can be added in custom code)
                 var fieldTypeId = info.Element("FieldPreValueSourceTypeId").ValueOrDefault(Guid.Empty);
-                if (!fieldPreValueSourceTypes.Any(x => x.Id == fieldTypeId))
+                if (!_fieldPreValueSourceTypes.Any(x => x.Id == fieldTypeId))
                 {
                     return SyncAttempt<FieldPreValueSource>.Fail(node.GetAlias(), ChangeType.Fail,
                         "FieldType cannot be found (missing a PreValueProvider?)");
@@ -87,7 +84,7 @@ namespace uSync.Forms.Serializers
                 item.Settings = MapImportSettings(JsonConvert.DeserializeObject<Dictionary<string, string>>(settings));
             }
             
-            return SyncAttempt<FieldPreValueSource>.Succeed(item.Name, item, ChangeType.Import, Array.Empty<uSyncChange>());
+            return SyncAttempt<FieldPreValueSource>.Succeed(item.Name, item, ChangeType.Import, []);
         }
 
         private Dictionary<string, string> MapExportSettings(Dictionary<string, string> settings)
@@ -105,7 +102,7 @@ namespace uSync.Forms.Serializers
 
         private Dictionary<string, string> MapImportSettings(Dictionary<string, string> settings)
         {
-            // for an import we created this directory from the xelement, we don't 
+            // for an import we created this directory from the XElement, we don't 
             // need to copy it. 
             foreach(var key in settings.Keys.ToList())
             {
@@ -117,13 +114,13 @@ namespace uSync.Forms.Serializers
         public override FieldPreValueSource FindItem(int id) => null;
 
         public override void DeleteItem(FieldPreValueSource item)
-            => SyncFormService.DeletePreValueSource(item);
+            => _syncFormService.DeletePreValueSource(item);
 
         public override FieldPreValueSource FindItem(Guid key)
-            => SyncFormService.GetPreValueSource(key);
+            => _syncFormService.GetPreValueSource(key);
 
         public override FieldPreValueSource FindItem(string alias)
-            => SyncFormService.GetPreValueSource(alias);
+            => _syncFormService.GetPreValueSource(alias);
 
         public override string ItemAlias(FieldPreValueSource item)
             => item.Name;
@@ -132,7 +129,7 @@ namespace uSync.Forms.Serializers
             => item.Id;
 
         public override void SaveItem(FieldPreValueSource item)
-            => SyncFormService.SavePreValueSource(item);
+            => _syncFormService.SavePreValueSource(item);
 
 
         /// <summary>

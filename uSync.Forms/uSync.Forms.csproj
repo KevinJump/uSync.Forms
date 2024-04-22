@@ -35,7 +35,7 @@
 		<PackageReference Include="Umbraco.Forms" Version="13.0.0">
 			<ExcludeAssets>buildTransitive;build</ExcludeAssets>
 		</PackageReference>
-		<PackageReference Include="uSync.Backoffice" Version="13.0.0" />
+		<PackageReference Include="uSync.Backoffice" Version="13.2.0" />
 	</ItemGroup>
 
 </Project>

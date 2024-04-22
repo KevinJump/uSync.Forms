@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 
+using Microsoft.Extensions.Logging;
+
 using Newtonsoft.Json;
 
-using Umbraco.Cms.Core;
 using Umbraco.Forms.Core;
-
-using uSync.Forms.Services;
 
 using uSync.Core;
 using uSync.Core.Models;
 using uSync.Core.Serialization;
-using Microsoft.Extensions.Logging;
+using uSync.Forms.Services;
 
 namespace uSync.Forms.Serializers
 {
-    [SyncSerializer("880817EB-BE5C-4540-ABDE-82010846F039", "DataSource", "DataSource", IsTwoPass = false)]
+	[SyncSerializer("880817EB-BE5C-4540-ABDE-82010846F039", "DataSource", "DataSource", IsTwoPass = false)]
     public class DataSourceSerializer : SyncSerializerRoot<FormDataSource>, ISyncSerializer<FormDataSource>
     {
         private SyncFormService syncFormService;
@@ -30,10 +29,10 @@ namespace uSync.Forms.Serializers
         {
             var node = this.InitializeBaseNode(item, item.Name);
 
-            var info = new XElement("Info");
+            var info = new XElement("Info",
+                new XElement("Name", item.Name),
+				new XElement("FormDataSourceTypeId", item.FormDataSourceTypeId));
 
-            info.Add(new XElement("Name", item.Name));
-            info.Add(new XElement("FormDataSourceTypeId", item.FormDataSourceTypeId));
             node.Add(info);
 
             var settingsJson = JsonConvert.SerializeObject(item.Settings, Formatting.Indented);

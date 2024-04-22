@@ -28,14 +28,13 @@ namespace uSync.Forms.Serializers
     [SyncSerializer("AFB4DECC-2828-4414-B85F-ADC1BF711521", "Forms Serializer", UdiEntityType.FormsForm, IsTwoPass = false)]
     public class FormSerializer : SyncSerializerRoot<Form>, ISyncSerializer<Form>
     {
-        private readonly IEntityService entityService;
-        private readonly SyncFormService syncFormService;
+        private readonly IEntityService _entityService;
+        private readonly SyncFormService _syncFormService;
 
         public FormSerializer(ILogger<SyncSerializerRoot<Form>> logger, IEntityService entityService, SyncFormService formService) : base(logger)
         {
-            this.entityService = entityService;
-            this.syncFormService = formService;
-            
+            _entityService = entityService;
+            _syncFormService = formService;
         }
 
         protected override SyncAttempt<XElement> SerializeCore(Form item, SyncSerializerOptions options)
@@ -78,7 +77,7 @@ namespace uSync.Forms.Serializers
 
             node.Add(SerializePages(item.Pages));
 
-            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, Array.Empty<uSyncChange>());
+            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, []);
         }
 
         private void SerializeFolderInfo(XElement node, Form form)
@@ -88,12 +87,12 @@ namespace uSync.Forms.Serializers
             {
                 var value = folderId.GetValue(form);
 
-                var attemt = value.TryConvertTo<Guid?>();
-                if (attemt.Success)
+                var attempt = value.TryConvertTo<Guid?>();
+                if (attempt.Success)
                 {
-                    if (attemt.Result != null)
+                    if (attempt.Result != null)
                     {
-                        var folderPath = syncFormService.GetFolderPath(attemt.Result.Value);
+                        var folderPath = _syncFormService.GetFolderPath(attempt.Result.Value);
                         node.Add(new XElement("Folder", folderPath));
                     }
                     else
@@ -133,10 +132,10 @@ namespace uSync.Forms.Serializers
                             var attempt = GetObjectValue<Guid>(field, "prevalueSourceId");
                             if (attempt && attempt.Result != Guid.Empty)
                             {
-                                var prevalue = syncFormService.GetPreValueSource(attempt.Result);
-                                if (prevalue != null)
+                                var preValue = _syncFormService.GetPreValueSource(attempt.Result);
+                                if (preValue != null)
                                 {
-                                    field["prevalueSourceId"] = prevalue.Name;
+                                    field["prevalueSourceId"] = preValue.Name;
                                 }
                             }
                         }
@@ -163,10 +162,10 @@ namespace uSync.Forms.Serializers
                             var attempt = GetObjectValue<string>(field, "prevalueSourceId");
                             if (attempt && attempt.Result != Guid.Empty.ToString())
                             {
-                                var prevalue = syncFormService.GetPreValueSource(attempt.Result);
-                                if (prevalue != null)
+                                var preValue = _syncFormService.GetPreValueSource(attempt.Result);
+                                if (preValue != null)
                                 {
-                                    field["prevalueSourceId"] = prevalue.Id;
+                                    field["prevalueSourceId"] = preValue.Id;
                                 }
                             }
                         }
@@ -269,7 +268,7 @@ namespace uSync.Forms.Serializers
                 var folderIdProperty = item?.GetType()?.GetProperty("FolderId");
                 if (folderIdProperty != null)
                 {
-                    var folder = syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
+                    var folder = _syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
 
                     if (folder != null) folderIdProperty.SetValue(item, folder.Id);
                 }
@@ -279,7 +278,7 @@ namespace uSync.Forms.Serializers
 
         private XElement SerializeWorkflows(Form form)
         {
-            var workflows = syncFormService.GetWorkflows(form);
+            var workflows = _syncFormService.GetWorkflows(form);
 
             var node = new XElement("Workflows");
 
@@ -332,7 +331,7 @@ namespace uSync.Forms.Serializers
                         workflow.Settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(settings);
                     }
 
-                    syncFormService.SaveWorkflow(workflow, form);
+                    _syncFormService.SaveWorkflow(workflow, form);
                 }
             }
         }
@@ -343,7 +342,7 @@ namespace uSync.Forms.Serializers
 
             if (dataSourceDefinition != null)
             {
-                var dataSource = syncFormService.GetDataSource(dataSourceDefinition.Id);
+                var dataSource = _syncFormService.GetDataSource(dataSourceDefinition.Id);
 
                 node.Add(new XElement("Source", dataSource?.Name ?? dataSourceDefinition.Id.ToString()));
                 var mappingsNode = new XElement("Mappings");
@@ -382,7 +381,7 @@ namespace uSync.Forms.Serializers
             var source = node.Element("Source").ValueOrDefault(string.Empty);
             if (string.IsNullOrWhiteSpace(source)) return;
 
-            var dataSource = syncFormService.GetDataSource(source);
+            var dataSource = _syncFormService.GetDataSource(source);
             if (dataSource != null)
             {
                 dataSourceDefinition.Id = dataSource.Id;
@@ -431,7 +430,7 @@ namespace uSync.Forms.Serializers
             var form = FindItem(alias);
             if (form != null)
             {
-                syncFormService.DeleteForm(form);
+                _syncFormService.DeleteForm(form);
                 return SyncAttempt<Form>.Succeed(alias, ChangeType.Delete);
             }
 
@@ -443,13 +442,13 @@ namespace uSync.Forms.Serializers
 
 
         public override void DeleteItem(Form item)
-            => syncFormService.DeleteForm(item);
+            => _syncFormService.DeleteForm(item);
 
         public override Form FindItem(Guid key)
-            => syncFormService.GetForm(key);
+            => _syncFormService.GetForm(key);
 
         public override Form FindItem(string alias)
-            => syncFormService.GetForm(alias);
+            => _syncFormService.GetForm(alias);
 
         public override string ItemAlias(Form item)
             => item.Name;
@@ -458,7 +457,7 @@ namespace uSync.Forms.Serializers
             => item.Id;
 
         public override void SaveItem(Form item)
-            => syncFormService.SaveForm(item);
+            => _syncFormService.SaveForm(item);
 
         public override Form FindItem(int id) => null;
 
@@ -466,7 +465,7 @@ namespace uSync.Forms.Serializers
         {
             if (id > 0)
             {
-                var attempt = entityService.GetKey(id, UmbracoObjectTypes.Document);
+                var attempt = _entityService.GetKey(id, UmbracoObjectTypes.Document);
                 if (attempt.Success) return attempt.Result;
             }
             return Guid.Empty;
@@ -476,7 +475,7 @@ namespace uSync.Forms.Serializers
         {
             if (key != Guid.Empty)
             {
-                var attempt = entityService.GetId(key, UmbracoObjectTypes.Document);
+                var attempt = _entityService.GetId(key, UmbracoObjectTypes.Document);
                 if (attempt.Success) return attempt.Result;
             }
 
