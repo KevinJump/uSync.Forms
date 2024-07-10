@@ -13,26 +13,23 @@ Forms edition adds syncing for Umbraco Forms - you can now sync:
     - Datasources
     - Prevalues
 
-    uSync.FormsEdition has been tested against Umbraco forms 8.6.1 
-    with both disk and database Storage. It supports folders from 
-    Umbraco forms v8.8 onwards.
+    uSync.FormsEdition has been tested against Umbraco forms 13.x
 
 Repo: https://github.com/KevinJump/uSync.Forms
-Docs: (soon)
-Forums: (soonish)
 
-uSync, uSync.ContentEdition and uSync.Forms are FREE ✔✔✔ you can use them
+uSync and uSync.Forms are FREE ✔✔✔ you can use them
 on any of your projects as many times as you like because they are FREE!
 
- --- 
- uSync.Complete is our awesome add on package that lets you and
- your editors push and pull content, media and settings between
- umbraco installations.
+--- 
+uSync.Complete is our awesome add on package that lets you and
+your editors push and pull content, media and settings between
+umbraco installations.
  
-            https://jumoo.co.uk/uSync/Complete
+           https://jumoo.co.uk/uSync/Complete
 
- Its not free 💰, but the 60 day trial is - so you can have 
- a play around show it the 👨‍💼👩‍💼 with the 💳 and they will ❤ it.   
+Its not free 💰, but the 60 day trial is - so you can have 
+a play around show it the 👨‍💼👩‍💼 with the 💳 and they will ❤ it.   
 
-
- 
+🚨 and when uSync.Forms is installed next to uSync.Complete you can
+push and pull forms between sites. 
+--- 
