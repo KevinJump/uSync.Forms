@@ -1,5 +1,6 @@
 ﻿using Azure;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 using System;
@@ -15,10 +16,14 @@ namespace uSync.Forms.Dependencies;
 public class FormPickerChecker : ISyncDependencyChecker<IContent>
 {
     private readonly ILogger<FormPickerChecker> _logger;
+    private readonly IConfigurationManager _configurationManager;
 
-    public FormPickerChecker(ILogger<FormPickerChecker> logger)
+    public FormPickerChecker(
+        ILogger<FormPickerChecker> logger,
+        IConfigurationManager configurationManager = null)
     {
         _logger = logger;
+        _configurationManager = configurationManager;
     }
 
     public UmbracoObjectTypes ObjectType => UmbracoObjectTypes.Document;
@@ -26,6 +31,12 @@ public class FormPickerChecker : ISyncDependencyChecker<IContent>
     public IEnumerable<uSyncDependency> GetDependencies(IContent item, DependencyFlags flags)
     {
         if (item == null) return [];
+
+        if (_configurationManager.GetValue("uSync:Forms:DisableFormPush", false))
+        {
+            _logger.LogDebug("Form push is disabled via configuration.");
+            return [];
+        }
 
         var items = new List<uSyncDependency>();
 
