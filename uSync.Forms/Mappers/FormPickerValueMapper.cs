@@ -42,13 +42,23 @@ namespace uSync.Forms.Mappers
 
                     if (form != null)
                     {
-                        return new uSyncDependency
+                        var formDependency = new uSyncDependency
                         {
                             Name = form.Name,
                             Udi = Udi.Create(UdiEntityType.FormsForm, form.Id),
                             Flags = flags,
-                            Order = uSyncFormPriorities.Forms
-                        }.AsEnumerableOfOne();
+                            Order = uSyncFormPriorities.Forms,
+                        }.AsEnumerableOfOne().ToList();
+                        if (form.DataSource == null)
+                        {
+                            return formDependency;
+                        }
+                        formDependency.Add(new uSyncDependency
+                        {
+                            Udi = Udi.Create(UdiEntityType.FormsDataSource, form.DataSource.Id),
+                            Flags = flags,
+                            Order = uSyncFormPriorities.DataSources,
+                        });
                     }
                 }
             }
