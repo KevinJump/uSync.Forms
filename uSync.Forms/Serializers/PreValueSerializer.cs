@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-
 using Microsoft.Extensions.Logging;
-
 using Newtonsoft.Json;
-
 using Umbraco.Forms.Core;
+using Umbraco.Forms.Core.Data;
+using Umbraco.Forms.Core.Models;
 using Umbraco.Forms.Core.Providers;
-
+using Umbraco.Forms.Core.Services;
 using uSync.Core;
 using uSync.Core.Models;
 using uSync.Core.Serialization;
@@ -24,14 +23,17 @@ namespace uSync.Forms.Serializers
 
         private readonly SyncFormService _syncFormService;
         private readonly FieldPreValueSourceCollection _fieldPreValueSourceTypes;
+        private readonly IPreValueTextFileStorage _preValueTextFileStorage;
 
         public PreValueSerializer(
             SyncFormService syncFormService,
             FormsMapperHelper formsMapperHelper,
             FieldPreValueSourceCollection fieldPreValueSourceTypes,
+            IPreValueTextFileStorage preValueTextFileStorage,
             ILogger<PreValueSerializer> logger) : base(logger)
         {
             _fieldPreValueSourceTypes = fieldPreValueSourceTypes;
+            _preValueTextFileStorage = preValueTextFileStorage;
             _syncFormService = syncFormService;
             _mapperHelper = formsMapperHelper;
         }
@@ -44,25 +46,48 @@ namespace uSync.Forms.Serializers
 
 
             var info = new XElement("Info",
-                new XElement ("Name", item.Name),
-                new XElement ("FieldPreValueSourceTypeId", item.FieldPreValueSourceTypeId));
+                new XElement("Name", item.Name),
+                new XElement("FieldPreValueSourceTypeId", item.FieldPreValueSourceTypeId));
 
             node.Add(info);
 
             var settingsJson = JsonConvert.SerializeObject(MapExportSettings(item.Settings), Formatting.Indented);
             node.Add(new XElement("Settings", settingsJson));
+            if (item.Settings.ContainsKey("TextFile") && options.GetSetting("IncludeFileContent", true))
+            {
+                node.Add(new XElement("TextFile", SerializeFileContent(item.Settings["TextFile"])));
+            }
 
             return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, []);
         }
 
-        protected override SyncAttempt<FieldPreValueSource> DeserializeCore(XElement node, SyncSerializerOptions options)
+        private XElement SerializeFileContent(string item)
         {
-
-            var item = FindItem(node) 
-                ?? new FieldPreValueSource
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(item))
                 {
-                    Id = node.GetKey()
-                };
+                    return new XElement("FileContent",
+                        JsonConvert.SerializeObject(_preValueTextFileStorage.GetTextFilePreValues(item)));
+                }
+            }
+            catch (Exception ex)
+            {
+                // can happen when the media locations get moved.
+                logger.LogError(ex, "Error reading prevalueSource file: {item}", item);
+            }
+
+            return new XElement("FileContent", "");
+        }
+
+        protected override SyncAttempt<FieldPreValueSource> DeserializeCore(XElement node,
+            SyncSerializerOptions options)
+        {
+            var item = FindItem(node)
+                       ?? new FieldPreValueSource
+                       {
+                           Id = node.GetKey()
+                       };
 
             var info = node.Element("Info");
             if (info != null)
@@ -80,10 +105,22 @@ namespace uSync.Forms.Serializers
             }
 
             var settings = node.Element("Settings").ValueOrDefault(string.Empty);
-            if (!string.IsNullOrWhiteSpace(settings)) {
+            if (!string.IsNullOrWhiteSpace(settings))
+            {
                 item.Settings = MapImportSettings(JsonConvert.DeserializeObject<Dictionary<string, string>>(settings));
             }
-            
+            var textFile = node.Element("TextFile");
+            if (textFile != null)
+            {
+                var textFileContent = textFile.Element("FileContent").ValueOrDefault(string.Empty);
+                if (!string.IsNullOrWhiteSpace(textFileContent))
+                {
+                    var preValues = JsonConvert.DeserializeObject<List<PreValue>>(textFileContent);
+                    var textFileName = item.Settings["TextFile"];
+                    _preValueTextFileStorage.SaveValuesIntoFile(preValues.Select(x=>$"{x.Value}|{x.Caption}").ToList(),textFileName);
+                }
+            }
+
             return SyncAttempt<FieldPreValueSource>.Succeed(item.Name, item, ChangeType.Import, []);
         }
 
@@ -91,8 +128,8 @@ namespace uSync.Forms.Serializers
         {
             // for export we copy the directory so we have no chance of 
             // accidently altering the form data. 
-            var mapped = new Dictionary<string,string>(settings);
-            foreach(var key in mapped.Keys.ToList())
+            var mapped = new Dictionary<string, string>(settings);
+            foreach (var key in mapped.Keys.ToList())
             {
                 mapped[key] = _mapperHelper.GetExportValue(mapped[key]);
             }
@@ -104,10 +141,11 @@ namespace uSync.Forms.Serializers
         {
             // for an import we created this directory from the XElement, we don't 
             // need to copy it. 
-            foreach(var key in settings.Keys.ToList())
+            foreach (var key in settings.Keys.ToList())
             {
                 settings[key] = _mapperHelper.GetImportValue(settings[key]);
             }
+
             return settings;
         }
 
