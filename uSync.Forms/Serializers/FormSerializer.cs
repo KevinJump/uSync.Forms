@@ -147,8 +147,11 @@ namespace uSync.Forms.Serializers
             return jArray.ToString(Formatting.Indented);
         }
 
-        private JArray MapPropertySourceNamesToId(JArray jArray)
+        private Attempt<JArray> MapPropertySourceNamesToId(JArray jArray)
         {
+            bool found = false;
+            List<string> missing = new List<string>();
+
             foreach (var item in jArray.Cast<JObject>())
             {
                 var fieldSets = GetArray(item, "fieldSets");
@@ -168,13 +171,21 @@ namespace uSync.Forms.Serializers
                                 {
                                     field["prevalueSourceId"] = preValue.Id;
                                 }
+                                else
+                                {
+                                    missing.Add(attempt.Result);
+                                    // warn... 
+                                    logger.LogWarning("Unable to map {preValueSource} to source - may be missing on target", attempt.Result);
+                                    field["prevalueSourceId"] = Guid.Empty;
+                                }
                             }
                         }
                     }
                 }
             }
 
-            return jArray;
+            return missing.Count == 0 ? Attempt.Succeed(jArray) 
+                : Attempt.Fail(jArray, new Exception($"Could not find [{string.Join(",", missing)}]"));
         }
 
         private JArray GetArray(JObject obj, string propertyName)
@@ -212,13 +223,14 @@ namespace uSync.Forms.Serializers
                 item.Id = node.GetKey();
             }
 
-            DeserializeInfo(node, item);
+            var changes = new List<uSyncChange>();
 
-            DeserializePages(node, item);
+            DeserializeInfo(node, item);
+            changes.AddRange(DeserializePages(node, item));
 
             // SaveItem(item);
 
-            return SyncAttempt<Form>.Succeed(item.Name, item, ChangeType.Import, Array.Empty<uSyncChange>());
+            return SyncAttempt<Form>.Succeed(item.Name, item, ChangeType.Import, changes);
         }
 
         private void DeserializeInfo(XElement node, Form item)
@@ -414,17 +426,24 @@ namespace uSync.Forms.Serializers
             item.DataSource = dataSourceDefinition;
         }
 
-        private void DeserializePages(XElement node, Form item)
+        private List<uSyncChange> DeserializePages(XElement node, Form item)
         {
+            var changes = new List<uSyncChange>();
+
             var pagesJson = node.Element("Pages").ValueOrDefault(string.Empty);
             if (!string.IsNullOrWhiteSpace(pagesJson))
             {
-                var array = MapPropertySourceNamesToId(JsonConvert.DeserializeObject<JArray>(pagesJson));
-
-                var pages = array.ToObject<List<Page>>();
+                var mapAttempt = MapPropertySourceNamesToId(JsonConvert.DeserializeObject<JArray>(pagesJson));
+                var pages = mapAttempt.Result.ToObject<List<Page>>();
                 if (pages != null)
                     item.Pages = pages;
+
+                if (mapAttempt.Success is false)
+                    changes.AddWarning("Pages", "pages", 
+                        $"Failed to map preValue sources {mapAttempt.Exception.Message} (check they are synced)"); 
             }
+
+            return changes;
         }
 
         protected override SyncAttempt<Form> ProcessDelete(Guid key, string alias, SerializerFlags flags)
