@@ -53,7 +53,8 @@ namespace uSync.Forms.Serializers
             info.Add(new XElement("HideFieldValidation", item.HideFieldValidation));
             info.Add(new XElement("RequireErrorMessage", item.RequiredErrorMessage));
             info.Add(new XElement("InvalidErrorMessage", item.InvalidErrorMessage));
-            info.Add(new XElement("MessageOnSubmit", item.MessageOnSubmit));
+            info.Add(new XElement("MessageOnSubmit", item.MessageOnSubmit,
+                new XAttribute("IsHtml", item.MessageOnSubmitIsHtml)));
 
             info.Add(new XElement("GoToPageOnSubmit", GetContentKey(item.GoToPageOnSubmit)));
 
@@ -235,6 +236,7 @@ namespace uSync.Forms.Serializers
             item.RequiredErrorMessage = info.Element("RequireErrorMessage").ValueOrDefault(string.Empty);
             item.InvalidErrorMessage = info.Element("InvalidErrorMessage").ValueOrDefault(string.Empty);
             item.MessageOnSubmit = info.Element("MessageOnSubmit").ValueOrDefault(string.Empty);
+            item.MessageOnSubmitIsHtml = info.Element("MessageOnSubmit")?.Attribute("IsHtml").ValueOrDefault(false) ?? false;
 
             item.GoToPageOnSubmit = GetContentId(info.Element("GoToPageOnSubmit").ValueOrDefault(Guid.Empty));
 
