@@ -53,7 +53,7 @@ namespace uSync.Forms.Serializers
 
             var settingsJson = JsonConvert.SerializeObject(MapExportSettings(item.Settings), Formatting.Indented);
             node.Add(new XElement("Settings", settingsJson));
-            if (item.Settings.ContainsKey("TextFile") /*  todo: figure out if we want it conditionally && options.GetSetting("IncludeFileContent", false) */)
+            if (item.Settings.ContainsKey("TextFile") && options.GetSetting("IncludeFileContent", true))
             {
                 node.Add(new XElement("TextFile", SerializeFileContent(item.Settings["TextFile"])));
             }
