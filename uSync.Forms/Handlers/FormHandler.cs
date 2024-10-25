@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
@@ -14,7 +16,10 @@ using uSync.BackOffice;
 using uSync.BackOffice.Configuration;
 using uSync.BackOffice.Services;
 using uSync.BackOffice.SyncHandlers;
+using uSync.BackOffice.SyncHandlers.Interfaces;
+using uSync.BackOffice.SyncHandlers.Models;
 using uSync.Core;
+using uSync.Core.Extensions;
 using uSync.Forms.Services;
 
 using static Umbraco.Cms.Core.Constants;
@@ -24,10 +29,10 @@ namespace uSync.Forms.Handlers
 	[SyncHandler("formsHandler", "Forms", "Forms", uSyncFormPriorities.Forms, 
         Icon = "icon-umb-contour usync-addon-icon", EntityType = UdiEntityType.FormsForm)]
     public class FormHandler : SyncHandlerRoot<Form, Form>, ISyncHandler,
-		INotificationHandler<SavedNotification<Form>>,
-		INotificationHandler<DeletedNotification<Form>>,
-		INotificationHandler<SavingNotification<Form>>,
-		INotificationHandler<DeletingNotification<Form>>
+		INotificationAsyncHandler<SavedNotification<Form>>,
+		INotificationAsyncHandler<DeletedNotification<Form>>,
+		INotificationAsyncHandler<SavingNotification<Form>>,
+		INotificationAsyncHandler<DeletingNotification<Form>>
 	{
 		public override string Group => "Forms";
 
@@ -36,9 +41,9 @@ namespace uSync.Forms.Handlers
         public FormHandler(ILogger<SyncHandlerRoot<Form, Form>> logger,
             AppCaches appCaches, 
             IShortStringHelper shortStringHelper,
-            SyncFileService syncFileService,
-            uSyncEventService mutexService,
-            uSyncConfigService uSyncConfig,
+            ISyncFileService syncFileService,
+            ISyncEventService mutexService,
+            ISyncConfigService uSyncConfig,
             ISyncItemFactory itemFactory,
             SyncFormService syncFormService)
             : base(logger, appCaches, shortStringHelper, syncFileService, mutexService, uSyncConfig, itemFactory)
@@ -46,8 +51,8 @@ namespace uSync.Forms.Handlers
             this._syncFormService = syncFormService;
         }
 
-        protected override IEnumerable<uSyncAction> DeleteMissingItems(Form parent, IEnumerable<Guid> keysToKeep, bool reportOnly) 
-            => [];
+        protected override Task<IEnumerable<uSyncAction>> DeleteMissingItemsAsync(Form parent, IEnumerable<Guid> keysToKeep, bool reportOnly)
+            => Task.FromResult(Enumerable.Empty<uSyncAction>());
 
         protected override string GetItemName(Form item)
             => item.Name;
@@ -55,13 +60,18 @@ namespace uSync.Forms.Handlers
         protected override string GetItemPath(Form item, bool useGuid, bool isFlat)
             => item.Name.ToSafeFileName(shortStringHelper);
 
-        protected override IEnumerable<Form> GetChildItems(Form parent)
-			=> parent is null ? _syncFormService.GetAllForms() : [];
 
-        protected override IEnumerable<Form> GetFolders(Form parent)
-            => [];
+        protected override Task<IEnumerable<Form>> GetChildItemsAsync(Form? parent)
+            => uSyncTaskHelper.FromResultOf(() =>
+            {
+                return parent == null ? _syncFormService.GetAllForms() : [];
+            });
 
-        protected override Form GetFromService(Form item)
-            => _syncFormService.GetForm(item.Id);
+
+        protected override Task<IEnumerable<Form>> GetFoldersAsync(Form? parent)
+            => uSyncTaskHelper.FromResultOf(() => Enumerable.Empty<Form>());
+
+        protected override Task<Form?> GetFromServiceAsync(Form? item)
+            => uSyncTaskHelper.FromResultOf<Form?>(() => _syncFormService.GetForm(item.Id));
     }
 }

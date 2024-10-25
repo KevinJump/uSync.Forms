@@ -3,10 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Umbraco.Cms.Core;
 
 using uSync.Core.Dependency;
+using uSync.Core.Extensions;
 using uSync.Core.Sync;
 using uSync.Forms.Services;
 
@@ -50,47 +52,52 @@ namespace uSync.Forms.Sync
         //        PickerView = "/App_Plugins/UmbracoForms/Backoffice/Form/overlays/formpicker/formpicker.html"
         //    };
         //}
+        public Task<SyncEntity?> GetSyncEntityAsync(string key)
+            => uSyncTaskHelper.FromResultOf(() => default(SyncEntity));
 
-        public SyncLocalItem GetEntity(SyncTreeItem treeItem)
-        {
-            if (treeItem.Id == Constants.System.RootString)
-                return GetRootItem(treeItem);
+        //private SyncLocalItem GetEntity(SyncTreeItem treeItem)
+        //{
+        //    if (treeItem.Id == Constants.System.RootString)
+        //        return GetRootItem(treeItem);
 
-            if (treeItem.Id.StartsWith("folder-"))
-            {
-                // folder
-                var folderId = treeItem.Id.Substring(7);
+        //    if (treeItem.Id.StartsWith("folder-"))
+        //    {
+        //        // folder
+        //        var folderId = treeItem.Id.Substring(7);
 
-                if (!Guid.TryParse(folderId, out Guid folderKey)) return null;
+        //        if (!Guid.TryParse(folderId, out Guid folderKey)) return null;
 
-                var folder = _formService.GetFolder(folderKey);
-                if (folder == null) return null;
+        //        var folder = _formService.GetFolder(folderKey);
+        //        if (folder == null) return null;
 
-                return new SyncLocalItem
-                {
-                    EntityType = EntityType,
-                    Name = folder.Name,
-                    Id = folder.Id.ToString(),
-                    Udi = Udi.Create(uSyncForms.FolderEntityType, folder.Id)
-                };
-            }
+        //        return new SyncLocalItem
+        //        {
+        //            EntityType = EntityType,
+        //            Name = folder.Name,
+        //            Id = folder.Id.ToString(),
+        //            Udi = Udi.Create(uSyncForms.FolderEntityType, folder.Id)
+        //        };
+        //    }
 
 
-            if (!Guid.TryParse(treeItem.Id, out Guid formKey)) return null;
+        //    if (!Guid.TryParse(treeItem.Id, out Guid formKey)) return null;
 
-            var form = _formService.GetForm(formKey);
-            if (form == null) return null;
+        //    var form = _formService.GetForm(formKey);
+        //    if (form == null) return null;
 
-            return new SyncLocalItem
-            {
-                EntityType = EntityType,
-                Id = treeItem.Id,
-                Name = form.Name,
-                Udi = Udi.Create(EntityType, form.Id)
-            };
-        }
+        //    return new SyncLocalItem
+        //    {
+        //        EntityType = EntityType,
+        //        Id = treeItem.Id,
+        //        Name = form.Name,
+        //        Udi = Udi.Create(EntityType, form.Id)
+        //    };
+        //}
 
-        public override IEnumerable<SyncItem> GetItems(SyncItem item)
+        public override Task<IEnumerable<SyncItem>> GetItemsAsync(SyncItem item)
+            => uSyncTaskHelper.FromResultOf(() => GetItems(item));
+
+        private IEnumerable<SyncItem> GetItems(SyncItem item)
         {
             var items = new List<SyncItem>();
 
@@ -108,7 +115,10 @@ namespace uSync.Forms.Sync
             return items;            
         }
 
-        protected override IEnumerable<SyncItem> GetDecendants(SyncItem item, DependencyFlags flags)
+        protected override Task<IEnumerable<SyncItem>> GetDescendantsAsync(SyncItem item, DependencyFlags flags)
+            => uSyncTaskHelper.FromResultOf(() => GetDecendants(item, flags));
+
+        private IEnumerable<SyncItem> GetDecendants(SyncItem item, DependencyFlags flags)
         {
             if (item.Udi.IsRoot)
             {

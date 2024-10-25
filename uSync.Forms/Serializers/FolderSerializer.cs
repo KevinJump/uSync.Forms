@@ -11,6 +11,7 @@ using Umbraco.Extensions;
 using Umbraco.Forms.Core.Models;
 
 using uSync.Core;
+using uSync.Core.Extensions;
 using uSync.Core.Models;
 using uSync.Core.Serialization;
 using uSync.Forms.Services;
@@ -28,25 +29,25 @@ namespace uSync.Forms.Serializers
             _syncFormService = syncFormService;
         }
 
-        public override void DeleteItem(Folder item)
-            => _syncFormService.DeleteFolder(item);
+        public override Task DeleteItemAsync(Folder item)
+            => uSyncTaskHelper.FromResultOf(() => _syncFormService.DeleteFolder(item));
 
-        public override Folder FindItem(int id) => null;
+        public override Task<Folder> FindItemAsync(Guid key)
+            => uSyncTaskHelper.FromResultOf(() => _syncFormService.GetFolder(key));
 
-        public override Folder FindItem(Guid key) => _syncFormService.GetFolder(key);
-
-        public override Folder FindItem(string alias) => null;
+        public override Task<Folder> FindItemAsync(string alias)
+            => uSyncTaskHelper.FromResultOf(() => default(Folder));
 
         public override string ItemAlias(Folder item) => item.Name;
 
         public override Guid ItemKey(Folder item) => item.Id;
 
-        public override void SaveItem(Folder item)
-            => _syncFormService.SaveFolder(item);
+        public override Task SaveItemAsync(Folder item)
+            => uSyncTaskHelper.FromResultOf(() => _syncFormService.SaveFolder(item));
 
-        protected override SyncAttempt<Folder> DeserializeCore(XElement node, SyncSerializerOptions options)
-        {
-            var item = CreateOrFindFolder(node);
+        protected override async Task<SyncAttempt<Folder>> DeserializeCoreAsync(XElement node, SyncSerializerOptions options)
+        { 
+            var item = await CreateOrFindFolderAsync(node);
 
             if (item == null)
             {
@@ -65,9 +66,9 @@ namespace uSync.Forms.Serializers
             return SyncAttempt<Folder>.Succeed(item.Name, item, ChangeType.Import, Array.Empty<uSyncChange>());
         }
 
-        private Folder CreateOrFindFolder(XElement node)
+        private async Task<Folder> CreateOrFindFolderAsync(XElement node)
         {
-            var item = FindItem(node.GetKey());
+            var item = await FindItemAsync(node.GetKey());
             if (item != null) return item;
 
             var info = node.Element("Info");
@@ -90,20 +91,23 @@ namespace uSync.Forms.Serializers
             return null;
         }
 
-        protected override SyncAttempt<XElement> SerializeCore(Folder item, SyncSerializerOptions options)
+        protected override Task<SyncAttempt<XElement>> SerializeCoreAsync(Folder item, SyncSerializerOptions options)
         {
-            var node = new XElement(ItemType,
-                new XAttribute("Key", ItemKey(item)),
-                new XAttribute("Alias", ItemAlias(item)));
+            return uSyncTaskHelper.FromResultOf(() =>
+            {
+                var node = new XElement(ItemType,
+                    new XAttribute("Key", ItemKey(item)),
+                    new XAttribute("Alias", ItemAlias(item)));
 
-            var info = new XElement("Info",
-                new XElement("Name", item.Name),
-                new XElement("Parent", item.ParentId),
-                new XElement("Path", _syncFormService.GetFolderPath(item.Id)));
+                var info = new XElement("Info",
+                    new XElement("Name", item.Name),
+                    new XElement("Parent", item.ParentId),
+                    new XElement("Path", _syncFormService.GetFolderPath(item.Id)));
 
-            node.Add(info);
+                node.Add(info);
 
-            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, Array.Empty<uSyncChange>());
+                return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, Array.Empty<uSyncChange>());
+            });
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<StaticWebAssetBasePath>App_Plugins/uSync.Forms</StaticWebAssetBasePath>
 		
 		<ContentTargetFolders>content</ContentTargetFolders>
@@ -23,6 +23,8 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
+
+		<Nullable>enable</Nullable>
 		
 	</PropertyGroup>
 
@@ -31,11 +33,12 @@
 		<None Include="readme.md" Pack="true" PackagePath="\" />
 		<None Include="readme.txt" Pack="true" PackagePath="\" />
 
-		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="13.0.0" />
-		<PackageReference Include="Umbraco.Forms" Version="13.0.0">
+		<PackageReference Include="Umbraco.Cms.Web.Website" Version="15.0.0-rc2" />
+		<PackageReference Include="Umbraco.Cms.Api.Management" Version="15.0.0-rc2" />
+		<PackageReference Include="Umbraco.Forms" Version="15.0.0-rc2">
 			<ExcludeAssets>buildTransitive;build</ExcludeAssets>
 		</PackageReference>
-		<PackageReference Include="uSync.Backoffice" Version="13.2.0" />
+		<PackageReference Include="uSync.Backoffice" Version="15.0.0-build.20241025.1" />
 	</ItemGroup>
 
 </Project>

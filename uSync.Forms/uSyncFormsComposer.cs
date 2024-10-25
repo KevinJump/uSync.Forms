@@ -32,24 +32,24 @@ namespace uSync.Forms
             builder.Services.AddSingleton<SyncFormService>();
             builder.Services.AddSingleton<FormsMapperHelper>();
 
-			builder.AddNotificationHandler<FormSavedNotification, FormHandler>()
-				.AddNotificationHandler<FormDeletedNotification, FormHandler>()
-				.AddNotificationHandler<PrevalueSourceSavedNotification, PreValueHandler>()
-				.AddNotificationHandler<PrevalueSourceDeletedNotification, PreValueHandler>()
-				.AddNotificationHandler<DataSourceSavedNotification, DataSourceHandler>()
-				.AddNotificationHandler<DataSourceDeletedNotification, DataSourceHandler>()
-				.AddNotificationHandler<FolderSavedNotification, FormsFolderHandler>()
-				.AddNotificationHandler<FolderDeletedNotification, FormsFolderHandler>();
+			builder.AddNotificationAsyncHandler<FormSavedNotification, FormHandler>()
+				.AddNotificationAsyncHandler<FormDeletedNotification, FormHandler>()
+				.AddNotificationAsyncHandler<PrevalueSourceSavedNotification, PreValueHandler>()
+				.AddNotificationAsyncHandler<PrevalueSourceDeletedNotification, PreValueHandler>()
+				.AddNotificationAsyncHandler<DataSourceSavedNotification, DataSourceHandler>()
+				.AddNotificationAsyncHandler<DataSourceDeletedNotification, DataSourceHandler>()
+				.AddNotificationAsyncHandler<FolderSavedNotification, FormsFolderHandler>()
+				.AddNotificationAsyncHandler<FolderDeletedNotification, FormsFolderHandler>();
 
 			// roots, saving and deleting to stop overwrittes
-			builder.AddNotificationHandler<FormSavingNotification, FormHandler>()
-				.AddNotificationHandler<FormDeletingNotification, FormHandler>()
-			    .AddNotificationHandler<PrevalueSourceSavingNotification, PreValueHandler>()
-                .AddNotificationHandler<PrevalueSourceDeletingNotification, PreValueHandler>()
-                .AddNotificationHandler<DataSourceSavingNotification, DataSourceHandler>()
-                .AddNotificationHandler<DataSourceDeletingNotification, DataSourceHandler>()
-                .AddNotificationHandler<FolderSavingNotification, FormsFolderHandler>()
-                .AddNotificationHandler<FolderDeletingNotification, FormsFolderHandler>();
+			builder.AddNotificationAsyncHandler<FormSavingNotification, FormHandler>()
+				.AddNotificationAsyncHandler<FormDeletingNotification, FormHandler>()
+			    .AddNotificationAsyncHandler<PrevalueSourceSavingNotification, PreValueHandler>()
+                .AddNotificationAsyncHandler<PrevalueSourceDeletingNotification, PreValueHandler>()
+                .AddNotificationAsyncHandler<DataSourceSavingNotification, DataSourceHandler>()
+                .AddNotificationAsyncHandler<DataSourceDeletingNotification, DataSourceHandler>()
+                .AddNotificationAsyncHandler<FolderSavingNotification, FormsFolderHandler>()
+                .AddNotificationAsyncHandler<FolderDeletingNotification, FormsFolderHandler>();
 
 			UdiParser.RegisterUdiType(uSyncForms.FolderEntityType, UdiType.GuidUdi);
 

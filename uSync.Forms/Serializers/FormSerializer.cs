@@ -22,6 +22,8 @@ using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core;
 using Umbraco.Extensions;
 using Umbraco.Cms.Core.Models;
+using System.Threading.Tasks;
+using uSync.Core.Extensions;
 
 namespace uSync.Forms.Serializers
 {
@@ -37,48 +39,51 @@ namespace uSync.Forms.Serializers
             _syncFormService = formService;
         }
 
-        protected override SyncAttempt<XElement> SerializeCore(Form item, SyncSerializerOptions options)
+        protected override Task<SyncAttempt<XElement>> SerializeCoreAsync(Form item, SyncSerializerOptions options)
         {
-            var node = new XElement(ItemType,
-                new XAttribute("Key", ItemKey(item)),
-                new XAttribute("Alias", ItemAlias(item)));
+            return uSyncTaskHelper.FromResultOf(() =>
+            {
+                var node = new XElement(ItemType,
+                    new XAttribute("Key", ItemKey(item)),
+                    new XAttribute("Alias", ItemAlias(item)));
 
-            var info = new XElement("Info");
-            info.Add(new XElement("Name", item.Name));
-            // info.Add(new XElement("Created", item.Created));
+                var info = new XElement("Info");
+                info.Add(new XElement("Name", item.Name));
+                // info.Add(new XElement("Created", item.Created));
 
-            info.Add(new XElement("FieldIndicationType", item.FieldIndicationType));
-            info.Add(new XElement("Indicator", item.Indicator));
-            info.Add(new XElement("ShowValidationSummary", item.ShowValidationSummary));
-            info.Add(new XElement("HideFieldValidation", item.HideFieldValidation));
-            info.Add(new XElement("RequireErrorMessage", item.RequiredErrorMessage));
-            info.Add(new XElement("InvalidErrorMessage", item.InvalidErrorMessage));
-            info.Add(new XElement("MessageOnSubmit", item.MessageOnSubmit,
-                new XAttribute("IsHtml", item.MessageOnSubmitIsHtml)));
+                info.Add(new XElement("FieldIndicationType", item.FieldIndicationType));
+                info.Add(new XElement("Indicator", item.Indicator));
+                info.Add(new XElement("ShowValidationSummary", item.ShowValidationSummary));
+                info.Add(new XElement("HideFieldValidation", item.HideFieldValidation));
+                info.Add(new XElement("RequireErrorMessage", item.RequiredErrorMessage));
+                info.Add(new XElement("InvalidErrorMessage", item.InvalidErrorMessage));
+                info.Add(new XElement("MessageOnSubmit", item.MessageOnSubmit,
+                    new XAttribute("IsHtml", item.MessageOnSubmitIsHtml)));
 
-            info.Add(new XElement("GoToPageOnSubmit", GetContentKey(item.GoToPageOnSubmit)));
+                info.Add(new XElement("GoToPageOnSubmit", item.GoToPageOnSubmit));
 
-            info.Add(new XElement("XPathOnSubmit", item.XPathOnSubmit ?? string.Empty));
-            info.Add(new XElement("ManualApproval", item.ManualApproval));
-            info.Add(new XElement("StoreRecordsLocally", item.StoreRecordsLocally));
-            info.Add(new XElement("CssClass", item.CssClass ?? string.Empty));
-            info.Add(new XElement("DisabledDefaultStylesheet", item.DisableDefaultStylesheet));
-            info.Add(new XElement(nameof(item.AutocompleteAttribute), item.AutocompleteAttribute));
+                info.Add(new XElement("XPathOnSubmit", item.XPathOnSubmit ?? string.Empty));
+                info.Add(new XElement("ManualApproval", item.ManualApproval));
+                info.Add(new XElement("StoreRecordsLocally", item.StoreRecordsLocally));
+                info.Add(new XElement("CssClass", item.CssClass ?? string.Empty));
+                info.Add(new XElement("DisabledDefaultStylesheet", item.DisableDefaultStylesheet));
+                info.Add(new XElement(nameof(item.AutocompleteAttribute), item.AutocompleteAttribute));
 
-            info.Add(SerializeWorkflows(item));
-            info.Add(SerializeDataSource(item.DataSource));
+                info.Add(SerializeWorkflows(item));
+                info.Add(SerializeDataSource(item.DataSource));
 
-            SerializeFolderInfo(info, item);
+                SerializeFolderInfo(info, item);
 
-            info.Add(new XElement("SubmitLabel", item.SubmitLabel));
-            info.Add(new XElement("NextLabel", item.NextLabel));
-            info.Add(new XElement("PreVLabel", item.PrevLabel));
+                info.Add(new XElement("SubmitLabel", item.SubmitLabel));
+                info.Add(new XElement("NextLabel", item.NextLabel));
+                info.Add(new XElement("PreVLabel", item.PrevLabel));
 
-            node.Add(info);
+                node.Add(info);
 
-            node.Add(SerializePages(item.Pages));
+                node.Add(SerializePages(item.Pages));
 
-            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, []);
+                return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, []);
+            });
         }
 
         private void SerializeFolderInfo(XElement node, Form form)
@@ -209,12 +214,12 @@ namespace uSync.Forms.Serializers
         }
 
 
-        protected override SyncAttempt<Form> DeserializeCore(XElement node, SyncSerializerOptions options)
+        protected override async Task<SyncAttempt<Form>> DeserializeCoreAsync(XElement node, SyncSerializerOptions options)
         {
-            var item = FindItem(node.GetKey());
+            var item = await FindItemAsync(node.GetKey());
             if (item == null)
             {
-                item = FindItem(node.GetAlias());
+                item = await FindItemAsync(node.GetAlias());
             }
 
             if (item == null)
@@ -225,7 +230,7 @@ namespace uSync.Forms.Serializers
 
             var changes = new List<uSyncChange>();
 
-            DeserializeInfo(node, item);
+            await DeserializeInfoAsync(node, item);
             changes.AddRange(DeserializePages(node, item));
 
             // SaveItem(item);
@@ -233,7 +238,7 @@ namespace uSync.Forms.Serializers
             return SyncAttempt<Form>.Succeed(item.Name, item, ChangeType.Import, changes);
         }
 
-        private void DeserializeInfo(XElement node, Form item)
+        private async Task DeserializeInfoAsync(XElement node, Form item)
         {
             var info = node.Element("Info");
             if (info == null) return;
@@ -250,7 +255,7 @@ namespace uSync.Forms.Serializers
             item.MessageOnSubmit = info.Element("MessageOnSubmit").ValueOrDefault(string.Empty);
             item.MessageOnSubmitIsHtml = info.Element("MessageOnSubmit")?.Attribute("IsHtml").ValueOrDefault(false) ?? false;
 
-            item.GoToPageOnSubmit = GetContentId(info.Element("GoToPageOnSubmit").ValueOrDefault(Guid.Empty));
+            item.GoToPageOnSubmit = info.Element("GoToPageOnSubmit").ValueOrDefault(Guid.Empty).ToString();
 
             item.XPathOnSubmit = info.Element("XPathOnSubmit").ValueOrDefault(string.Empty);
             item.ManualApproval = info.Element("ManualApproval").ValueOrDefault(false);
@@ -265,7 +270,7 @@ namespace uSync.Forms.Serializers
             item.PrevLabel = info.Element("PreVLabel").ValueOrDefault(string.Empty);
 
             // have to save before we do the workflow and source. 
-            SaveItem(item);
+            await SaveItemAsync(item);
 
             DeserializeWorkdlows(info, item);
             DesersilizeDataSource(info, item);
@@ -381,7 +386,6 @@ namespace uSync.Forms.Serializers
             return node;
         }
 
-
         private void DesersilizeDataSource(XElement info, Form item)
         {
             var node = info.Element("DataSource");
@@ -446,9 +450,9 @@ namespace uSync.Forms.Serializers
             return changes;
         }
 
-        protected override SyncAttempt<Form> ProcessDelete(Guid key, string alias, SerializerFlags flags)
+        protected override async Task<SyncAttempt<Form>> ProcessDeleteAsync(Guid key, string alias, SerializerFlags flags)
         {
-            var form = FindItem(alias);
+            var form = await FindItemAsync(alias);
             if (form != null)
             {
                 _syncFormService.DeleteForm(form);
@@ -461,15 +465,14 @@ namespace uSync.Forms.Serializers
         protected override SyncAttempt<Form> ProcessRename(Guid key, string alias, SerializerFlags flags)
             => SyncAttempt<Form>.Succeed(alias, ChangeType.NoChange);
 
+        public override Task DeleteItemAsync(Form item)
+            => uSyncTaskHelper.FromResultOf(() => _syncFormService.DeleteForm(item));
 
-        public override void DeleteItem(Form item)
-            => _syncFormService.DeleteForm(item);
+        public override Task<Form?> FindItemAsync(Guid key)
+            => uSyncTaskHelper.FromResultOf<Form?>(() => _syncFormService.GetForm(key));
 
-        public override Form FindItem(Guid key)
-            => _syncFormService.GetForm(key);
-
-        public override Form FindItem(string alias)
-            => _syncFormService.GetForm(alias);
+        public override Task<Form?> FindItemAsync(string alias)
+            => uSyncTaskHelper.FromResultOf<Form?>(() => _syncFormService.GetForm(alias));
 
         public override string ItemAlias(Form item)
             => item.Name;
@@ -477,31 +480,9 @@ namespace uSync.Forms.Serializers
         public override Guid ItemKey(Form item)
             => item.Id;
 
-        public override void SaveItem(Form item)
-            => _syncFormService.SaveForm(item);
+        public override Task SaveItemAsync(Form item)
+            => uSyncTaskHelper.FromResultOf(() => _syncFormService.SaveForm(item));
 
-        public override Form FindItem(int id) => null;
-
-        private Guid GetContentKey(int id)
-        {
-            if (id > 0)
-            {
-                var attempt = _entityService.GetKey(id, UmbracoObjectTypes.Document);
-                if (attempt.Success) return attempt.Result;
-            }
-            return Guid.Empty;
-        }
-
-        private int GetContentId(Guid key)
-        {
-            if (key != Guid.Empty)
-            {
-                var attempt = _entityService.GetId(key, UmbracoObjectTypes.Document);
-                if (attempt.Success) return attempt.Result;
-            }
-
-            return 0;
-        }
 
 
         protected override XElement CleanseNode(XElement node)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 using Microsoft.Extensions.Logging;
@@ -9,6 +10,7 @@ using Newtonsoft.Json;
 using Umbraco.Forms.Core;
 
 using uSync.Core;
+using uSync.Core.Extensions;
 using uSync.Core.Models;
 using uSync.Core.Serialization;
 using uSync.Forms.Services;
@@ -25,25 +27,28 @@ namespace uSync.Forms.Serializers
             this.syncFormService = syncFormService;
         }
 
-        protected override SyncAttempt<XElement> SerializeCore(FormDataSource item, SyncSerializerOptions options)
+        protected override Task<SyncAttempt<XElement>> SerializeCoreAsync(FormDataSource item, SyncSerializerOptions options)
         {
-            var node = this.InitializeBaseNode(item, item.Name);
+            return uSyncTaskHelper.FromResultOf(() =>
+            {
+                var node = this.InitializeBaseNode(item, item.Name);
 
-            var info = new XElement("Info",
-                new XElement("Name", item.Name),
-				new XElement("FormDataSourceTypeId", item.FormDataSourceTypeId));
+                var info = new XElement("Info",
+                    new XElement("Name", item.Name),
+                    new XElement("FormDataSourceTypeId", item.FormDataSourceTypeId));
 
-            node.Add(info);
+                node.Add(info);
 
-            var settingsJson = JsonConvert.SerializeObject(item.Settings, Formatting.Indented);
-            node.Add(new XElement("Settings", new XCData(settingsJson)));
+                var settingsJson = JsonConvert.SerializeObject(item.Settings, Formatting.Indented);
+                node.Add(new XElement("Settings", new XCData(settingsJson)));
 
-            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, Array.Empty<uSyncChange>());
+                return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, Array.Empty<uSyncChange>());
+            });
         }
 
-        protected override SyncAttempt<FormDataSource> DeserializeCore(XElement node, SyncSerializerOptions options)
-        {
-            var item = FindItem(node.GetAlias());
+        protected override async Task<SyncAttempt<FormDataSource>> DeserializeCoreAsync(XElement node, SyncSerializerOptions options)
+        { 
+            var item = await FindItemAsync(node.GetAlias());
 
             if (item == null)
             {
@@ -69,16 +74,14 @@ namespace uSync.Forms.Serializers
             return SyncAttempt<FormDataSource>.Succeed(item.Name, item, ChangeType.Import, Array.Empty<uSyncChange>());
         }
 
-        public override FormDataSource FindItem(int id) => null;
+        public override Task DeleteItemAsync(FormDataSource item)
+            => uSyncTaskHelper.FromResultOf(() => syncFormService.DeleteDataSource(item));
 
-        public override void DeleteItem(FormDataSource item)
-            => syncFormService.DeleteDataSource(item);
+        public override Task<FormDataSource> FindItemAsync(Guid key)
+            => uSyncTaskHelper.FromResultOf(() => syncFormService.GetDataSource(key));
 
-        public override FormDataSource FindItem(Guid key)
-            => syncFormService.GetDataSource(key);
-
-        public override FormDataSource FindItem(string alias)
-            => syncFormService.GetDataSource(alias);
+        public override Task<FormDataSource> FindItemAsync(string alias)
+            => uSyncTaskHelper.FromResultOf(() => syncFormService.GetDataSource(alias));
 
         public override string ItemAlias(FormDataSource item)
             => item.Name;
@@ -86,8 +89,8 @@ namespace uSync.Forms.Serializers
         public override Guid ItemKey(FormDataSource item)
             => item.Id;
 
-        public override void SaveItem(FormDataSource item)
-            => syncFormService.SaveDataSource(item);
+        public override Task SaveItemAsync(FormDataSource item)
+            => uSyncTaskHelper.FromResultOf(() => syncFormService.SaveDataSource(item));
 
         protected override XElement CleanseNode(XElement node)
         {

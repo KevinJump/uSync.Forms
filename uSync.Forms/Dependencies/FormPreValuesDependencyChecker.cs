@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models;
@@ -19,7 +20,7 @@ namespace uSync.Forms.Dependencies
     {
         public UmbracoObjectTypes ObjectType => UmbracoObjectTypes.FormsPreValue;
 
-        public IEnumerable<uSyncDependency> GetDependencies(FieldPreValueSource item, DependencyFlags flags)
+        private IEnumerable<uSyncDependency> GetDependencies(FieldPreValueSource item, DependencyFlags flags)
         {
             if (item == null) return Enumerable.Empty<uSyncDependency>();
 
@@ -38,6 +39,7 @@ namespace uSync.Forms.Dependencies
             return items;
         }
 
-        
+        public Task<IEnumerable<uSyncDependency>> GetDependenciesAsync(FieldPreValueSource item, DependencyFlags flags)
+            => Task.FromResult(GetDependencies(item, flags));
     }
 }

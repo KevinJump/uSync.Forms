@@ -3,10 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Umbraco.Cms.Core;
 
 using uSync.Core.Dependency;
+using uSync.Core.Extensions;
 using uSync.Core.Sync;
 using uSync.Forms.Services;
 
@@ -68,19 +70,30 @@ namespace uSync.Forms.Sync
             };
         }
 
-        public override IEnumerable<SyncItem> GetItems(SyncItem item)
+        public override Task<IEnumerable<SyncItem>> GetItemsAsync(SyncItem item)
         {
-            var items = new List<SyncItem>();
-
-            if (item.Udi.EntityType == UdiEntityType.FormsDataSource)
+            return uSyncTaskHelper.FromResultOf<IEnumerable<SyncItem>>(() =>
             {
-                // we only add orginal item if its a form, we don't sync empty folders.
-                items.Add(item);
-            }
-            return items;            
+                var items = new List<SyncItem>();
+
+                if (item.Udi.EntityType == UdiEntityType.FormsDataSource)
+                {
+                    // we only add orginal item if its a form, we don't sync empty folders.
+                    items.Add(item);
+                }
+                return items;
+            });
         }
 
-        protected override IEnumerable<SyncItem> GetDecendants(SyncItem item, DependencyFlags flags)
+        public Task<SyncEntity?> GetSyncEntityAsync(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Task<IEnumerable<SyncItem>> GetDescendantsAsync(SyncItem item, DependencyFlags flags)
+            => uSyncTaskHelper.FromResultOf(() => GetDecendants(item, flags));
+        
+        protected IEnumerable<SyncItem> GetDecendants(SyncItem item, DependencyFlags flags)
         {
             if (item.Udi.IsRoot)
             {

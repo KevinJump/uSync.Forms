@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -10,6 +11,7 @@ using Umbraco.Forms.Core.Models;
 using Umbraco.Forms.Core.Providers;
 using Umbraco.Forms.Core.Services;
 using uSync.Core;
+using uSync.Core.Extensions;
 using uSync.Core.Models;
 using uSync.Core.Serialization;
 using uSync.Forms.Services;
@@ -38,27 +40,32 @@ namespace uSync.Forms.Serializers
             _mapperHelper = formsMapperHelper;
         }
 
-        protected override SyncAttempt<XElement> SerializeCore(FieldPreValueSource item, SyncSerializerOptions options)
+
+        protected override Task<SyncAttempt<XElement>> SerializeCoreAsync(FieldPreValueSource item, SyncSerializerOptions options)
         {
-            var node = new XElement(ItemType,
-                new XAttribute("Key", ItemKey(item)),
-                new XAttribute("Alias", ItemAlias(item)));
-
-
-            var info = new XElement("Info",
-                new XElement("Name", item.Name),
-                new XElement("FieldPreValueSourceTypeId", item.FieldPreValueSourceTypeId));
-
-            node.Add(info);
-
-            var settingsJson = JsonConvert.SerializeObject(MapExportSettings(item.Settings), Formatting.Indented);
-            node.Add(new XElement("Settings", settingsJson));
-            if (item.Settings.ContainsKey("TextFile") && options.GetSetting("IncludeFileContent", true))
+            return uSyncTaskHelper.FromResultOf(() =>
             {
-                node.Add(new XElement("TextFile", SerializeFileContent(item.Settings["TextFile"])));
-            }
 
-            return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, []);
+                var node = new XElement(ItemType,
+                    new XAttribute("Key", ItemKey(item)),
+                    new XAttribute("Alias", ItemAlias(item)));
+
+
+                var info = new XElement("Info",
+                    new XElement("Name", item.Name),
+                    new XElement("FieldPreValueSourceTypeId", item.FieldPreValueSourceTypeId));
+
+                node.Add(info);
+
+                var settingsJson = JsonConvert.SerializeObject(MapExportSettings(item.Settings), Formatting.Indented);
+                node.Add(new XElement("Settings", settingsJson));
+                if (item.Settings.ContainsKey("TextFile") && options.GetSetting("IncludeFileContent", true))
+                {
+                    node.Add(new XElement("TextFile", SerializeFileContent(item.Settings["TextFile"])));
+                }
+
+                return SyncAttempt<XElement>.Succeed(item.Name, node, ChangeType.Export, []);
+            });
         }
 
         private XElement SerializeFileContent(string item)
@@ -80,14 +87,9 @@ namespace uSync.Forms.Serializers
             return new XElement("FileContent", "");
         }
 
-        protected override SyncAttempt<FieldPreValueSource> DeserializeCore(XElement node,
-            SyncSerializerOptions options)
+        protected override async Task<SyncAttempt<FieldPreValueSource>> DeserializeCoreAsync(XElement node, SyncSerializerOptions options)
         {
-            var item = FindItem(node)
-                       ?? new FieldPreValueSource
-                       {
-                           Id = node.GetKey()
-                       };
+            var item = await FindItemAsync(node) ?? new FieldPreValueSource { Id = node.GetKey() };
 
             var info = node.Element("Info");
             if (info != null)
@@ -149,16 +151,14 @@ namespace uSync.Forms.Serializers
             return settings;
         }
 
-        public override FieldPreValueSource FindItem(int id) => null;
+        public override Task DeleteItemAsync(FieldPreValueSource item)
+            => uSyncTaskHelper.FromResultOf(() => _syncFormService.DeletePreValueSource(item));
 
-        public override void DeleteItem(FieldPreValueSource item)
-            => _syncFormService.DeletePreValueSource(item);
+        public override Task<FieldPreValueSource?> FindItemAsync(Guid key)
+            => uSyncTaskHelper.FromResultOf<FieldPreValueSource?>(() => _syncFormService.GetPreValueSource(key));
 
-        public override FieldPreValueSource FindItem(Guid key)
-            => _syncFormService.GetPreValueSource(key);
-
-        public override FieldPreValueSource FindItem(string alias)
-            => _syncFormService.GetPreValueSource(alias);
+        public override Task<FieldPreValueSource?> FindItemAsync(string alias)
+            => uSyncTaskHelper.FromResultOf<FieldPreValueSource?>(() => _syncFormService.GetPreValueSource(alias));
 
         public override string ItemAlias(FieldPreValueSource item)
             => item.Name;
@@ -166,9 +166,8 @@ namespace uSync.Forms.Serializers
         public override Guid ItemKey(FieldPreValueSource item)
             => item.Id;
 
-        public override void SaveItem(FieldPreValueSource item)
-            => _syncFormService.SavePreValueSource(item);
-
+        public override Task SaveItemAsync(FieldPreValueSource item)
+            => uSyncTaskHelper.FromResultOf(() => _syncFormService.SavePreValueSource(item));
 
         /// <summary>
         ///  we remove the key, because it can't be set in forms

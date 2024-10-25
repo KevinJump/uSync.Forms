@@ -3,10 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Umbraco.Cms.Core;
 
 using uSync.Core.Dependency;
+using uSync.Core.Extensions;
 using uSync.Core.Sync;
 using uSync.Forms.Services;
 
@@ -50,73 +52,64 @@ namespace uSync.Forms.Sync
         //    };
         //}
 
-        public SyncLocalItem GetEntity(SyncTreeItem treeItem)
+        public override Task<IEnumerable<SyncItem>> GetItemsAsync(SyncItem item)
         {
-            if (treeItem.Id == Constants.System.RootString)
-                return GetRootItem(treeItem);
-
-            if (!Guid.TryParse(treeItem.Id, out Guid formKey)) return null;
-
-            var form = _formService.GetPreValueSource(formKey);
-            if (form == null) return null;
-
-            return new SyncLocalItem
+            return uSyncTaskHelper.FromResultOf<IEnumerable<SyncItem>>(() =>
             {
-                EntityType = EntityType,
-                Id = treeItem.Id,
-                Name = form.Name,
-                Udi = Udi.Create(EntityType, form.Id)
-            };
-        }
+                var items = new List<SyncItem>();
 
-        public override IEnumerable<SyncItem> GetItems(SyncItem item)
-        {
-            var items = new List<SyncItem>();
-
-            if (item.Udi.EntityType == UdiEntityType.FormsPreValue)
-            {
-                // we only add orginal item if its a form, we don't sync empty folders.
-                items.Add(item);
-            }
-            return items;            
-        }
-
-        protected override IEnumerable<SyncItem> GetDecendants(SyncItem item, DependencyFlags flags)
-        {
-            if (item.Udi.IsRoot)
-            {
-                return _formService.GetAllForms().Select(x => new SyncItem
+                if (item.Udi.EntityType == UdiEntityType.FormsPreValue)
                 {
-                    Name = x.Name,
-                    Udi = Udi.Create(UdiEntityType.FormsForm, x.Id),
-                    Flags = flags & ~DependencyFlags.IncludeChildren
-                });
-            }
-            else
-            {
-                switch(item.Udi.EntityType)
-                {
-                    case UdiEntityType.FormsPreValue:
-                        return Enumerable.Empty<SyncItem>();
-                    case uSyncForms.FolderEntityType:
-                        if (item.Udi is GuidUdi guidUdi) {
-                            var forms = _formService.GetFolderForms(guidUdi.Guid)
-                                .Select(x => new SyncItem
-                                {
-                                    Name = x.Name,
-                                    Udi = Udi.Create(UdiEntityType.FormsForm, x.Id),
-                                    Flags = flags & ~DependencyFlags.IncludeChildren
-                                });
-
-                            _logger.LogDebug("Getting Forms in folder: {guid} {count}", guidUdi, forms.Count());
-
-                            return forms;
-                        }
-                        break;
+                    // we only add original item if its a form, we don't sync empty folders.
+                    items.Add(item);
                 }
-            }
+                return items;
+            });
+        }
 
-            return Enumerable.Empty<SyncItem>();
+        public Task<SyncEntity?> GetSyncEntityAsync(string key)
+            => Task.FromResult<SyncEntity?>(null);
+
+        protected override Task<IEnumerable<SyncItem>> GetDescendantsAsync(SyncItem item, DependencyFlags flags)
+        {
+            return uSyncTaskHelper.FromResultOf(() =>
+            {
+                if (item.Udi.IsRoot)
+                {
+                    return _formService.GetAllForms().Select(x => new SyncItem
+                    {
+                        Name = x.Name,
+                        Udi = Udi.Create(UdiEntityType.FormsForm, x.Id),
+                        Flags = flags & ~DependencyFlags.IncludeChildren
+                    });
+                }
+                else
+                {
+                    switch (item.Udi.EntityType)
+                    {
+                        case UdiEntityType.FormsPreValue:
+                            return Enumerable.Empty<SyncItem>();
+                        case uSyncForms.FolderEntityType:
+                            if (item.Udi is GuidUdi guidUdi)
+                            {
+                                var forms = _formService.GetFolderForms(guidUdi.Guid)
+                                    .Select(x => new SyncItem
+                                    {
+                                        Name = x.Name,
+                                        Udi = Udi.Create(UdiEntityType.FormsForm, x.Id),
+                                        Flags = flags & ~DependencyFlags.IncludeChildren
+                                    });
+
+                                _logger.LogDebug("Getting Forms in folder: {guid} {count}", guidUdi, forms.Count());
+
+                                return forms;
+                            }
+                            break;
+                    }
+                }
+
+                return Enumerable.Empty<SyncItem>();
+            });
         }
     }
 }

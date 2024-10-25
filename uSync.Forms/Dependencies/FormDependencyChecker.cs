@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models;
@@ -16,6 +17,10 @@ namespace uSync.Forms.Dependencies
     public class FormDependencyChecker : ISyncDependencyChecker<Form>
     {
         public UmbracoObjectTypes ObjectType => UmbracoObjectTypes.FormsForm;
+
+
+        public Task<IEnumerable<uSyncDependency>> GetDependenciesAsync(Form item, DependencyFlags flags)
+            => Task.FromResult(GetDependencies(item, flags));
 
         public IEnumerable<uSyncDependency> GetDependencies(Form item, DependencyFlags flags)
         {
