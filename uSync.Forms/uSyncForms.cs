@@ -8,9 +8,9 @@ namespace uSync.Forms
     {
         public string Name => "FormsEdition";
 
-        public string Version => typeof(uSyncForms).Assembly.GetName().Version.ToString();
+        public string Version => typeof(uSyncForms).Assembly.GetName().Version?.ToString() ?? "15.0.0";
 
-        public string Icon => null;
+        public string Icon => string.Empty;
 
         public string View => string.Empty;
 

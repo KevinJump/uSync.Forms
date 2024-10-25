@@ -11,7 +11,7 @@ namespace uSync.Forms.Services
     {
         public IEnumerable<FormDataSource> GetAllDataSources() => _dataSourceService.Get();
 
-        public FormDataSource GetDataSource(Guid key)         
+        public FormDataSource? GetDataSource(Guid key)         
         { 
             try
             {
@@ -23,7 +23,7 @@ namespace uSync.Forms.Services
             }
         }
 
-        public FormDataSource GetDataSource(string name)
+        public FormDataSource? GetDataSource(string name)
         {
             var sources = GetAllDataSources();
             if (sources != null)

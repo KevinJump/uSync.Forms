@@ -15,9 +15,9 @@ namespace uSync.Forms.Services
 
         public IEnumerable<FieldPreValueSource> GetAllPreValues() => _preValueSourceService.Get();
 
-        public FieldPreValueSource GetPreValueSource(Guid id) => _preValueSourceService.Get(id);
+        public FieldPreValueSource? GetPreValueSource(Guid id) => _preValueSourceService.Get(id);
 
-        public FieldPreValueSource GetPreValueSource(string name)
+        public FieldPreValueSource? GetPreValueSource(string name)
         {
             var preValues = GetAllPreValues();
             if (preValues != null)

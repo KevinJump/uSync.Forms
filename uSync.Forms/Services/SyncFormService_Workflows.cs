@@ -23,7 +23,7 @@ namespace uSync.Forms.Services
             => (item.Id == Guid.Empty || (FindWorkflow(item.Id, form) == null));
 
 
-        public Workflow FindWorkflow(Guid id, Form form)
+        public Workflow? FindWorkflow(Guid id, Form form)
         {
             var workflows = GetWorkflows(form);
             if (workflows == null) return null;

@@ -17,11 +17,11 @@ namespace uSync.Forms.Dependencies;
 public class FormPickerChecker : ISyncDependencyChecker<IContent>
 {
     private readonly ILogger<FormPickerChecker> _logger;
-    private readonly IConfigurationManager _configurationManager;
+    private readonly IConfigurationManager? _configurationManager;
 
     public FormPickerChecker(
         ILogger<FormPickerChecker> logger,
-        IConfigurationManager configurationManager = null)
+        IConfigurationManager? configurationManager = null)
     {
         _logger = logger;
         _configurationManager = configurationManager;
@@ -33,7 +33,7 @@ public class FormPickerChecker : ISyncDependencyChecker<IContent>
     {
         if (item == null) return [];
 
-        if (_configurationManager.GetValue("uSync:Forms:DisableFormPush", false))
+        if (_configurationManager?.GetValue("uSync:Forms:DisableFormPush", false) is true)
         {
             _logger.LogDebug("Form push is disabled via configuration.");
             return [];

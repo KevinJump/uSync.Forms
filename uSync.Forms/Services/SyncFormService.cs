@@ -43,13 +43,13 @@ namespace uSync.Forms.Services
 
         public IEnumerable<Form> GetAllForms() => _formService.Get();
 
-        public Form GetForm(Guid key)
+        public Form? GetForm(Guid key)
         {
             try { return _formService.Get(key); }
             catch { return null; }
         }
 
-        public Form GetForm(string name) { 
+        public Form? GetForm(string name) { 
             try { return _formService.Get(name); }
             catch { return null; }
         }

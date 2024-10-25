@@ -70,7 +70,9 @@ namespace uSync.Forms.Serializers
                 info.Add(new XElement(nameof(item.AutocompleteAttribute), item.AutocompleteAttribute));
 
                 info.Add(SerializeWorkflows(item));
-                info.Add(SerializeDataSource(item.DataSource));
+
+                if (item.DataSource is not null)
+                    info.Add(SerializeDataSource(item.DataSource));
 
                 SerializeFolderInfo(info, item);
 
@@ -152,9 +154,8 @@ namespace uSync.Forms.Serializers
             return jArray.ToString(Formatting.Indented);
         }
 
-        private Attempt<JArray> MapPropertySourceNamesToId(JArray jArray)
+        private Attempt<JArray?> MapPropertySourceNamesToId(JArray jArray)
         {
-            bool found = false;
             List<string> missing = new List<string>();
 
             foreach (var item in jArray.Cast<JObject>())
@@ -169,7 +170,7 @@ namespace uSync.Forms.Serializers
                         foreach (var field in fields.Cast<JObject>())
                         {
                             var attempt = GetObjectValue<string>(field, "prevalueSourceId");
-                            if (attempt && attempt.Result != Guid.Empty.ToString())
+                            if (attempt && string.IsNullOrWhiteSpace(attempt.Result) is false && attempt.Result != Guid.Empty.ToString())
                             {
                                 var preValue = _syncFormService.GetPreValueSource(attempt.Result);
                                 if (preValue != null)
@@ -189,13 +190,13 @@ namespace uSync.Forms.Serializers
                 }
             }
 
-            return missing.Count == 0 ? Attempt.Succeed(jArray) 
-                : Attempt.Fail(jArray, new Exception($"Could not find [{string.Join(",", missing)}]"));
+            return missing.Count == 0 ? Attempt.Succeed<JArray?>(jArray) 
+                : Attempt.Fail<JArray?>(jArray, new Exception($"Could not find [{string.Join(",", missing)}]"));
         }
 
         private JArray GetArray(JObject obj, string propertyName)
         {
-            if (obj.TryGetValue(propertyName, out JToken token))
+            if (obj.TryGetValue(propertyName, out JToken? token))
             {
                 if (token is JArray array)
                     return array;
@@ -205,7 +206,7 @@ namespace uSync.Forms.Serializers
         }
         private Attempt<TObject> GetObjectValue<TObject>(JObject obj, string propertyName)
         {
-            if (obj.TryGetValue(propertyName, out JToken token))
+            if (obj.TryGetValue(propertyName, out JToken? token))
             {
                 return token.TryConvertTo<TObject>();
             }
@@ -347,7 +348,7 @@ namespace uSync.Forms.Serializers
                     var settings = wNode.Element(nameof(workflow.Settings)).ValueOrDefault(string.Empty);
                     if (!string.IsNullOrWhiteSpace(settings))
                     {
-                        workflow.Settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(settings);
+                        workflow.Settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(settings) ?? [];
                     }
 
                     _syncFormService.SaveWorkflow(workflow, form);
@@ -437,14 +438,14 @@ namespace uSync.Forms.Serializers
             var pagesJson = node.Element("Pages").ValueOrDefault(string.Empty);
             if (!string.IsNullOrWhiteSpace(pagesJson))
             {
-                var mapAttempt = MapPropertySourceNamesToId(JsonConvert.DeserializeObject<JArray>(pagesJson));
-                var pages = mapAttempt.Result.ToObject<List<Page>>();
+                var mapAttempt = MapPropertySourceNamesToId(JsonConvert.DeserializeObject<JArray>(pagesJson) ?? []);
+                var pages = mapAttempt.Result?.ToObject<List<Page>>();
                 if (pages != null)
                     item.Pages = pages;
 
                 if (mapAttempt.Success is false)
                     changes.AddWarning("Pages", "pages", 
-                        $"Failed to map preValue sources {mapAttempt.Exception.Message} (check they are synced)"); 
+                        $"Failed to map preValue sources {mapAttempt.Exception?.Message ?? "unknown"} (check they are synced)"); 
             }
 
             return changes;
@@ -487,9 +488,12 @@ namespace uSync.Forms.Serializers
 
         protected override XElement CleanseNode(XElement node)
         {
-            var clensed = XElement.Parse(node.ToString());
-            clensed.Attribute("Key").Value = Guid.Empty.ToString();
-            return clensed;
+            var cleansed = XElement.Parse(node.ToString());
+
+            var keyNode = cleansed.Attribute("key");
+            if (keyNode != null)
+                keyNode.Value = Guid.Empty.ToString();
+            return cleansed;
         }
 
 

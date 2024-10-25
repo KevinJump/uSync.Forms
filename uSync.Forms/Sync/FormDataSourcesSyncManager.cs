@@ -52,7 +52,7 @@ namespace uSync.Forms.Sync
         //    };
         //}
 
-        public SyncLocalItem GetEntity(SyncTreeItem treeItem)
+        public SyncLocalItem? GetEntity(SyncTreeItem treeItem)
         {
             if (treeItem.Id == Constants.System.RootString)
                 return GetRootItem(treeItem);

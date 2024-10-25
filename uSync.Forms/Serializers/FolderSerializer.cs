@@ -32,10 +32,10 @@ namespace uSync.Forms.Serializers
         public override Task DeleteItemAsync(Folder item)
             => uSyncTaskHelper.FromResultOf(() => _syncFormService.DeleteFolder(item));
 
-        public override Task<Folder> FindItemAsync(Guid key)
+        public override Task<Folder?> FindItemAsync(Guid key)
             => uSyncTaskHelper.FromResultOf(() => _syncFormService.GetFolder(key));
 
-        public override Task<Folder> FindItemAsync(string alias)
+        public override Task<Folder?> FindItemAsync(string alias)
             => uSyncTaskHelper.FromResultOf(() => default(Folder));
 
         public override string ItemAlias(Folder item) => item.Name;
@@ -66,7 +66,7 @@ namespace uSync.Forms.Serializers
             return SyncAttempt<Folder>.Succeed(item.Name, item, ChangeType.Import, Array.Empty<uSyncChange>());
         }
 
-        private async Task<Folder> CreateOrFindFolderAsync(XElement node)
+        private async Task<Folder?> CreateOrFindFolderAsync(XElement node)
         {
             var item = await FindItemAsync(node.GetKey());
             if (item != null) return item;

@@ -72,6 +72,6 @@ namespace uSync.Forms.Handlers
             => uSyncTaskHelper.FromResultOf(() => Enumerable.Empty<Form>());
 
         protected override Task<Form?> GetFromServiceAsync(Form? item)
-            => uSyncTaskHelper.FromResultOf<Form?>(() => _syncFormService.GetForm(item.Id));
+            => uSyncTaskHelper.FromResultOf<Form?>(() => item is null ? null : _syncFormService.GetForm(item.Id));
     }
 }

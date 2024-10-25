@@ -58,19 +58,19 @@ namespace uSync.Forms.Handlers
         protected override Task DeleteViaServiceAsync(FormDataSource item)
             => uSyncTaskHelper.FromResultOf(() => syncFormService.DeleteDataSource(item));
 
-        protected override Task<IEnumerable<FormDataSource>> GetChildItemsAsync(FormDataSource parent)
+        protected override Task<IEnumerable<FormDataSource>> GetChildItemsAsync(FormDataSource? parent)
             => uSyncTaskHelper.FromResultOf(() => {
                 return parent == null ? syncFormService.GetAllDataSources() : [];
             });
 
-        protected override Task<IEnumerable<FormDataSource>> GetFoldersAsync(FormDataSource parent)
+        protected override Task<IEnumerable<FormDataSource>> GetFoldersAsync(FormDataSource? parent)
             => uSyncTaskHelper.FromResultOf(() => Enumerable.Empty<FormDataSource>());
 
         protected override string GetItemPath(FormDataSource item, bool useGuid, bool isFlat)
             => item.Name.ToSafeFileName(shortStringHelper);
 
-        protected override Task<FormDataSource> GetFromServiceAsync(FormDataSource item)
-            => uSyncTaskHelper.FromResultOf(() => syncFormService.GetDataSource(item.Id));
+        protected override Task<FormDataSource?> GetFromServiceAsync(FormDataSource? item)
+            => uSyncTaskHelper.FromResultOf<FormDataSource?>(() => item is null ? null : syncFormService.GetDataSource(item.Id));
 
         protected override string GetItemName(FormDataSource item)
             => item.Name;    

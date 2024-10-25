@@ -49,7 +49,7 @@ namespace uSync.Forms.Services
             return folders;
         }
 
-        public Folder GetFolder(Guid folderId) 
+        public Folder? GetFolder(Guid folderId) 
         {
             try
             {
@@ -80,26 +80,27 @@ namespace uSync.Forms.Services
         {
             var path = "";
             var folder = GetFolder(folderId);
-            if (folder != null)
+            if (folder is not null)
             {
                 if (folder.ParentId != null)
                 {
                     // has a parent. 
                     path = GetFolderPath(folder.ParentId.Value);
                 }
-            }
 
-            path += "/" + folder.Name;
+                path += "/" + folder.Name;
+
+            }
 
             return path;
         }
 
-        public Folder CreateOrFindFolders(Guid parent, string folderPath)
+        public Folder? CreateOrFindFolders(Guid parent, string folderPath)
         {
             return CreateOrFindFoldersInternal(parent, folderPath);
         }
 
-        private Folder CreateOrFindFoldersInternal(Guid parent, string folderPath) 
+        private Folder? CreateOrFindFoldersInternal(Guid parent, string folderPath) 
         { 
             var folderPathClean = folderPath.Trim('/');
 
@@ -145,7 +146,7 @@ namespace uSync.Forms.Services
             if (folderPathClean.Contains('/'))
             {
                 var remaining = folderPathClean.Substring(folderPathClean.IndexOf('/'));
-                return CreateOrFindFolders(formFolder.Id, remaining);
+                return CreateOrFindFolders(formFolder?.Id ?? Guid.Empty, remaining);
             }
             else
             {

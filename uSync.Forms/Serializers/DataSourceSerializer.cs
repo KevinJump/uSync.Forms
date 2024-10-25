@@ -66,7 +66,7 @@ namespace uSync.Forms.Serializers
             var settings = node.Element("Settings").ValueOrDefault(string.Empty);
             if (!string.IsNullOrWhiteSpace(settings))
             {
-                item.Settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(settings);
+                item.Settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(settings) ?? [];
             }
 
             // SaveItem(item);
@@ -77,11 +77,11 @@ namespace uSync.Forms.Serializers
         public override Task DeleteItemAsync(FormDataSource item)
             => uSyncTaskHelper.FromResultOf(() => syncFormService.DeleteDataSource(item));
 
-        public override Task<FormDataSource> FindItemAsync(Guid key)
-            => uSyncTaskHelper.FromResultOf(() => syncFormService.GetDataSource(key));
+        public override Task<FormDataSource?> FindItemAsync(Guid key)
+            => uSyncTaskHelper.FromResultOf<FormDataSource?>(() => syncFormService.GetDataSource(key));
 
-        public override Task<FormDataSource> FindItemAsync(string alias)
-            => uSyncTaskHelper.FromResultOf(() => syncFormService.GetDataSource(alias));
+        public override Task<FormDataSource?> FindItemAsync(string alias)
+            => uSyncTaskHelper.FromResultOf<FormDataSource?>(() => syncFormService.GetDataSource(alias));
 
         public override string ItemAlias(FormDataSource item)
             => item.Name;
@@ -94,10 +94,14 @@ namespace uSync.Forms.Serializers
 
         protected override XElement CleanseNode(XElement node)
         {
-            var cleaned = XElement.Parse(node.ToString());
-            cleaned.Attribute("Key").Value = Guid.Empty.ToString();
-            return cleaned;
+            var cleansed = XElement.Parse(node.ToString());
+
+            var keyNode = cleansed.Attribute("key");
+            if (keyNode != null)
+                keyNode.Value = Guid.Empty.ToString();
+            return cleansed;
         }
+
 
     }
 }

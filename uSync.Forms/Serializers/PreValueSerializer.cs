@@ -109,7 +109,7 @@ namespace uSync.Forms.Serializers
             var settings = node.Element("Settings").ValueOrDefault(string.Empty);
             if (!string.IsNullOrWhiteSpace(settings))
             {
-                item.Settings = MapImportSettings(JsonConvert.DeserializeObject<Dictionary<string, string>>(settings));
+                item.Settings = MapImportSettings(JsonConvert.DeserializeObject<Dictionary<string, string>>(settings) ?? []);
             }
             var textFile = node.Element("TextFile");
             if (textFile != null)
@@ -119,7 +119,7 @@ namespace uSync.Forms.Serializers
                 {
                     var preValues = JsonConvert.DeserializeObject<List<PreValue>>(textFileContent);
                     var textFileName = item.Settings["TextFile"];
-                    _preValueTextFileStorage.SaveValuesIntoFile(preValues.Select(x=>$"{x.Value}|{x.Caption}").ToList(),textFileName);
+                    _preValueTextFileStorage.SaveValuesIntoFile((preValues?.Select(x=>$"{x.Value}|{x.Caption}") ?? []).ToList(),textFileName);
                 }
             }
 
@@ -174,9 +174,13 @@ namespace uSync.Forms.Serializers
         /// </summary>
         protected override XElement CleanseNode(XElement node)
         {
-            var cleaned = XElement.Parse(node.ToString());
-            cleaned.Attribute("Key").Value = Guid.Empty.ToString();
-            return cleaned;
+            var cleansed = XElement.Parse(node.ToString());
+
+            var keyNode = cleansed.Attribute("key");
+            if (keyNode != null)
+                keyNode.Value = Guid.Empty.ToString();
+            return cleansed;
         }
+
     }
 }

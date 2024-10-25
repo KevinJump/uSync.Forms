@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Extensions;
 
 using uSync.Core.Dependency;
+using uSync.Core.Extensions;
 using uSync.Core.Mapping;
 using uSync.Forms.Services;
 
@@ -31,39 +33,42 @@ namespace uSync.Forms.Mappers
             "UmbracoForms.FormPicker"
         };
 
-        public override IEnumerable<uSyncDependency> GetDependencies(object value, string editorAlias, DependencyFlags flags)
+        public override Task<IEnumerable<uSyncDependency>> GetDependenciesAsync(object value, string editorAlias, DependencyFlags flags)
         {
-            if (value != null)
+            return uSyncTaskHelper.FromResultOf(() =>
             {
-                var attempt = value.TryConvertTo<Guid>();
-                if (attempt.Success)
+                if (value != null)
                 {
-                    var form = _syncFormService.GetForm(attempt.Result);
-
-                    if (form != null)
+                    var attempt = value.TryConvertTo<Guid>();
+                    if (attempt.Success)
                     {
-                        var formDependency = new uSyncDependency
+                        var form = _syncFormService.GetForm(attempt.Result);
+
+                        if (form != null)
                         {
-                            Name = form.Name,
-                            Udi = Udi.Create(UdiEntityType.FormsForm, form.Id),
-                            Flags = flags,
-                            Order = uSyncFormPriorities.Forms,
-                        }.AsEnumerableOfOne().ToList();
-                        if (form.DataSource == null)
-                        {
-                            return formDependency;
+                            var formDependency = new uSyncDependency
+                            {
+                                Name = form.Name,
+                                Udi = Udi.Create(UdiEntityType.FormsForm, form.Id),
+                                Flags = flags,
+                                Order = uSyncFormPriorities.Forms,
+                            }.AsEnumerableOfOne().ToList();
+                            if (form.DataSource == null)
+                            {
+                                return formDependency;
+                            }
+                            formDependency.Add(new uSyncDependency
+                            {
+                                Udi = Udi.Create(UdiEntityType.FormsDataSource, form.DataSource.Id),
+                                Flags = flags,
+                                Order = uSyncFormPriorities.DataSources,
+                            });
                         }
-                        formDependency.Add(new uSyncDependency
-                        {
-                            Udi = Udi.Create(UdiEntityType.FormsDataSource, form.DataSource.Id),
-                            Flags = flags,
-                            Order = uSyncFormPriorities.DataSources,
-                        });
                     }
                 }
-            }
 
-            return Enumerable.Empty<uSyncDependency>();
+                return Enumerable.Empty<uSyncDependency>();
+            });
         }
     }
 }
