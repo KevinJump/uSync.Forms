@@ -1,9 +1,11 @@
 ﻿
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Cms.Core.Media.EmbedProviders;
 using Umbraco.Forms;
 using Umbraco.Forms.Core.Services.Notifications;
 
@@ -31,7 +33,7 @@ namespace uSync.Forms
 
             builder.Services.AddSingleton<SyncFormService>();
             builder.Services.AddSingleton<FormsMapperHelper>();
-
+			builder.Services.AddOptions<uSyncFormsOptions>().Bind(builder.Config.GetSection(uSyncFormsOptions.Section));
 			builder.AddNotificationHandler<FormSavedNotification, FormHandler>()
 				.AddNotificationHandler<FormDeletedNotification, FormHandler>()
 				.AddNotificationHandler<PrevalueSourceSavedNotification, PreValueHandler>()
