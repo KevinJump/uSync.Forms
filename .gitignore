@@ -249,3 +249,4 @@ $RECYCLE.BIN/
 # code analysis
 .sonarqube
 
+.idea
