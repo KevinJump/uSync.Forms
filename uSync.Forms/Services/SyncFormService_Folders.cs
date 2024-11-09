@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
+using System.Web;
 using Umbraco.Extensions;
 using Umbraco.Forms.Core.Models;
 using Umbraco.Forms.Core.Services;
+
+using uSync.Core.Extensions;
 
 namespace uSync.Forms.Services
 {
@@ -42,7 +45,8 @@ namespace uSync.Forms.Services
                 folders.AddRange(_folderService.GetAtRoot());
             }
 
-            foreach (var folder in folders) {
+            foreach (var folder in folders)
+            {
                 folders.AddRange(GetAllFolders(folder.Id));
             }
 
@@ -88,7 +92,7 @@ namespace uSync.Forms.Services
                     path = GetFolderPath(folder.ParentId.Value);
                 }
 
-                path += "/" + folder.Name;
+            path += "/" +  HttpUtility.UrlEncode(folder?.Name);
 
             }
 
@@ -104,7 +108,7 @@ namespace uSync.Forms.Services
         { 
             var folderPathClean = folderPath.Trim('/');
 
-            IEnumerable<Folder> folders; 
+            IEnumerable<Folder> folders;
             if (parent == Guid.Empty)
             {
                 folders = _folderService.GetAtRoot();
@@ -115,15 +119,15 @@ namespace uSync.Forms.Services
             }
 
             var folder = folderPathClean;
-            if(folderPathClean.Contains('/'))
+            if (folderPathClean.Contains('/'))
             {
                 folder = folderPathClean.Substring(0, folderPathClean.IndexOf('/'));
             }
 
-            var formFolder = folders.FirstOrDefault(x => x.Name.InvariantEquals(folder));
+            var formFolder = folders.FirstOrDefault(x => x.Name.InvariantEquals( HttpUtility.UrlDecode(folder)));
 
-            if (formFolder == null) {
-
+            if (formFolder == null)
+            {
                 formFolder = new Folder
                 {
                     Name = folder,
@@ -133,7 +137,7 @@ namespace uSync.Forms.Services
 
                 try
                 {
-                    formFolder = ((IFolderService)_folderService).Insert(formFolder);
+                    formFolder = _folderService.Insert(formFolder);
                 }
                 catch
                 {
@@ -141,7 +145,7 @@ namespace uSync.Forms.Services
                     // support folders)
                     return null;
                 }
-            };
+            }
 
             if (folderPathClean.Contains('/'))
             {
@@ -152,6 +156,66 @@ namespace uSync.Forms.Services
             {
                 return formFolder;
             }
+        }
+
+        public Task<Folder?> CreateOrFindFoldersWithIdAsync(Guid parentId, Guid key, string name)
+        {
+            return uSyncTaskHelper.FromResultOf<Folder?>(() =>
+            {
+                var formFolder = _folderService.Get(key);
+                if (formFolder != null)
+                {
+                    return formFolder;
+                }
+
+                if (parentId != Guid.Empty)
+                {
+                    var parentFolder = _folderService.Get(parentId);
+                    if (parentFolder == null)
+                    {
+                        //no parent exist, we need to create it by path
+                        return null;
+                    }
+                }
+
+                formFolder = new Folder
+                {
+                    Name = name,
+
+                };
+                if (parentId != Guid.Empty) formFolder.ParentId = parentId;
+                formFolder.Id = key;
+                try
+                {
+                    formFolder = _folderService.Insert(formFolder);
+                }
+                catch
+                {
+                    // error (could be we are importing to something that doesn't 
+                    // support folders)
+                    return null;
+                }
+
+                return formFolder;
+            });
+        }
+
+        public int GetFolderLevel(Guid folderId)
+        {
+            var path = 0;
+            var folder = GetFolder(folderId);
+            if (folder != null)
+            {
+                if (folder.ParentId != null)
+                {
+                    // has a parent. 
+                    path++;
+                    path += GetFolderLevel(folder.ParentId.Value);
+                }
+            }
+
+
+            return path;
         }
     }
 }

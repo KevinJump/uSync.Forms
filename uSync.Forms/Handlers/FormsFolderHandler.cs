@@ -50,6 +50,14 @@ namespace uSync.Forms.Handlers
             this.ItemContainerType = Umbraco.Cms.Core.Models.UmbracoObjectTypes.Unknown;
         }
 
+
+        protected override async Task<IReadOnlyList<OrderedNodeInfo>> GetMergedItemsAsync(string[] folders)
+        {
+            var items = await base.GetMergedItemsAsync(folders);
+       
+            return [.. items.OrderBy(x=>x.Level)];
+        }
+
         protected override Task<IEnumerable<uSyncAction>> DeleteMissingItemsAsync(Folder parent, IEnumerable<Guid> keysToKeep, bool reportOnly)
             => Task.FromResult(Enumerable.Empty<uSyncAction>());
 

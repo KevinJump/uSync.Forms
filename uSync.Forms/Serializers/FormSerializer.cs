@@ -2,21 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using Umbraco.Cms.Core.Services;
 using Umbraco.Forms.Core;
 using Umbraco.Forms.Core.Enums;
 using Umbraco.Forms.Core.Models;
-
 using uSync.Forms.Services;
-
 using uSync.Core;
 using uSync.Core.Models;
 using uSync.Core.Serialization;
-
 using static Umbraco.Cms.Core.Constants;
 using Microsoft.Extensions.Logging;
 using Umbraco.Cms.Core;
@@ -27,13 +22,15 @@ using uSync.Core.Extensions;
 
 namespace uSync.Forms.Serializers
 {
-    [SyncSerializer("AFB4DECC-2828-4414-B85F-ADC1BF711521", "Forms Serializer", UdiEntityType.FormsForm, IsTwoPass = false)]
+    [SyncSerializer("AFB4DECC-2828-4414-B85F-ADC1BF711521", "Forms Serializer", UdiEntityType.FormsForm,
+        IsTwoPass = false)]
     public class FormSerializer : SyncSerializerRoot<Form>, ISyncSerializer<Form>
     {
         private readonly IEntityService _entityService;
         private readonly SyncFormService _syncFormService;
 
-        public FormSerializer(ILogger<SyncSerializerRoot<Form>> logger, IEntityService entityService, SyncFormService formService) : base(logger)
+        public FormSerializer(ILogger<SyncSerializerRoot<Form>> logger, IEntityService entityService,
+            SyncFormService formService) : base(logger)
         {
             _entityService = entityService;
             _syncFormService = formService;
@@ -94,6 +91,7 @@ namespace uSync.Forms.Serializers
             if (folderId != null)
             {
                 var value = folderId.GetValue(form);
+                node.Add(new XElement("FolderId", folderId.GetValue(form)));
 
                 var attempt = value.TryConvertTo<Guid?>();
                 if (attempt.Success)
@@ -181,7 +179,9 @@ namespace uSync.Forms.Serializers
                                 {
                                     missing.Add(attempt.Result);
                                     // warn... 
-                                    logger.LogWarning("Unable to map {preValueSource} to source - may be missing on target", attempt.Result);
+                                    logger.LogWarning(
+                                        "Unable to map {preValueSource} to source - may be missing on target",
+                                        attempt.Result);
                                     field["prevalueSourceId"] = Guid.Empty;
                                 }
                             }
@@ -204,6 +204,7 @@ namespace uSync.Forms.Serializers
 
             return new JArray();
         }
+
         private Attempt<TObject> GetObjectValue<TObject>(JObject obj, string propertyName)
         {
             if (obj.TryGetValue(propertyName, out JToken? token))
@@ -246,7 +247,8 @@ namespace uSync.Forms.Serializers
 
             item.Name = info.Element("Name").ValueOrDefault(node.GetAlias());
 
-            item.FieldIndicationType = info.Element("FieldIndicationType").ValueOrDefault(FormFieldIndication.MarkMandatoryFields);
+            item.FieldIndicationType = info.Element("FieldIndicationType")
+                .ValueOrDefault(FormFieldIndication.MarkMandatoryFields);
             item.Indicator = info.Element("Indicator").ValueOrDefault("*");
 
             item.ShowValidationSummary = info.Element("ShowValidationSummary").ValueOrDefault(false);
@@ -254,7 +256,8 @@ namespace uSync.Forms.Serializers
             item.RequiredErrorMessage = info.Element("RequireErrorMessage").ValueOrDefault(string.Empty);
             item.InvalidErrorMessage = info.Element("InvalidErrorMessage").ValueOrDefault(string.Empty);
             item.MessageOnSubmit = info.Element("MessageOnSubmit").ValueOrDefault(string.Empty);
-            item.MessageOnSubmitIsHtml = info.Element("MessageOnSubmit")?.Attribute("IsHtml").ValueOrDefault(false) ?? false;
+            item.MessageOnSubmitIsHtml =
+                info.Element("MessageOnSubmit")?.Attribute("IsHtml").ValueOrDefault(false) ?? false;
 
             item.GoToPageOnSubmit = info.Element("GoToPageOnSubmit").ValueOrDefault(Guid.Empty).ToString();
 
@@ -276,22 +279,27 @@ namespace uSync.Forms.Serializers
             DeserializeWorkdlows(info, item);
             DesersilizeDataSource(info, item);
 
-            DeserializeFolders(info, item);
+            await DeserializeFoldersAsync(info, item);
         }
 
-        private void DeserializeFolders(XElement info, Form item)
+        private async Task DeserializeFoldersAsync(XElement info, Form item)
         {
             var folderPath = info.Element("Folder").ValueOrDefault(string.Empty);
 
             if (!string.IsNullOrWhiteSpace(folderPath))
             {
-                var folderIdProperty = item?.GetType()?.GetProperty("FolderId");
-                if (folderIdProperty != null)
-                {
-                    var folder = _syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
+                Umbraco.Forms.Core.Models.Folder? folder;
 
-                    if (folder != null) folderIdProperty.SetValue(item, folder.Id);
+                if (item.FolderId != null && item.FolderId != Guid.Empty)
+                {
+                    folder = await _syncFormService.CreateOrFindFoldersWithIdAsync(Guid.Empty, item.FolderId.Value, "");
+                    if (folder != null) return;
                 }
+                
+                folder = _syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
+
+                if (folder != null) 
+                    item.FolderId = folder.Id;
             }
         }
 
@@ -317,13 +325,13 @@ namespace uSync.Forms.Serializers
 
                 node.Add(wNode);
             }
+
             return node;
         }
 
 
         private void DeserializeWorkdlows(XElement info, Form form)
         {
-
             var node = info.Element("Workflows");
             if (node != null)
             {
@@ -340,9 +348,11 @@ namespace uSync.Forms.Serializers
                     workflow.Id = wNode.Element(nameof(workflow.Id)).ValueOrDefault(Guid.NewGuid());
                     workflow.Name = wNode.Element(nameof(workflow.Name)).ValueOrDefault("Unknown");
                     workflow.Active = wNode.Element(nameof(workflow.Active)).ValueOrDefault(true);
-                    workflow.IncludeSensitiveData = wNode.Element(nameof(workflow.IncludeSensitiveData)).ValueOrDefault(IncludeSensitiveData.False);
+                    workflow.IncludeSensitiveData = wNode.Element(nameof(workflow.IncludeSensitiveData))
+                        .ValueOrDefault(IncludeSensitiveData.False);
                     workflow.WorkflowTypeId = wNode.Element(nameof(workflow.WorkflowTypeId)).ValueOrDefault(Guid.Empty);
-                    workflow.ExecutesOn = wNode.Element(nameof(workflow.ExecutesOn)).ValueOrDefault(FormState.Submitted);
+                    workflow.ExecutesOn =
+                        wNode.Element(nameof(workflow.ExecutesOn)).ValueOrDefault(FormState.Submitted);
                     workflow.SortOrder = wNode.Element(nameof(workflow.SortOrder)).ValueOrDefault(n);
 
                     var settings = wNode.Element(nameof(workflow.Settings)).ValueOrDefault(string.Empty);
@@ -413,13 +423,14 @@ namespace uSync.Forms.Serializers
             var mappingNode = node.Element("Mappings");
             if (mappingNode != null)
             {
-
                 foreach (var mNode in mappingNode.Elements("Mapping"))
                 {
                     var mapping = new FormDataSourceMapping();
                     mapping.DataFieldKey = mNode.Element(nameof(mapping.DataFieldKey)).ValueOrDefault(string.Empty);
-                    mapping.PrevalueKeyfield = mNode.Element(nameof(mapping.PrevalueKeyfield)).ValueOrDefault(string.Empty);
-                    mapping.PrevalueValueField = mNode.Element(nameof(mapping.PrevalueValueField)).ValueOrDefault(string.Empty);
+                    mapping.PrevalueKeyfield =
+                        mNode.Element(nameof(mapping.PrevalueKeyfield)).ValueOrDefault(string.Empty);
+                    mapping.PrevalueValueField =
+                        mNode.Element(nameof(mapping.PrevalueValueField)).ValueOrDefault(string.Empty);
                     mapping.PrevalueTable = mNode.Element(nameof(mapping.PrevalueTable)).ValueOrDefault(string.Empty);
                     mapping.DataType = mNode.Element(nameof(mapping.DataType)).ValueOrDefault(FieldDataType.String);
                     mapping.DefaultValue = mNode.Element(nameof(mapping.DefaultValue)).ValueOrDefault(string.Empty);
@@ -483,7 +494,29 @@ namespace uSync.Forms.Serializers
 
         public override Task SaveItemAsync(Form item)
             => uSyncTaskHelper.FromResultOf(() => _syncFormService.SaveForm(item));
+      
 
+        private Guid GetContentKey(int id)
+        {
+            if (id > 0)
+            {
+                var attempt = _entityService.GetKey(id, UmbracoObjectTypes.Document);
+                if (attempt.Success) return attempt.Result;
+            }
+
+            return Guid.Empty;
+        }
+
+        private int GetContentId(Guid key)
+        {
+            if (key != Guid.Empty)
+            {
+                var attempt = _entityService.GetId(key, UmbracoObjectTypes.Document);
+                if (attempt.Success) return attempt.Result;
+            }
+
+            return 0;
+        }
 
 
         protected override XElement CleanseNode(XElement node)
@@ -495,7 +528,5 @@ namespace uSync.Forms.Serializers
                 keyNode.Value = Guid.Empty.ToString();
             return cleansed;
         }
-
-
     }
 }
