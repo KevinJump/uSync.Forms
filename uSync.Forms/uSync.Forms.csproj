@@ -41,4 +41,8 @@
 		<PackageReference Include="uSync.Backoffice" Version="15.0.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="form-client\" />
+	</ItemGroup>
+
 </Project>
