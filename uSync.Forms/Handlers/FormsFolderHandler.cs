@@ -24,7 +24,7 @@ using uSync.Forms.Services;
 namespace uSync.Forms.Handlers
 {
 	[SyncHandler("folderHander", "Folders", "Form-Folders", uSyncFormPriorities.Folders,
-     Icon = "icon-folder usync-addon-icon", EntityType = uSyncForms.FolderEntityType)]
+     Icon = "icon-folder", EntityType = uSyncForms.FolderEntityType)]
     public class FormsFolderHandler : SyncHandlerRoot<Folder, Folder>, ISyncHandler,
 		INotificationAsyncHandler<SavedNotification<Folder>>,
 		INotificationAsyncHandler<DeletedNotification<Folder>>,

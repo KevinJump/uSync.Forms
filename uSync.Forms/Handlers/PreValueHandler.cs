@@ -30,7 +30,7 @@ using static Umbraco.Cms.Core.Constants;
 namespace uSync.Forms.Handlers
 {
     [SyncHandler("formsPreValueHandler", "PreValue", "Forms-PreValues", uSyncFormPriorities.PreValues,
-        Icon = "icon-box usync-addon-icon", EntityType = UdiEntityType.FormsPreValue)]
+        Icon = "icon-box", EntityType = UdiEntityType.FormsPreValue)]
     public class PreValueHandler : SyncHandlerRoot<FieldPreValueSource, FieldPreValueSource>, ISyncHandler,
 		INotificationAsyncHandler<SavedNotification<FieldPreValueSource>>,
 		INotificationAsyncHandler<DeletedNotification<FieldPreValueSource>>,

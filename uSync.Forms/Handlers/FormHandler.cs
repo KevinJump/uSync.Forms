@@ -27,7 +27,7 @@ using static Umbraco.Cms.Core.Constants;
 namespace uSync.Forms.Handlers
 {
 	[SyncHandler("formsHandler", "Forms", "Forms", uSyncFormPriorities.Forms, 
-        Icon = "icon-umb-contour usync-addon-icon", EntityType = UdiEntityType.FormsForm)]
+        Icon = "icon-circle-dotted", EntityType = UdiEntityType.FormsForm)]
     public class FormHandler : SyncHandlerRoot<Form, Form>, ISyncHandler,
 		INotificationAsyncHandler<SavedNotification<Form>>,
 		INotificationAsyncHandler<DeletedNotification<Form>>,
