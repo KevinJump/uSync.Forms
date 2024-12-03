@@ -15,7 +15,7 @@
 
 		<RepositoryUrl>https://github.com/KevinJump/uSync.Forms</RepositoryUrl>
 		<PackageProjectUrl>https://jumoo.co.uk/uSync</PackageProjectUrl>
-		<Copyright>Jumoo @ 2013-2023</Copyright>
+		<Copyright>Jumoo @ 2013-2024</Copyright>
 
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 
@@ -33,16 +33,11 @@
 		<None Include="readme.md" Pack="true" PackagePath="\" />
 		<None Include="readme.txt" Pack="true" PackagePath="\" />
 
-		<PackageReference Include="Umbraco.Cms.Web.Website" Version="15.0.0" />
-		<PackageReference Include="Umbraco.Cms.Api.Management" Version="15.0.0" />
-		<PackageReference Include="Umbraco.Forms" Version="15.0.0">
+		<PackageReference Include="Umbraco.Cms.Web.Website" Version="[15,16)" />
+		<PackageReference Include="Umbraco.Cms.Api.Management" Version="[15,16)" />
+		<PackageReference Include="Umbraco.Forms" Version="[15,16)">
 			<ExcludeAssets>buildTransitive;build</ExcludeAssets>
 		</PackageReference>
-		<PackageReference Include="uSync.Backoffice" Version="15.0.0" />
+		<PackageReference Include="uSync.Backoffice" Version="[15, 16)" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="form-client\" />
-	</ItemGroup>
-
 </Project>
