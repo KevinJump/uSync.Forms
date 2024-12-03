@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Microsoft.Extensions.Logging;
 
 using Umbraco.Cms.Core.Cache;
@@ -44,7 +44,15 @@ namespace uSync.Forms.Handlers
 
             this.itemContainerType = Umbraco.Cms.Core.Models.UmbracoObjectTypes.Unknown;
         }
-
+        /// <summary>
+        ///  Get merged items from a collection of folders. 
+        /// </summary>
+        protected override IReadOnlyList<OrderedNodeInfo> GetMergedItems(string[] folders)
+        {
+            var items = base.GetMergedItems(folders);
+       
+            return items.OrderBy(x=>x.Level).ToList();
+        }
         protected override IEnumerable<uSyncAction> DeleteMissingItems(Folder parent, IEnumerable<Guid> keysToKeep, bool reportOnly)
             => [];
 

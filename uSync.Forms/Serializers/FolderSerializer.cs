@@ -75,11 +75,8 @@ namespace uSync.Forms.Serializers
 
             var parentId = info.Element("Parent").ValueOrDefault(Guid.Empty);
             var name = info.Element("Name").ValueOrDefault(node.GetAlias());
-            if (parentId != Guid.Empty)
-            {
-                item = _syncFormService.CreateOrFindFolders(parentId, name);
-                if (item != null) return item;
-            }
+            item = _syncFormService.CreateOrFindFoldersWithId(parentId,node.GetKey(), name);
+            if (item != null) return item;
 
             var path = info.Element("Path").ValueOrDefault(string.Empty);
             if (!string.IsNullOrWhiteSpace(path))
@@ -94,6 +91,7 @@ namespace uSync.Forms.Serializers
         {
             var node = new XElement(ItemType,
                 new XAttribute("Key", ItemKey(item)),
+                new XAttribute("Level", _syncFormService.GetFolderLevel(item.Id)),
                 new XAttribute("Alias", ItemAlias(item)));
 
             var info = new XElement("Info",
