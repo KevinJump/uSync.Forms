@@ -306,8 +306,12 @@ namespace uSync.Forms.Serializers
                 wNode.Add(new XElement(nameof(workflow.WorkflowTypeId), workflow.WorkflowTypeId));
                 wNode.Add(new XElement(nameof(workflow.ExecutesOn), workflow.ExecutesOn));
                 wNode.Add(new XElement(nameof(workflow.SortOrder), workflow.SortOrder));
+                wNode.Add(new XElement(nameof(workflow.IsMandatory), workflow.IsMandatory));
                 wNode.Add(new XElement(nameof(workflow.Settings),
                     new XCData(JsonConvert.SerializeObject(workflow.Settings, Formatting.Indented))));
+
+                wNode.Add(new XElement(nameof(workflow.Condition), 
+                    new XCData(JsonConvert.SerializeObject(workflow.Condition, Formatting.Indented))));
 
                 node.Add(wNode);
             }
@@ -338,11 +342,17 @@ namespace uSync.Forms.Serializers
                     workflow.WorkflowTypeId = wNode.Element(nameof(workflow.WorkflowTypeId)).ValueOrDefault(Guid.Empty);
                     workflow.ExecutesOn = wNode.Element(nameof(workflow.ExecutesOn)).ValueOrDefault(FormState.Submitted);
                     workflow.SortOrder = wNode.Element(nameof(workflow.SortOrder)).ValueOrDefault(n);
+                    workflow.IsMandatory = wNode.Element(nameof(workflow.IsMandatory)).ValueOrDefault(false);
 
                     var settings = wNode.Element(nameof(workflow.Settings)).ValueOrDefault(string.Empty);
                     if (!string.IsNullOrWhiteSpace(settings))
                     {
                         workflow.Settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(settings);
+                    }
+
+                    var condition = wNode.Element(nameof(workflow.Condition)).ValueOrDefault(string.Empty);
+                    if (!string.IsNullOrWhiteSpace(condition)) {
+                        workflow.Condition = JsonConvert.DeserializeObject<FieldCondition>(condition);
                     }
 
                     _syncFormService.SaveWorkflow(workflow, form);
