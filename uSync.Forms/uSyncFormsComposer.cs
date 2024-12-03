@@ -35,8 +35,17 @@ namespace uSync.Forms
             builder.Services.AddSingleton<FormsMapperHelper>();
 			builder.Services.AddOptions<uSyncFormsOptions>().Bind(builder.Config.GetSection(uSyncFormsOptions.Section));
 
-			// roots, saving and deleting to stop overwrittes
-			builder.AddNotificationAsyncHandler<FormSavingNotification, FormHandler>()
+            builder.AddNotificationAsyncHandler<FormSavedNotification, FormHandler>()
+                .AddNotificationAsyncHandler<FormDeletedNotification, FormHandler>()
+                .AddNotificationAsyncHandler<PrevalueSourceSavedNotification, PreValueHandler>()
+                .AddNotificationAsyncHandler<PrevalueSourceDeletedNotification, PreValueHandler>()
+                .AddNotificationAsyncHandler<DataSourceSavedNotification, DataSourceHandler>()
+                .AddNotificationAsyncHandler<DataSourceDeletedNotification, DataSourceHandler>()
+                .AddNotificationAsyncHandler<FolderSavedNotification, FormsFolderHandler>()
+                .AddNotificationAsyncHandler<FolderDeletedNotification, FormsFolderHandler>();
+
+            // roots, saving and deleting to stop overwrittes
+            builder.AddNotificationAsyncHandler<FormSavingNotification, FormHandler>()
 				.AddNotificationAsyncHandler<FormDeletingNotification, FormHandler>()
 			    .AddNotificationAsyncHandler<PrevalueSourceSavingNotification, PreValueHandler>()
                 .AddNotificationAsyncHandler<PrevalueSourceDeletingNotification, PreValueHandler>()
