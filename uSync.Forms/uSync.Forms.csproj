@@ -31,11 +31,11 @@
 		<None Include="readme.md" Pack="true" PackagePath="\" />
 		<None Include="readme.txt" Pack="true" PackagePath="\" />
 
-		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="13.0.0" />
-		<PackageReference Include="Umbraco.Forms" Version="13.0.0">
+		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="[13,14)" />
+		<PackageReference Include="Umbraco.Forms" Version="[13,14)">
 			<ExcludeAssets>buildTransitive;build</ExcludeAssets>
 		</PackageReference>
-		<PackageReference Include="uSync.Backoffice" Version="13.2.0" />
+		<PackageReference Include="uSync.Backoffice" Version="[13.2,14)" />
 	</ItemGroup>
 
 </Project>
