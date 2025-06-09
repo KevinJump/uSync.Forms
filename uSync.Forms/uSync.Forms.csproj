@@ -33,11 +33,11 @@
 		<None Include="readme.md" Pack="true" PackagePath="\" />
 		<None Include="readme.txt" Pack="true" PackagePath="\" />
 
-		<PackageReference Include="Umbraco.Cms.Web.Website" Version="[15,16)" />
-		<PackageReference Include="Umbraco.Cms.Api.Management" Version="[15,16)" />
-		<PackageReference Include="Umbraco.Forms" Version="[15,16)">
+		<PackageReference Include="Umbraco.Cms.Web.Website" Version="16.0.0-rc5" />
+		<PackageReference Include="Umbraco.Cms.Api.Management" Version="16.0.0-rc5" />
+		<PackageReference Include="Umbraco.Forms" Version="16.0.0-rc3">
 			<ExcludeAssets>buildTransitive;build</ExcludeAssets>
 		</PackageReference>
-		<PackageReference Include="uSync.Backoffice" Version="[15, 16)" />
+		<PackageReference Include="uSync.Backoffice" Version="16.0.0-rc3" />
 	</ItemGroup>
 </Project>
