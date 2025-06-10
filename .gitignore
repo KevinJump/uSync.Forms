@@ -250,3 +250,4 @@ $RECYCLE.BIN/
 .sonarqube
 
 .idea
+/uSync.Forms/wwwroot/App_Plugins/uSync.Forms
