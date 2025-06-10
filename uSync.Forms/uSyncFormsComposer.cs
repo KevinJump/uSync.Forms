@@ -6,6 +6,7 @@ using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Media.EmbedProviders;
+using Umbraco.Cms.Infrastructure.Manifest;
 using Umbraco.Forms;
 using Umbraco.Forms.Core.Services.Notifications;
 
@@ -55,6 +56,8 @@ namespace uSync.Forms
                 .AddNotificationAsyncHandler<FolderDeletingNotification, FormsFolderHandler>();
 
 			UdiParser.RegisterUdiType(uSyncForms.FolderEntityType, UdiType.GuidUdi);
+
+            builder.Services.AddSingleton<IPackageManifestReader, uSyncFormsManifestReader>();
 
             return builder;
         }

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
-		<StaticWebAssetBasePath>App_Plugins/uSync.Forms</StaticWebAssetBasePath>
+		<StaticWebAssetBasePath>/</StaticWebAssetBasePath>
 		
 		<ContentTargetFolders>content</ContentTargetFolders>
 
