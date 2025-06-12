@@ -19,7 +19,7 @@ namespace uSync.Forms.Sync
     /// <summary>
     ///  form Sync manager, tells uSync.Complete how to render the push/pull menus.
     /// </summary>
-    [SyncItemManager(UdiEntityType.FormsPreValue, Umbraco.Forms.Core.Constants.Trees.PreValueSource)]
+    [SyncItemManager(UdiEntityType.FormsPreValue, "")]
     public class FormPreValuesSyncManager : SyncItemManagerBase, ISyncItemManager
     {
         private readonly SyncFormService _formService;

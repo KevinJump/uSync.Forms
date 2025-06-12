@@ -35,7 +35,7 @@
 
 		<PackageReference Include="Umbraco.Cms.Web.Website" Version="16.0.0" />
 		<PackageReference Include="Umbraco.Cms.Api.Management" Version="16.0.0" />
-		<PackageReference Include="Umbraco.Forms" Version="16.0.0-rc3">
+		<PackageReference Include="Umbraco.Forms" Version="16.0.0">
 			<ExcludeAssets>buildTransitive;build</ExcludeAssets>
 		</PackageReference>
 		<PackageReference Include="uSync.Backoffice" Version="16.0.0" />
