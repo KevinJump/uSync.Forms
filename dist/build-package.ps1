@@ -55,6 +55,7 @@ dotnet restore ..
 
 ""; "##### Packaging"; "----------------------------------" ; ""
 
+dotnet pack ..\uSync.Forms.Complete\uSync.Forms.Complete.csproj --no-restore -c $env -o $outFolder /p:$buildParams
 dotnet pack ..\uSync.Forms\uSync.Forms.csproj --no-restore -c $env -o $outFolder /p:$buildParams
 
 ""; "##### Copying to LocalGit folder"; "----------------------------------" ; ""

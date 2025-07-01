@@ -1,8 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using NPoco.RowMappers;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
 using Umbraco.Cms.Core;
@@ -38,61 +41,36 @@ namespace uSync.Forms.Sync
         };
 
 
-        /////////////////        
-        // Forms doesn't use the EditorService to open its picker (because why would it)
-        // but if it did then we could do this, and then forms would also appear in 
-        // uSyncExporter so they could be included in export sync packs. 
-
-        //public override SyncEntityInfo GetSyncInfo(string entityType)
-        //{
-        //    return new SyncEntityInfo
-        //    {
-        //        SectionAlias = Constants.Applications.Forms,
-        //        TreeAlias = Umbraco.Forms.Core.Constants.Trees.Form,
-        //        PickerView = "/App_Plugins/UmbracoForms/Backoffice/Form/overlays/formpicker/formpicker.html"
-        //    };
-        //}
         public Task<SyncEntity?> GetSyncEntityAsync(string key)
-            => uSyncTaskHelper.FromResultOf(() => default(SyncEntity));
+        {
+            if (Guid.TryParse(key, out var guidKey) is false)
+                return Task.FromResult<SyncEntity?>(null);
 
-        //private SyncLocalItem GetEntity(SyncTreeItem treeItem)
-        //{
-        //    if (treeItem.Id == Constants.System.RootString)
-        //        return GetRootItem(treeItem);
+            var item = _formService.GetForm(guidKey);
+            if (item is not null)
+            {
+                return Task.FromResult<SyncEntity?>(new SyncEntity
+                {
+                    Icon = "icon-form",
+                    Name = item.Name,
+                    Udi = Udi.Create(UdiEntityType.FormsForm, item.Id)
+                });
+            }
 
-        //    if (treeItem.Id.StartsWith("folder-"))
-        //    {
-        //        // folder
-        //        var folderId = treeItem.Id.Substring(7);
+            var folder = _formService.GetFolder(guidKey);
+            if (folder is not null)
+            {
+                return Task.FromResult<SyncEntity?>(new SyncEntity
+                {
+                    Icon = "icon-form",
+                    Name = folder.Name,
+                    Udi = Udi.Create(uSyncForms.FolderEntityType, folder.Id)
+                });
+            }
 
-        //        if (!Guid.TryParse(folderId, out Guid folderKey)) return null;
+            return Task.FromResult<SyncEntity?>(null);
 
-        //        var folder = _formService.GetFolder(folderKey);
-        //        if (folder == null) return null;
-
-        //        return new SyncLocalItem
-        //        {
-        //            EntityType = EntityType,
-        //            Name = folder.Name,
-        //            Id = folder.Id.ToString(),
-        //            Udi = Udi.Create(uSyncForms.FolderEntityType, folder.Id)
-        //        };
-        //    }
-
-
-        //    if (!Guid.TryParse(treeItem.Id, out Guid formKey)) return null;
-
-        //    var form = _formService.GetForm(formKey);
-        //    if (form == null) return null;
-
-        //    return new SyncLocalItem
-        //    {
-        //        EntityType = EntityType,
-        //        Id = treeItem.Id,
-        //        Name = form.Name,
-        //        Udi = Udi.Create(EntityType, form.Id)
-        //    };
-        //}
+        }
 
         public override Task<IEnumerable<SyncItem>> GetItemsAsync(SyncItem item)
             => uSyncTaskHelper.FromResultOf(() => GetItems(item));
@@ -112,7 +90,7 @@ namespace uSync.Forms.Sync
                 items.AddRange(GetDecendants(item, item.Flags & ~DependencyFlags.IncludeChildren));
             }
 
-            return items;            
+            return items;
         }
 
         protected override Task<IEnumerable<SyncItem>> GetDescendantsAsync(SyncItem item, DependencyFlags flags)
@@ -131,12 +109,13 @@ namespace uSync.Forms.Sync
             }
             else
             {
-                switch(item.Udi.EntityType)
+                switch (item.Udi.EntityType)
                 {
                     case UdiEntityType.FormsForm:
                         return Enumerable.Empty<SyncItem>();
                     case uSyncForms.FolderEntityType:
-                        if (item.Udi is GuidUdi guidUdi) {
+                        if (item.Udi is GuidUdi guidUdi)
+                        {
                             var forms = _formService.GetFolderForms(guidUdi.Guid)
                                 .Select(x => new SyncItem
                                 {

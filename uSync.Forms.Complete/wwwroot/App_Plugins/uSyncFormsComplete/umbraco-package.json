@@ -1,0 +1,14 @@
+{
+  "id": "uSync.Forms.Complete",
+  "name": "uSync.Forms.Complete",
+  "version": "0.0.0",
+  "allowTelemetry": true,
+  "extensions": [
+    {
+      "name": "uSync Forms Complete Bundle",
+      "alias": "uSync.Forms.Complete.Bundle",
+      "type": "bundle",
+      "js": "/App_Plugins/uSyncFormsComplete/u-sync-forms-complete.js"
+    }
+  ]
+}

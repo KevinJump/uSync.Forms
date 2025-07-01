@@ -36,22 +36,6 @@ namespace uSync.Forms.Sync
             UdiEntityType.FormsDataSource
         };
 
-
-        /////////////////        
-        // Forms doesn't use the EditorService to open its picker (because why would it)
-        // but if it did then we could do this, and then forms would also appear in 
-        // uSyncExporter so they could be included in export sync packs. 
-
-        //public override SyncEntityInfo GetSyncInfo(string entityType)
-        //{
-        //    return new SyncEntityInfo
-        //    {
-        //        SectionAlias = Constants.Applications.Forms,
-        //        TreeAlias = Umbraco.Forms.Core.Constants.Trees.Form,
-        //        PickerView = "/App_Plugins/UmbracoForms/Backoffice/Form/overlays/formpicker/formpicker.html"
-        //    };
-        //}
-
         public SyncLocalItem? GetEntity(SyncTreeItem treeItem)
         {
             if (treeItem.Id == Constants.System.RootString)
@@ -72,6 +56,22 @@ namespace uSync.Forms.Sync
 
         public override Task<IEnumerable<SyncItem>> GetItemsAsync(SyncItem item)
         {
+            if (item.Udi.IsRoot)
+            {
+                var sources = _formService.GetAllDataSources();
+
+                return uSyncTaskHelper.FromResultOf<IEnumerable<SyncItem>>(() =>
+                {
+
+                    return sources.Select(x => new SyncItem
+                    {
+                        Name = x.Name,
+                        Udi = Udi.Create(UdiEntityType.FormsDataSource, x.Id),
+                        Flags = item.Flags
+                    });
+                });
+            }
+
             return uSyncTaskHelper.FromResultOf<IEnumerable<SyncItem>>(() =>
             {
                 var items = new List<SyncItem>();
@@ -87,7 +87,20 @@ namespace uSync.Forms.Sync
 
         public Task<SyncEntity?> GetSyncEntityAsync(string key)
         {
-            throw new NotImplementedException();
+            if (Guid.TryParse(key, out var guidValue) is false)
+                return Task.FromResult<SyncEntity?>(null);
+
+            var dataSource = _formService.GetDataSource(guidValue);
+            if (dataSource is null)
+                return Task.FromResult<SyncEntity?>(null);
+
+            return Task.FromResult<SyncEntity?>(new SyncEntity
+            {
+                Icon = "icon-star",
+                Name = dataSource.Name,
+                Udi = Udi.Create(UdiEntityType.FormsDataSource, guidValue)
+            });
+
         }
 
         protected override Task<IEnumerable<SyncItem>> GetDescendantsAsync(SyncItem item, DependencyFlags flags)

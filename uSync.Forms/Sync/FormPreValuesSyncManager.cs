@@ -54,6 +54,22 @@ namespace uSync.Forms.Sync
 
         public override Task<IEnumerable<SyncItem>> GetItemsAsync(SyncItem item)
         {
+            if (item.Udi.IsRoot)
+            {
+                var preValues = _formService.GetAllPreValues();
+
+                // if this is the root item, we return all forms
+                return uSyncTaskHelper.FromResultOf<IEnumerable<SyncItem>>(() =>
+                {
+                    return preValues.Select(x => new SyncItem
+                    {
+                        Name = x.Name,
+                        Udi = Udi.Create(UdiEntityType.FormsPreValue, x.Id),
+                        Flags = item.Flags 
+                    });
+                });
+            }
+
             return uSyncTaskHelper.FromResultOf<IEnumerable<SyncItem>>(() =>
             {
                 var items = new List<SyncItem>();
@@ -68,7 +84,21 @@ namespace uSync.Forms.Sync
         }
 
         public Task<SyncEntity?> GetSyncEntityAsync(string key)
-            => Task.FromResult<SyncEntity?>(null);
+        {
+            if (Guid.TryParse(key, out var guidValue) is false)
+                return Task.FromResult<SyncEntity?>(null);
+
+            var preValue = _formService.GetPreValueSource(guidValue);
+            if (preValue is null)
+                return Task.FromResult<SyncEntity?>(null);
+
+            return Task.FromResult<SyncEntity?>(new SyncEntity
+            {
+                Icon = "icon-star",
+                Name = preValue.Name,
+                Udi = Udi.Create(UdiEntityType.FormsPreValue, guidValue)
+            });
+        }
 
         protected override Task<IEnumerable<SyncItem>> GetDescendantsAsync(SyncItem item, DependencyFlags flags)
         {
