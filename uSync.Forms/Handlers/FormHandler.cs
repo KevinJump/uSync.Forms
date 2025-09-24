@@ -63,5 +63,11 @@ namespace uSync.Forms.Handlers
 
         protected override Form GetFromService(Form item)
             => _syncFormService.GetForm(item.Id);
+
+        public override void Handle(SavedNotification<Form> notification)
+        {
+            // saved. 
+            base.Handle(notification);
+        }
     }
 }

@@ -41,15 +41,15 @@ namespace uSync.Forms.Sync
         // but if it did then we could do this, and then forms would also appear in 
         // uSyncExporter so they could be included in export sync packs. 
 
-        //public override SyncEntityInfo GetSyncInfo(string entityType)
-        //{
-        //    return new SyncEntityInfo
-        //    {
-        //        SectionAlias = Constants.Applications.Forms,
-        //        TreeAlias = Umbraco.Forms.Core.Constants.Trees.Form,
-        //        PickerView = "/App_Plugins/UmbracoForms/Backoffice/Form/overlays/formpicker/formpicker.html"
-        //    };
-        //}
+        public override SyncEntityInfo GetSyncInfo(string entityType)
+        {
+            return new SyncEntityInfo
+            {
+                SectionAlias = Constants.Applications.Forms,
+                TreeAlias = null, // Umbraco.Forms.Core.Constants.Trees.Form,
+                PickerView = null, // "/App_Plugins/UmbracoForms/Backoffice/Form/overlays/formpicker/formpicker.html"
+            };
+        }
 
         public SyncLocalItem GetEntity(SyncTreeItem treeItem)
         {
