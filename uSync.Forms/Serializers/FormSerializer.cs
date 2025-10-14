@@ -272,7 +272,7 @@ namespace uSync.Forms.Serializers
             // have to save before we do the workflow and source. 
             SaveItem(item);
 
-            DeserializeWorkdlows(info, item);
+            DeserializeWorkflows(info, item);
             DesersilizeDataSource(info, item);
 
             DeserializeFolders(info, item);
@@ -335,45 +335,61 @@ namespace uSync.Forms.Serializers
         }
 
 
-        private void DeserializeWorkdlows(XElement info, Form form)
+        private void DeserializeWorkflows(XElement info, Form form)
         {
             var node = info.Element("Workflows");
-            if (node != null)
+            if (node is null)
             {
-                var workflows = new List<Workflow>();
+                _syncFormService.DeleteAllWorkflows(form);
+                return;
+            }
 
-                int n = 0;
+            var workflowIds = new List<Guid>();
 
-                foreach (var wNode in node.Elements("Workflow"))
+            int defaultSortOrder = 0;
+
+            foreach (var wNode in node.Elements("Workflow"))
+            {
+
+                var workflow = new Workflow();
+                workflow.Form = form.Id;
+                workflow.Id = wNode.Element(nameof(workflow.Id)).ValueOrDefault(Guid.NewGuid());
+                workflow.Name = wNode.Element(nameof(workflow.Name)).ValueOrDefault("Unknown");
+                workflow.Active = wNode.Element(nameof(workflow.Active)).ValueOrDefault(true);
+                workflow.IncludeSensitiveData = wNode.Element(nameof(workflow.IncludeSensitiveData))
+                    .ValueOrDefault(IncludeSensitiveData.False);
+                workflow.WorkflowTypeId = wNode.Element(nameof(workflow.WorkflowTypeId)).ValueOrDefault(Guid.Empty);
+                workflow.ExecutesOn =
+                    wNode.Element(nameof(workflow.ExecutesOn)).ValueOrDefault(FormState.Submitted);
+                
+                workflow.SortOrder = wNode.Element(nameof(workflow.SortOrder)).ValueOrDefault(defaultSortOrder);
+                defaultSortOrder = workflow.SortOrder + 1;
+
+                workflow.IsMandatory = wNode.Element(nameof(workflow.IsMandatory)).ValueOrDefault(false);
+
+                var settings = wNode.Element(nameof(workflow.Settings)).ValueOrDefault(string.Empty);
+                if (!string.IsNullOrWhiteSpace(settings))
                 {
-                    n++;
-
-                    var workflow = new Workflow();
-                    workflow.Form = form.Id;
-                    workflow.Id = wNode.Element(nameof(workflow.Id)).ValueOrDefault(Guid.NewGuid());
-                    workflow.Name = wNode.Element(nameof(workflow.Name)).ValueOrDefault("Unknown");
-                    workflow.Active = wNode.Element(nameof(workflow.Active)).ValueOrDefault(true);
-                    workflow.IncludeSensitiveData = wNode.Element(nameof(workflow.IncludeSensitiveData))
-                        .ValueOrDefault(IncludeSensitiveData.False);
-                    workflow.WorkflowTypeId = wNode.Element(nameof(workflow.WorkflowTypeId)).ValueOrDefault(Guid.Empty);
-                    workflow.ExecutesOn =
-                        wNode.Element(nameof(workflow.ExecutesOn)).ValueOrDefault(FormState.Submitted);
-                    workflow.SortOrder = wNode.Element(nameof(workflow.SortOrder)).ValueOrDefault(n);
-                    workflow.IsMandatory = wNode.Element(nameof(workflow.IsMandatory)).ValueOrDefault(false);
-
-                    var settings = wNode.Element(nameof(workflow.Settings)).ValueOrDefault(string.Empty);
-                    if (!string.IsNullOrWhiteSpace(settings))
-                    {
-                        workflow.Settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(settings);
-                    }
-
-                    var condition = wNode.Element(nameof(workflow.Condition)).ValueOrDefault(string.Empty);
-                    if (!string.IsNullOrWhiteSpace(condition)) {
-                        workflow.Condition = JsonConvert.DeserializeObject<FieldCondition>(condition);
-                    }
-
-                    _syncFormService.SaveWorkflow(workflow, form);
+                    workflow.Settings = JsonConvert.DeserializeObject<Dictionary<string, string>>(settings);
                 }
+
+                var condition = wNode.Element(nameof(workflow.Condition)).ValueOrDefault(string.Empty);
+                if (!string.IsNullOrWhiteSpace(condition))
+                {
+                    workflow.Condition = JsonConvert.DeserializeObject<FieldCondition>(condition);
+                }
+
+                workflowIds.Add(workflow.Id);
+
+                _syncFormService.SaveWorkflow(workflow, form);
+            }
+
+            // remove any workflows from the form that are not in the list.
+            var existing = _syncFormService.GetWorkflows(form);
+            foreach(var workflow in existing)
+            {
+                if (workflowIds.Contains(workflow.Id) is false)
+                    _syncFormService.DeleteWorkflow(workflow.Id);
             }
         }
 

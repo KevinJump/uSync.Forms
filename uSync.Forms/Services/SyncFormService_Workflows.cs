@@ -31,5 +31,8 @@ namespace uSync.Forms.Services
         }
 
         public List<Workflow> GetWorkflows(Form form) => _workflowService.Get(form);
+
+        public void DeleteWorkflow(Guid workflowId) => _workflowService.Delete(workflowId);
+        public void DeleteAllWorkflows(Form form) => _workflowService.Delete(form);
     }
 }
