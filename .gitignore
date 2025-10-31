@@ -252,3 +252,4 @@ $RECYCLE.BIN/
 
 .idea
 /uSync.Forms/wwwroot/App_Plugins/uSync.Forms
+**/uSync/**/
