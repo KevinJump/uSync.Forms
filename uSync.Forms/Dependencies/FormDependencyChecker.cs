@@ -76,13 +76,13 @@ namespace uSync.Forms.Dependencies
         {
             if (item.DataSource == null) return Enumerable.Empty<uSyncDependency>();
 
-            return new uSyncDependency
+            return [new uSyncDependency
             {
                 Flags = flags,
                 Level = 1,
                 Name = item.DataSource.Id.ToString(),
                 Udi = Udi.Create(UdiEntityType.FormsDataSource, item.DataSource.Id)
-            }.AsEnumerableOfOne();
+            }];
         }
     }
 }

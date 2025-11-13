@@ -14,7 +14,7 @@ internal class uSyncFormsManifestReader : IPackageManifestReader
 {
     public Task<IEnumerable<PackageManifest>> ReadPackageManifestsAsync()
     {
-        PackageManifest manifest = new PackageManifest
+        PackageManifest manifest = new()
         {
             Id = "uSync.Forms",
             Name = "uSync.Forms",
@@ -30,6 +30,6 @@ internal class uSyncFormsManifestReader : IPackageManifestReader
             ]
         };
 
-        return Task.FromResult(manifest.AsEnumerableOfOne());
+        return Task.FromResult<IEnumerable<PackageManifest>>([manifest]);
     }
 }

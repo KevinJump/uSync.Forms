@@ -13,6 +13,7 @@ using Umbraco.Forms.Core.Models;
 
 using uSync.BackOffice;
 using uSync.BackOffice.Configuration;
+using uSync.BackOffice.Models;
 using uSync.BackOffice.Services;
 using uSync.BackOffice.SyncHandlers;
 using uSync.BackOffice.SyncHandlers.Interfaces;
@@ -50,11 +51,9 @@ namespace uSync.Forms.Handlers
             this.ItemContainerType = Umbraco.Cms.Core.Models.UmbracoObjectTypes.Unknown;
         }
 
-
-        protected override async Task<IReadOnlyList<OrderedNodeInfo>> GetMergedItemsAsync(string[] folders)
+        protected override async Task<IReadOnlyList<OrderedNodeInfo>> GetMergedItemsAsync(string[] folders, SyncMergeOptions options)
         {
-            var items = await base.GetMergedItemsAsync(folders);
-       
+            var items = await base.GetMergedItemsAsync(folders, options);      
             return [.. items.OrderBy(x=>x.Level)];
         }
 

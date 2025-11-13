@@ -18,7 +18,8 @@ namespace uSync.Forms.Mappers
 {
     public class FormPickerValueMapper : SyncValueMapperBase, ISyncMapper
     {
-        private SyncFormService _syncFormService;
+        private readonly SyncFormService _syncFormService;
+        
         public FormPickerValueMapper(
             SyncFormService syncFormService,
             IEntityService entityService) : base(entityService)
@@ -28,10 +29,10 @@ namespace uSync.Forms.Mappers
 
         public override string Name => "Forms Picker Mapper";
 
-        public override string[] Editors => new string[]
-        {
+        public override string[] Editors =>
+        [
             "UmbracoForms.FormPicker"
-        };
+        ];
 
         public override Task<IEnumerable<uSyncDependency>> GetDependenciesAsync(object value, string editorAlias, DependencyFlags flags)
         {
@@ -46,17 +47,19 @@ namespace uSync.Forms.Mappers
 
                         if (form != null)
                         {
-                            var formDependency = new uSyncDependency
+                            List<uSyncDependency> formDependency = [new uSyncDependency
                             {
                                 Name = form.Name,
                                 Udi = Udi.Create(UdiEntityType.FormsForm, form.Id),
                                 Flags = flags,
                                 Order = uSyncFormPriorities.Forms,
-                            }.AsEnumerableOfOne().ToList();
+                            }];
+
                             if (form.DataSource == null)
                             {
                                 return formDependency;
                             }
+
                             formDependency.Add(new uSyncDependency
                             {
                                 Udi = Udi.Create(UdiEntityType.FormsDataSource, form.DataSource.Id),
