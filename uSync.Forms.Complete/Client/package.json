@@ -1,21 +1,15 @@
 {
   "name": "u-sync-forms-complete",
   "private": true,
-  "version": "0.0.0",
+  "version": "17.0.0-rc2",
   "type": "module",
   "scripts": {
     "watch": "tsc && vite build --watch",
-    "build": "tsc && vite build",
-    "generate-client": "node scripts/generate-openapi.js https://localhost:5000/umbraco/swagger/usyncformscomplete/swagger.json"
+    "build": "tsc && vite build"
   },
   "devDependencies": {
-    "@hey-api/client-fetch": "^0.10.0",
-    "@hey-api/openapi-ts": "^0.66.7",
-    "@jumoo/usync-publisher-assets": "^16.0.3",
-    "@umbraco-cms/backoffice": "^*",
-    "chalk": "^5.4.1",
-    "cross-env": "^7.0.3",
-    "node-fetch": "^3.3.2",
+    "@jumoo/usync-publisher-assets": "^17.0.0-rc1",
+    "@umbraco-cms/backoffice": "^17.0.0-rc2",
     "typescript": "^5.8.3",
     "vite": "^6.3.4"
   }

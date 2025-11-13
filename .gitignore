@@ -3,6 +3,7 @@
 
 dist/**/*.*
 !dist/build-package.ps1
+*/uSync/**/*
 
 # User-specific files
 *.suo

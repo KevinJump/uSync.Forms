@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<StaticWebAssetBasePath>/</StaticWebAssetBasePath>
-		
+
 		<ContentTargetFolders>content</ContentTargetFolders>
 
 		<Product>uSync.Forms</Product>
 		<PackageId>uSync.Forms</PackageId>
-		
+
 		<Title>uSync Forms</Title>
 		<Description>uSync for Umbraco Forms and Settings</Description>
 		<PackageTags>umbraco usync umbraco-marketplace</PackageTags>
@@ -25,7 +25,7 @@
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
 
 		<Nullable>enable</Nullable>
-		
+
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -33,11 +33,11 @@
 		<None Include="readme.md" Pack="true" PackagePath="\" />
 		<None Include="readme.txt" Pack="true" PackagePath="\" />
 
-		<PackageReference Include="Umbraco.Cms.Web.Website" Version="16.0.0" />
-		<PackageReference Include="Umbraco.Cms.Api.Management" Version="16.0.0" />
-		<PackageReference Include="Umbraco.Forms" Version="16.0.0">
+		<PackageReference Include="Umbraco.Cms.Web.Website" Version="17.0.0-rc2" />
+		<PackageReference Include="Umbraco.Cms.Api.Management" Version="17.0.0-rc2" />
+		<PackageReference Include="Umbraco.Forms" Version="17.0.0-rc2">
 			<ExcludeAssets>buildTransitive;build</ExcludeAssets>
 		</PackageReference>
-		<PackageReference Include="uSync.Backoffice" Version="16.0.0" />
+		<PackageReference Include="uSync.Backoffice" Version="17.0.0-rc2" />
 	</ItemGroup>
 </Project>
