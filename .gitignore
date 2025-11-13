@@ -3,6 +3,7 @@
 
 dist/**/*.*
 !dist/build-package.ps1
+uSync/**/*
 
 # User-specific files
 *.suo
@@ -251,3 +252,4 @@ $RECYCLE.BIN/
 
 .idea
 /uSync.Forms/wwwroot/App_Plugins/uSync.Forms
+**/uSync/**/

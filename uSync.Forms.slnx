@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="dist/build-package.ps1" />
+    <File Path="readme.md" />
+  </Folder>
+  <Project Path="uSync.Forms.Complete/uSync.Forms.Complete.csproj" />
+  <Project Path="uSync.Forms.Site/uSync.Forms.Site.csproj" />
+  <Project Path="uSync.Forms/uSync.Forms.csproj" />
+</Solution>
