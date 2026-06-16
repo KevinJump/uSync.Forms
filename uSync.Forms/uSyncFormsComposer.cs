@@ -11,6 +11,7 @@ using Umbraco.Forms;
 using Umbraco.Forms.Core.Services.Notifications;
 
 using uSync.BackOffice;
+using uSync.Core.Extensions;
 using uSync.Forms.Handlers;
 using uSync.Forms.Services;
 
@@ -29,6 +30,10 @@ namespace uSync.Forms
     {
         public static IUmbracoBuilder AdduSyncForms(this IUmbracoBuilder builder) 
         {
+            // don't load backoffice isn't loaded (frontend only).
+            if (builder.IsUmbracoBackOfficeEnabled() is false)
+                return builder;
+
             // builder.AddUmbracoFormsCore();
             builder.AdduSync();
 
