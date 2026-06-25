@@ -1,13 +1,14 @@
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.CreateUmbracoBuilder()
-    // .AddCore()
     .AddBackOffice()
     .AddWebsite()
     .AddComposers()
     .Build();
 
 WebApplication app = builder.Build();
+
 
 await app.BootUmbracoAsync();
 
