@@ -1,6 +1,9 @@
 ﻿
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
+using System.Linq;
 
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
@@ -34,6 +37,10 @@ namespace uSync.Forms
             if (builder.IsUmbracoBackOfficeEnabled() is false)
                 return builder;
 
+            // don't run twice (if something adds builder.AdduSyncForms() outside of the default composer)
+            if (builder.Services.FirstOrDefault(x => x.ServiceType == typeof(SyncFormService)) is not null)
+                return builder;
+
             // builder.AddUmbracoFormsCore();
             builder.AdduSync();
 
@@ -62,7 +69,8 @@ namespace uSync.Forms
 
 			UdiParser.RegisterUdiType(uSyncForms.FolderEntityType, UdiType.GuidUdi);
 
-            builder.Services.AddSingleton<IPackageManifestReader, uSyncFormsManifestReader>();
+            // try add, so we don't add the manifest twice (shouldn't be possible with service check at the top!). 
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IPackageManifestReader, uSyncFormsManifestReader>());
 
             return builder;
         }
