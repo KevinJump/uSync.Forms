@@ -11,6 +11,6 @@
     "@jumoo/usync-publisher-assets": "^17.0.0",
     "@umbraco-cms/backoffice": "^17.4.2",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12"
+    "vite": "^8.2.1"
   }
 }
