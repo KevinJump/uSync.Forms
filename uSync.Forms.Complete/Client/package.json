@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@jumoo/usync-publisher-assets": "^17.0.0",
-    "@umbraco-cms/backoffice": "^17.0.0",
+    "@umbraco-cms/backoffice": "^18.1.1",
     "typescript": "^5.9.3",
     "vite": "^7.1.12"
   }
