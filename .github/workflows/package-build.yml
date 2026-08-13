@@ -49,8 +49,11 @@ jobs:
           useConfigFile: true
           configFilePath: ./GitVersion.yml
 
+      # block scalar, not a plain one - the ": " inside the string would otherwise be
+      # read as the start of a nested mapping.
       - name: Display version
-        run: echo "Full Version: ${{ steps.gitversion.outputs.fullSemVer }}"
+        run: |
+          echo "Full Version: ${{ steps.gitversion.outputs.fullSemVer }}"
 
   package-up:
     runs-on: ubuntu-latest
