@@ -10,7 +10,7 @@
   "devDependencies": {
     "@jumoo/usync-publisher-assets": "^17.0.0",
     "@umbraco-cms/backoffice": "^17.0.0",
-    "typescript": "^5.9.3",
+    "typescript": "^7.0.2",
     "vite": "^7.1.12"
   }
 }
