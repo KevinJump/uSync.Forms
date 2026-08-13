@@ -5,18 +5,30 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    ignore:
+      # this branch targets Umbraco 17 - don't suggest jumping major versions
+      - dependency-name: "Umbraco.Cms*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Umbraco.Forms*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/uSync.Forms/forms-client"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "@umbraco-cms/*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/uSync.Forms.Complete/Client"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "@umbraco-cms/*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
