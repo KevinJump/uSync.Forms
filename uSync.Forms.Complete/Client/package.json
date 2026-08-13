@@ -8,7 +8,7 @@
     "build": "tsc && vite build"
   },
   "devDependencies": {
-    "@jumoo/usync-publisher-assets": "^17.0.0",
+    "@jumoo/usync-publisher-assets": "^18.0.1",
     "@umbraco-cms/backoffice": "^17.0.0",
     "typescript": "^5.9.3",
     "vite": "^7.1.12"
