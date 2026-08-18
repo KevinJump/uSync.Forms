@@ -34,3 +34,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      # v4 needs GitVersion >= 6.2 and our GitVersion.yml is still v5 schema -
+      # see the comment in package-build.yml. Migrate deliberately, not via dependabot.
+      - dependency-name: "gittools/actions"
+        update-types: ["version-update:semver-major"]
