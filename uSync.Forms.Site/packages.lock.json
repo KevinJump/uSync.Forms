@@ -114,13 +114,13 @@
       },
       "Umbraco.Forms": {
         "type": "Direct",
-        "requested": "[17.4.1, )",
-        "resolved": "17.4.1",
-        "contentHash": "GuPqMOyZOtq9vNnoftWovH0w1VgconUC4VTsyKdYCJpL5ichdYGn8Mp5aCFkzf/BI8D+68cjl5G+5ym54Tsr0A==",
+        "requested": "[17.4.8, )",
+        "resolved": "17.4.8",
+        "contentHash": "wMmhIqxAM8GWD20lafceNGp5GmRXyWilZgbmSQStlHL1uCtRXdf71HGEq/jcRmCFko5adkUVBRN0YrI6gUVhug==",
         "dependencies": {
-          "Umbraco.Forms.Core.Providers": "[17.4.1, 18.0.0)",
-          "Umbraco.Forms.Examine": "[17.4.1, 18.0.0)",
-          "Umbraco.Forms.StaticAssets": "[17.4.1, 18.0.0)"
+          "Umbraco.Forms.Core.Providers": "[17.4.8, 18.0.0)",
+          "Umbraco.Forms.Examine": "[17.4.8, 18.0.0)",
+          "Umbraco.Forms.StaticAssets": "[17.4.8, 18.0.0)"
         }
       },
       "uSync": {
@@ -1990,8 +1990,8 @@
       },
       "Umbraco.Forms.Core": {
         "type": "Transitive",
-        "resolved": "17.4.1",
-        "contentHash": "66b4qNtxzYd4CkkHfynEbORLnxQ8zbU16EH7KpfOm6iwmO5JpRwA6qSSoYCYcnEQO2qGOySGWwxXU3HJZoFYkA==",
+        "resolved": "17.4.8",
+        "contentHash": "8DxL7+Hp432K2dK1VUt7Ajg8xVKITT1BTihq7oJ2WtFItLaqH9/0+CMGPkOCbD2+WlTNFLRhccYFkHfNXx5jOg==",
         "dependencies": {
           "Microsoft.Data.SqlClient": "6.1.1",
           "Umbraco.Licenses": "17.0.2"
@@ -1999,41 +1999,41 @@
       },
       "Umbraco.Forms.Core.Providers": {
         "type": "Transitive",
-        "resolved": "17.4.1",
-        "contentHash": "plEdwRhCXJwAr6g4JAknxOcTk9f5Z9L5uQxlg0kffjOq6YrHCJvjfVtjKHpV3dfyf18uZj/V8nIT4vUexqyOFQ==",
+        "resolved": "17.4.8",
+        "contentHash": "LtURrYYvvc2cRm/GHGLO+azxs9cMCQMztTnrB6cgV15m0Fu/ZjQ1mTZdyc7FGBoAuKaV1DLGZA8WQnue4mBqgA==",
         "dependencies": {
           "CsvHelper": "33.1.0",
           "Umbraco.Cms.Web.Common": "[17.4.0, 18.0.0)",
-          "Umbraco.Forms.Core": "[17.4.1, 18.0.0)",
-          "Umbraco.Forms.Web": "[17.4.1, 18.0.0)"
+          "Umbraco.Forms.Core": "[17.4.8, 18.0.0)",
+          "Umbraco.Forms.Web": "[17.4.8, 18.0.0)"
         }
       },
       "Umbraco.Forms.Examine": {
         "type": "Transitive",
-        "resolved": "17.4.1",
-        "contentHash": "n7HflLgM2SRkhJwD+OLMXm4NvNTuaMcIYDy3jiSptRZyrDJlc5bQe+rL2wSN5HBMUM7YnRA0A2jLXd+xmFEAuQ==",
+        "resolved": "17.4.8",
+        "contentHash": "EWg66rkaqC3LnpkdQGp1mhzb3yqssv+z9POw8QG1V1ghwOHcc6csZkDj4uJ+O1/oXu1gKPJGh5aoZ63u7suDzA==",
         "dependencies": {
-          "Umbraco.Forms.Core": "[17.4.1, 18.0.0)"
+          "Umbraco.Forms.Core": "[17.4.8, 18.0.0)"
         }
       },
       "Umbraco.Forms.StaticAssets": {
         "type": "Transitive",
-        "resolved": "17.4.1",
-        "contentHash": "LfnT80Lg5iH4DuQ0vuBqelOMvWAT7iCW01g+Vdo6i+aL8gRDQcUlHkn3m+zezFEtdtyAEo8fY08+E06wUviUQQ==",
+        "resolved": "17.4.8",
+        "contentHash": "+eQOd1+nvxD4j2k4zAe7XSn+sruOUy/nVtCvg7h+dgoFjRlNGQYTc2AUUiF+OB7NcKXI19L47UPdkoUeh9jh9Q==",
         "dependencies": {
           "Umbraco.Cms.Web.Website": "[17.4.0, 18.0.0)",
-          "Umbraco.Forms.Core.Providers": "[17.4.1, 18.0.0)"
+          "Umbraco.Forms.Core.Providers": "[17.4.8, 18.0.0)"
         }
       },
       "Umbraco.Forms.Web": {
         "type": "Transitive",
-        "resolved": "17.4.1",
-        "contentHash": "ahVwyB588bApzktsZjC9kaOp92jkasAmiXf/qcdt9IogsGqX7KkC2Fg+4MUXATsyg77vNwIcN++62YEQ1U85uQ==",
+        "resolved": "17.4.8",
+        "contentHash": "JBAHNntxU5/Xt+KPY8jXh0wx8Je/J26ObMYAt7QjsBSaZ6zvshq9qZXPzThCL+VHYeAMX+YAL2BRSEHB1yZBQg==",
         "dependencies": {
           "JsonLogic": "5.4.2",
           "Umbraco.Cms.Api.Management": "[17.4.0, 18.0.0)",
           "Umbraco.Cms.Web.Website": "[17.4.0, 18.0.0)",
-          "Umbraco.Forms.Core": "[17.4.1, 18.0.0)"
+          "Umbraco.Forms.Core": "[17.4.8, 18.0.0)"
         }
       },
       "Umbraco.Licenses": {
@@ -2196,7 +2196,7 @@
         "dependencies": {
           "Umbraco.Cms.Api.Management": "[17.4.2, )",
           "Umbraco.Cms.Web.Website": "[17.4.2, )",
-          "Umbraco.Forms": "[17.4.1, )",
+          "Umbraco.Forms": "[17.4.8, )",
           "uSync.Backoffice": "[17.3.5, )"
         }
       },
