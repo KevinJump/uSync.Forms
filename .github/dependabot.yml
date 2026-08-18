@@ -1,0 +1,38 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      # Umbraco.Cms/.Forms versions are locked to the 18.0.0 release pinned across
+      # the .NET projects and package.json - bump these deliberately, not via dependabot.
+      - dependency-name: "Umbraco.Cms*"
+      - dependency-name: "Umbraco.Forms*"
+
+  - package-ecosystem: "npm"
+    directory: "/uSync.Forms/forms-client"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "@umbraco-cms/*"
+
+  - package-ecosystem: "npm"
+    directory: "/uSync.Forms.Complete/Client"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "@umbraco-cms/*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+      # v4 needs GitVersion >= 6.2 and our GitVersion.yml is still v5 schema -
+      # see the comment in package-build.yml. Migrate deliberately, not via dependabot.
+      - dependency-name: "gittools/actions"
+        update-types: ["version-update:semver-major"]

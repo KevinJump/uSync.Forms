@@ -1,0 +1,60 @@
+name: PR Project Build
+
+permissions:
+  contents: read
+
+# uSync.Forms releases from "v{major}/main" - a branch per Umbraco major. Plain "main"
+# is kept in the filter so a re-created main, or a branch that hasn't been moved over
+# yet, still builds.
+on:
+  pull_request:
+    branches: [ "main", "*/main" ]
+    paths-ignore:
+      - "**.md"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  config: Release
+  solution_name: ./uSync.Forms.slnx
+  forms_client_folder: ./uSync.Forms/forms-client
+
+jobs:
+  build-project:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "lts/*"
+          cache: npm
+          cache-dependency-path: "**/package-lock.json"
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
+
+      # uSync.Forms.Complete's Client folder builds itself via an MSBuild target during
+      # `dotnet build` (RestoreClient/BuildClient in uSync.Forms.Complete.csproj), which
+      # is why node has to be on PATH before that step. forms-client has no such target,
+      # so it's built explicitly here, before the dotnet build picks up its static assets.
+      - name: build forms-client
+        run: |
+          npm ci
+          npm run build
+        working-directory: ${{ env.forms_client_folder }}
+
+      - name: restore
+        run: dotnet restore ${{ env.solution_name }} --locked-mode
+
+      - name: build
+        run: >
+          dotnet build ${{ env.solution_name }}
+          -c ${{ env.config }} --no-restore
+          -p:ContinuousIntegrationBuild=true

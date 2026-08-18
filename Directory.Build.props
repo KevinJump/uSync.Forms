@@ -1,0 +1,40 @@
+<Project>
+
+	<!--
+		NOTE: adding this file stops any Directory.Build.props further up the disk from
+		applying. Local machines may set NuGetAuditMode there for their own reasons, but CI
+		never sees that file, so the setting needs to live here too or the two environments
+		disagree about which NuGet advisories are worth a warning.
+	-->
+
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+		<NuGetAuditMode>direct</NuGetAuditMode>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+	</PropertyGroup>
+
+	<!-- shared package metadata - a project's own PropertyGroup still wins if it sets these -->
+	<PropertyGroup>
+		<Authors>Kevin Jump</Authors>
+		<Company>Jumoo</Company>
+		<Copyright>Jumoo @ 2013-2026</Copyright>
+
+		<PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+		<PackageProjectUrl>https://jumoo.co.uk/uSync</PackageProjectUrl>
+
+		<RepositoryUrl>https://github.com/KevinJump/uSync.Forms</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+		<!-- don't append the build onto the version -->
+		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+
+		<!-- lock files, so a transitive update can't change a build without a commit -->
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+	</PropertyGroup>
+
+</Project>
