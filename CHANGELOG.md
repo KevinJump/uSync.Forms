@@ -14,6 +14,8 @@ All notable changes to uSync.Forms are documented here.
   no longer show as changed on every import.
 - Content id mapping in prevalue source settings: values with more than one id, or the
   same id twice, now map correctly, and digits inside GUIDs are no longer treated as ids.
+- Pushing or pulling a forms folder now includes forms in every folder beneath it, not
+  only its direct child folders.
 
 ### Changed
 
@@ -21,3 +23,6 @@ All notable changes to uSync.Forms are documented here.
 - Item existence checks use the Forms `Exists` APIs instead of loading every item.
 - Removed `CleanseNode` overrides that re-parsed the XML on every comparison without
   changing it.
+- Prevalue sources are looked up once per form import instead of once per field.
+- Removed unused code: reflection for `FolderId` on export, and the unused
+  `IEntityService` constructor argument on `FormSerializer`.

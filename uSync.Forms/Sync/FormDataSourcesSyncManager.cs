@@ -23,11 +23,9 @@ namespace uSync.Forms.Sync
     public class FormDataSourcesSyncManager : SyncItemManagerBase, ISyncItemManager
     {
         private readonly SyncFormService _formService;
-        private readonly ILogger<FormSyncManager> _logger;
 
-        public FormDataSourcesSyncManager(SyncFormService formService, ILogger<FormSyncManager> logger)
+        public FormDataSourcesSyncManager(SyncFormService formService)
         {
-            _logger = logger;
             _formService = formService;
         }
 
@@ -103,45 +101,10 @@ namespace uSync.Forms.Sync
 
         }
 
+        /// <summary>
+        ///  data sources do not have children (the root is handled in GetItemsAsync).
+        /// </summary>
         protected override Task<IEnumerable<SyncItem>> GetDescendantsAsync(SyncItem item, DependencyFlags flags)
-            => uSyncTaskHelper.FromResultOf(() => GetDecendants(item, flags));
-        
-        protected IEnumerable<SyncItem> GetDecendants(SyncItem item, DependencyFlags flags)
-        {
-            if (item.Udi.IsRoot)
-            {
-                return _formService.GetAllForms().Select(x => new SyncItem
-                {
-                    Name = x.Name,
-                    Udi = Udi.Create(UdiEntityType.FormsForm, x.Id),
-                    Flags = flags & ~DependencyFlags.IncludeChildren
-                });
-            }
-            else
-            {
-                switch(item.Udi.EntityType)
-                {
-                    case UdiEntityType.FormsPreValue:
-                        return Enumerable.Empty<SyncItem>();
-                    case uSyncForms.FolderEntityType:
-                        if (item.Udi is GuidUdi guidUdi) {
-                            var forms = _formService.GetFolderForms(guidUdi.Guid)
-                                .Select(x => new SyncItem
-                                {
-                                    Name = x.Name,
-                                    Udi = Udi.Create(UdiEntityType.FormsForm, x.Id),
-                                    Flags = flags & ~DependencyFlags.IncludeChildren
-                                });
-
-                            _logger.LogDebug("Getting Forms in folder: {guid} {count}", guidUdi, forms.Count());
-
-                            return forms;
-                        }
-                        break;
-                }
-            }
-
-            return Enumerable.Empty<SyncItem>();
-        }
+            => Task.FromResult(Enumerable.Empty<SyncItem>());
     }
 }
