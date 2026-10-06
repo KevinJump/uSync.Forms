@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Cms.Core.Media.EmbedProviders;
 using Umbraco.Cms.Infrastructure.Manifest;
 using Umbraco.Forms;
 using Umbraco.Forms.Core.Services.Notifications;
