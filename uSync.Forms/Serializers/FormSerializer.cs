@@ -307,7 +307,10 @@ namespace uSync.Forms.Serializers
                 return;
             }
 
-            var folder = _syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
+            // not there by id, so find (or create) it by path. if we do have to create it, it
+            // gets the id from the file, so it matches when the folder itself is synced.
+            var folder = _syncFormService.CreateOrFindFolders(Guid.Empty, folderPath,
+                folderId == Guid.Empty ? null : folderId);
             if (folder != null)
                 item.FolderId = folder.Id;
         }
