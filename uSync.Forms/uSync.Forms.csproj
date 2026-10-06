@@ -28,6 +28,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<!-- the client source's json files are picked up as content, keep them out of the package -->
+		<Content Remove="forms-client\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 
 		<None Include="readme.md" Pack="true" PackagePath="\" />
 		<None Include="readme.txt" Pack="true" PackagePath="\" />

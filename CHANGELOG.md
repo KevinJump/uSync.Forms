@@ -25,6 +25,8 @@ All notable changes to uSync.Forms are documented here.
 - A folder created from a form's folder path now gets the folder id from the file and
   its real (decoded) name, so the form no longer shows as changed on every import.
 - Looking up a form by name no longer relies on a caught exception when it is missing.
+- The uSync.Forms package no longer ships the client source `package.json`,
+  `package-lock.json` and `tsconfig.json` as content files.
 
 ### Changed
 
