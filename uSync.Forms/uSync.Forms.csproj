@@ -15,7 +15,6 @@
 
 		<RepositoryUrl>https://github.com/KevinJump/uSync.Forms</RepositoryUrl>
 		<PackageProjectUrl>https://jumoo.co.uk/uSync</PackageProjectUrl>
-		<Copyright>Jumoo @ 2013-2024</Copyright>
 
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 
