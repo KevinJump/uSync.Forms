@@ -14,7 +14,7 @@ namespace uSync.Forms.Services
     public partial class SyncFormService
     {
         private bool IsNew(Folder folder)
-            => folder.Id == Guid.Empty || _folderService.Get(folder.Id) == null;
+            => folder.Id == Guid.Empty || !_folderService.Exists(folder.Id);
 
         public void SaveFolder(Folder item)
         {

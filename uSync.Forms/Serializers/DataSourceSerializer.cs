@@ -92,15 +92,6 @@ namespace uSync.Forms.Serializers
         public override Task SaveItemAsync(FormDataSource item)
             => uSyncTaskHelper.FromResultOf(() => syncFormService.SaveDataSource(item));
 
-        protected override XElement CleanseNode(XElement node)
-        {
-            var cleansed = XElement.Parse(node.ToString());
-
-            var keyNode = cleansed.Attribute("key");
-            if (keyNode != null)
-                keyNode.Value = Guid.Empty.ToString();
-            return cleansed;
-        }
 
 
     }

@@ -60,7 +60,7 @@ namespace uSync.Forms.Services
         }
 
         private bool IsNew(Form item)
-            => item.Id == Guid.Empty || !GetAllForms().Any(x => x.Id == item.Id);
+            => item.Id == Guid.Empty || !_formService.Exists(item.Id);
 
 
         public void DeleteForm(Form item)
