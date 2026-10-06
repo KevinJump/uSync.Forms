@@ -26,13 +26,11 @@ namespace uSync.Forms.Serializers
         IsTwoPass = false)]
     public class FormSerializer : SyncSerializerRoot<Form>, ISyncSerializer<Form>
     {
-        private readonly IEntityService _entityService;
         private readonly SyncFormService _syncFormService;
 
-        public FormSerializer(ILogger<SyncSerializerRoot<Form>> logger, IEntityService entityService,
+        public FormSerializer(ILogger<SyncSerializerRoot<Form>> logger,
             SyncFormService formService) : base(logger)
         {
-            _entityService = entityService;
             _syncFormService = formService;
         }
 
@@ -87,26 +85,10 @@ namespace uSync.Forms.Serializers
 
         private void SerializeFolderInfo(XElement node, Form form)
         {
-            var folderId = form?.GetType()?.GetProperty("FolderId");
-            if (folderId != null)
-            {
-                var value = folderId.GetValue(form);
-                node.Add(new XElement("FolderId", folderId.GetValue(form)));
-
-                var attempt = value.TryConvertTo<Guid?>();
-                if (attempt.Success)
-                {
-                    if (attempt.Result != null)
-                    {
-                        var folderPath = _syncFormService.GetFolderPath(attempt.Result.Value);
-                        node.Add(new XElement("Folder", folderPath));
-                    }
-                    else
-                    {
-                        node.Add(new XElement("Folder", string.Empty));
-                    }
-                }
-            }
+            node.Add(new XElement("FolderId", form.FolderId));
+            node.Add(new XElement("Folder", form.FolderId is null
+                ? string.Empty
+                : _syncFormService.GetFolderPath(form.FolderId.Value)));
         }
 
         private XElement SerializePages(IEnumerable<Page> pages)
@@ -156,6 +138,9 @@ namespace uSync.Forms.Serializers
         {
             List<string> missing = new List<string>();
 
+            // looked up once (and only if a field needs it), not once per field.
+            Dictionary<string, FieldPreValueSource>? sources = null;
+
             foreach (var item in jArray.Cast<JObject>())
             {
                 var fieldSets = GetArray(item, "fieldSets");
@@ -170,8 +155,8 @@ namespace uSync.Forms.Serializers
                             var attempt = GetObjectValue<string>(field, "prevalueSourceId");
                             if (attempt && string.IsNullOrWhiteSpace(attempt.Result) is false && attempt.Result != Guid.Empty.ToString())
                             {
-                                var preValue = _syncFormService.GetPreValueSource(attempt.Result);
-                                if (preValue != null)
+                                sources ??= GetPreValueSourcesByName();
+                                if (sources.TryGetValue(attempt.Result, out var preValue))
                                 {
                                     field["prevalueSourceId"] = preValue.Id;
                                 }
@@ -192,6 +177,18 @@ namespace uSync.Forms.Serializers
 
             return missing.Count == 0 ? Attempt.Succeed<JArray?>(jArray) 
                 : Attempt.Fail<JArray?>(jArray, new Exception($"Could not find [{string.Join(",", missing)}]"));
+        }
+
+        private Dictionary<string, FieldPreValueSource> GetPreValueSourcesByName()
+        {
+            var sources = new Dictionary<string, FieldPreValueSource>(StringComparer.InvariantCultureIgnoreCase);
+            foreach (var source in _syncFormService.GetAllPreValues())
+            {
+                if (source.Name != null)
+                    sources.TryAdd(source.Name, source);
+            }
+
+            return sources;
         }
 
         private JArray GetArray(JObject obj, string propertyName)
@@ -533,30 +530,5 @@ namespace uSync.Forms.Serializers
 
         public override Task SaveItemAsync(Form item)
             => uSyncTaskHelper.FromResultOf(() => _syncFormService.SaveForm(item));
-      
-
-        private Guid GetContentKey(int id)
-        {
-            if (id > 0)
-            {
-                var attempt = _entityService.GetKey(id, UmbracoObjectTypes.Document);
-                if (attempt.Success) return attempt.Result;
-            }
-
-            return Guid.Empty;
-        }
-
-        private int GetContentId(Guid key)
-        {
-            if (key != Guid.Empty)
-            {
-                var attempt = _entityService.GetId(key, UmbracoObjectTypes.Document);
-                if (attempt.Success) return attempt.Result;
-            }
-
-            return 0;
-        }
-
-
     }
 }
