@@ -232,17 +232,25 @@ namespace uSync.Forms.Serializers
 
             var changes = new List<uSyncChange>();
 
-            await DeserializeInfoAsync(node, item);
+            var info = node.Element("Info");
+
+            DeserializeInfo(node, info, item);
             changes.AddRange(DeserializePages(node, item));
 
-            // SaveItem(item);
+            // workflows reference the form, so it has to be saved before they are.
+            // we save here (once) and tell uSync not to save it again.
+            await SaveItemAsync(item);
 
-            return SyncAttempt<Form>.Succeed(item.Name, item, ChangeType.Import, changes);
+            if (info != null)
+                DeserializeWorkflows(info, item);
+
+            var attempt = SyncAttempt<Form>.Succeed(item.Name, item, ChangeType.Import, changes);
+            attempt.Saved = true;
+            return attempt;
         }
 
-        private async Task DeserializeInfoAsync(XElement node, Form item)
+        private void DeserializeInfo(XElement node, XElement? info, Form item)
         {
-            var info = node.Element("Info");
             if (info == null) return;
 
             item.Name = info.Element("Name").ValueOrDefault(node.GetAlias());
@@ -259,7 +267,9 @@ namespace uSync.Forms.Serializers
             item.MessageOnSubmitIsHtml =
                 info.Element("MessageOnSubmit")?.Attribute("IsHtml").ValueOrDefault(false) ?? false;
 
-            item.GoToPageOnSubmit = info.Element("GoToPageOnSubmit").ValueOrDefault(Guid.Empty).ToString();
+            // forms stores this as a string (a content key, "0" or empty) - round trip it as is,
+            // so the imported value matches the file and doesn't show as a change every time.
+            item.GoToPageOnSubmit = info.Element("GoToPageOnSubmit").ValueOrDefault(string.Empty);
 
             item.XPathOnSubmit = info.Element("XPathOnSubmit").ValueOrDefault(string.Empty);
             item.ManualApproval = info.Element("ManualApproval").ValueOrDefault(false);
@@ -273,34 +283,36 @@ namespace uSync.Forms.Serializers
             item.NextLabel = info.Element("NextLabel").ValueOrDefault(string.Empty);
             item.PrevLabel = info.Element("PreVLabel").ValueOrDefault(string.Empty);
 
-            // have to save before we do the workflow and source. 
-            await SaveItemAsync(item);
-
-            DeserializeWorkflows(info, item);
             DesersilizeDataSource(info, item);
-
-            await DeserializeFoldersAsync(info, item);
+            DeserializeFolders(info, item);
         }
 
-        private async Task DeserializeFoldersAsync(XElement info, Form item)
+        private void DeserializeFolders(XElement info, Form item)
         {
-            var folderPath = info.Element("Folder").ValueOrDefault(string.Empty);
+            // no folder info in the file (older exports) - leave the form where it is.
+            var folderNode = info.Element("Folder");
+            if (folderNode == null) return;
 
-            if (!string.IsNullOrWhiteSpace(folderPath))
+            var folderId = info.Element("FolderId").ValueOrDefault(Guid.Empty);
+            var folderPath = folderNode.ValueOrDefault(string.Empty);
+
+            // the folder handler runs before forms, so the folder will normally exist by id.
+            if (folderId != Guid.Empty && _syncFormService.GetFolder(folderId) != null)
             {
-                Umbraco.Forms.Core.Models.Folder? folder;
-
-                if (item.FolderId != null && item.FolderId != Guid.Empty)
-                {
-                    folder = await _syncFormService.CreateOrFindFoldersWithIdAsync(Guid.Empty, item.FolderId.Value, "");
-                    if (folder != null) return;
-                }
-                
-                folder = _syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
-
-                if (folder != null) 
-                    item.FolderId = folder.Id;
+                item.FolderId = folderId;
+                return;
             }
+
+            if (string.IsNullOrWhiteSpace(folderPath))
+            {
+                // form is at the root.
+                item.FolderId = null;
+                return;
+            }
+
+            var folder = _syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
+            if (folder != null)
+                item.FolderId = folder.Id;
         }
 
 
