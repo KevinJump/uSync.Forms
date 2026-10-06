@@ -4,6 +4,12 @@ All notable changes to uSync.Forms are documented here.
 
 ## Unreleased
 
+### Added
+
+- Forms now sync their multi-page paging and summary settings, record retention days,
+  entries list display fields, validation rules and block-based submit message. These
+  are only imported when they are in the file, so older exports do not reset them.
+
 ### Fixed
 
 - Form picker dependencies were dropped when the picked form had a data source.
@@ -16,6 +22,9 @@ All notable changes to uSync.Forms are documented here.
   same id twice, now map correctly, and digits inside GUIDs are no longer treated as ids.
 - Pushing or pulling a forms folder now includes forms in every folder beneath it, not
   only its direct child folders.
+- A folder created from a form's folder path now gets the folder id from the file and
+  its real (decoded) name, so the form no longer shows as changed on every import.
+- Looking up a form by name no longer relies on a caught exception when it is missing.
 
 ### Changed
 
