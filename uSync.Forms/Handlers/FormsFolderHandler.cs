@@ -53,8 +53,31 @@ namespace uSync.Forms.Handlers
 
         protected override async Task<IReadOnlyList<OrderedNodeInfo>> GetMergedItemsAsync(string[] folders, SyncMergeOptions options)
         {
-            var items = await base.GetMergedItemsAsync(folders, options);      
-            return [.. items.OrderBy(x=>x.Level)];
+            var items = await base.GetMergedItemsAsync(folders, options);
+
+            // folder files don't have a level, so we work the depth out from the parent
+            // chain - a parent has to be imported before any of its children.
+            var parents = new Dictionary<Guid, Guid>();
+            foreach (var item in items)
+            {
+                parents[item.Key] = item.Node.Element("Info")?.Element("Parent").ValueOrDefault(Guid.Empty) ?? Guid.Empty;
+            }
+
+            return [.. items.OrderBy(x => GetFolderDepth(x.Key, parents))];
+        }
+
+        private static int GetFolderDepth(Guid key, Dictionary<Guid, Guid> parents)
+        {
+            var depth = 0;
+            var visited = new HashSet<Guid> { key };
+
+            while (parents.TryGetValue(key, out var parent) && parent != Guid.Empty && visited.Add(parent))
+            {
+                depth++;
+                key = parent;
+            }
+
+            return depth;
         }
 
         protected override Task<IEnumerable<uSyncAction>> DeleteMissingItemsAsync(Folder parent, IEnumerable<Guid> keysToKeep, bool reportOnly)
