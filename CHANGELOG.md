@@ -26,3 +26,6 @@ All notable changes to uSync.Forms are documented here.
 - Prevalue sources are looked up once per form import instead of once per field.
 - Removed unused code: reflection for `FolderId` on export, and the unused
   `IEntityService` constructor argument on `FormSerializer`.
+- Removed the empty backoffice entry point from the uSync.Forms client bundle, and added
+  the missing data source label.
+- The package manifest reports the assembly version instead of a fixed `1.0.0`.
