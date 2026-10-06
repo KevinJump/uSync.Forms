@@ -75,6 +75,25 @@ namespace uSync.Forms.Serializers
                 info.Add(new XElement("NextLabel", item.NextLabel));
                 info.Add(new XElement("PreVLabel", item.PrevLabel));
 
+                info.Add(new XElement(nameof(item.MessageOnSubmitBlocks), item.MessageOnSubmitBlocks ?? string.Empty));
+
+                info.Add(new XElement(nameof(item.ShowPagingOnMultiPageForms), item.ShowPagingOnMultiPageForms));
+                info.Add(new XElement(nameof(item.PagingDetailsFormat), item.PagingDetailsFormat ?? string.Empty));
+                info.Add(new XElement(nameof(item.PageCaptionFormat), item.PageCaptionFormat ?? string.Empty));
+                info.Add(new XElement(nameof(item.ShowSummaryPageOnMultiPageForms), item.ShowSummaryPageOnMultiPageForms));
+                info.Add(new XElement(nameof(item.SummaryLabel), item.SummaryLabel ?? string.Empty));
+
+                info.Add(new XElement(nameof(item.DaysToRetainSubmittedRecordsFor), item.DaysToRetainSubmittedRecordsFor));
+                info.Add(new XElement(nameof(item.DaysToRetainApprovedRecordsFor), item.DaysToRetainApprovedRecordsFor));
+                info.Add(new XElement(nameof(item.DaysToRetainRejectedRecordsFor), item.DaysToRetainRejectedRecordsFor));
+
+                info.Add(new XElement(nameof(item.DisplayDefaultFields), item.DisplayDefaultFields));
+                info.Add(new XElement(nameof(item.SelectedDisplayFields),
+                    new XCData(JsonConvert.SerializeObject(item.SelectedDisplayFields ?? [], Formatting.Indented))));
+
+                info.Add(new XElement(nameof(item.ValidationRules),
+                    new XCData(JsonConvert.SerializeObject(item.ValidationRules ?? [], Formatting.Indented))));
+
                 node.Add(info);
 
                 node.Add(SerializePages(item.Pages));
@@ -280,8 +299,48 @@ namespace uSync.Forms.Serializers
             item.NextLabel = info.Element("NextLabel").ValueOrDefault(string.Empty);
             item.PrevLabel = info.Element("PreVLabel").ValueOrDefault(string.Empty);
 
+            DeserializeOptionalInfo(info, item);
+
             DesersilizeDataSource(info, item);
             DeserializeFolders(info, item);
+        }
+
+        /// <summary>
+        ///  settings that were added to the file after the first release. they are only
+        ///  set when they are in the file, so importing an older export doesn't reset them.
+        /// </summary>
+        private static void DeserializeOptionalInfo(XElement info, Form item)
+        {
+            SetIfPresent(info, nameof(item.MessageOnSubmitBlocks), string.Empty,
+                x => item.MessageOnSubmitBlocks = string.IsNullOrEmpty(x) ? null : x);
+
+            SetIfPresent(info, nameof(item.ShowPagingOnMultiPageForms), MultiPageNavigationOption.None,
+                x => item.ShowPagingOnMultiPageForms = x);
+            SetIfPresent(info, nameof(item.PagingDetailsFormat), string.Empty, x => item.PagingDetailsFormat = x);
+            SetIfPresent(info, nameof(item.PageCaptionFormat), string.Empty, x => item.PageCaptionFormat = x);
+            SetIfPresent(info, nameof(item.ShowSummaryPageOnMultiPageForms), false,
+                x => item.ShowSummaryPageOnMultiPageForms = x);
+            SetIfPresent(info, nameof(item.SummaryLabel), string.Empty,
+                x => item.SummaryLabel = string.IsNullOrEmpty(x) ? null : x);
+
+            SetIfPresent(info, nameof(item.DaysToRetainSubmittedRecordsFor), 0, x => item.DaysToRetainSubmittedRecordsFor = x);
+            SetIfPresent(info, nameof(item.DaysToRetainApprovedRecordsFor), 0, x => item.DaysToRetainApprovedRecordsFor = x);
+            SetIfPresent(info, nameof(item.DaysToRetainRejectedRecordsFor), 0, x => item.DaysToRetainRejectedRecordsFor = x);
+
+            SetIfPresent(info, nameof(item.DisplayDefaultFields), true, x => item.DisplayDefaultFields = x);
+            SetIfPresent(info, nameof(item.SelectedDisplayFields), string.Empty,
+                x => item.SelectedDisplayFields = JsonConvert.DeserializeObject<List<RecordFieldDisplay>>(x) ?? []);
+
+            SetIfPresent(info, nameof(item.ValidationRules), string.Empty,
+                x => item.ValidationRules = JsonConvert.DeserializeObject<List<ValidationRule>>(x) ?? []);
+        }
+
+        private static void SetIfPresent<TValue>(XElement info, string name, TValue defaultValue, Action<TValue> setValue)
+        {
+            var element = info.Element(name);
+            if (element is null) return;
+
+            setValue(element.ValueOrDefault(defaultValue));
         }
 
         private void DeserializeFolders(XElement info, Form item)
@@ -307,7 +366,10 @@ namespace uSync.Forms.Serializers
                 return;
             }
 
-            var folder = _syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
+            // not there by id, so find (or create) it by path. if we do have to create it, it
+            // gets the id from the file, so it matches when the folder itself is synced.
+            var folder = _syncFormService.CreateOrFindFolders(Guid.Empty, folderPath,
+                folderId == Guid.Empty ? null : folderId);
             if (folder != null)
                 item.FolderId = folder.Id;
         }
