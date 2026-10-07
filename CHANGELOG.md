@@ -4,6 +4,12 @@ All notable changes to uSync.Forms are documented here.
 
 ## Unreleased
 
+### Upgrading
+
+- Run a uSync export of your forms after upgrading. Form files from earlier versions do
+  not have the new settings below, so until they are exported again each form is reported
+  as changed and saved on every import. Nothing is reset in the meantime.
+
 ### Added
 
 - Forms now sync their multi-page paging and summary settings, record retention days,
