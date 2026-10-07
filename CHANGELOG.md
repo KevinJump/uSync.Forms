@@ -2,7 +2,7 @@
 
 All notable changes to uSync.Forms are documented here.
 
-## Unreleased
+## 18.1.0 - 2026-10-07
 
 ### Upgrading
 
