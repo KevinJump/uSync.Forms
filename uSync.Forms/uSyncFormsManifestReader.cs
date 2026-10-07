@@ -19,7 +19,7 @@ internal class uSyncFormsManifestReader : IPackageManifestReader
             Id = "uSync.Forms",
             Name = "uSync.Forms",
             AllowTelemetry = true,
-            Version = typeof(uSyncFormsManifestReader).Assembly.GetName().Version?.ToString(3) ?? "17.0.0",
+            Version = typeof(uSyncFormsManifestReader).Assembly.GetName().Version?.ToString(3) ?? "18.0.0",
             Extensions = [
                 new JsonObject {
                     ["name"] = "uSync.Forms bundle",

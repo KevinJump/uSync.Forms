@@ -52,14 +52,14 @@ jobs:
       # prerelease scheme - makes it obvious which nightly a given package build
       # is, and when it was built.
       #
-      # v17/main builds are "-prerelease.{date}.{run}". Any other branch is
+      # v18/main builds are "-prerelease.{date}.{run}". Any other branch is
       # "-branch.{branch}.{date}.{run}", so a branch build on the feed can't be
       # mistaken for a main nightly, and sorts below them ("branch" < "prerelease").
       - name: Determine nightly version
         id: version
         run: |
           date=$(date -u +%Y%m%d)
-          if [ "$GITHUB_REF" = "refs/heads/v17/main" ]; then
+          if [ "$GITHUB_REF" = "refs/heads/v18/main" ]; then
             label=prerelease
           else
             # semver prerelease identifiers are [0-9A-Za-z-] only.
