@@ -20,7 +20,8 @@ namespace uSync.Forms
             _entityService = entityService;
         }
 
-        private const string _idRegEx = @"\d{4,9}";
+        // lookarounds stop us matching runs of digits inside guids or longer tokens.
+        private const string _idRegEx = @"(?<![\w-])\d{4,9}(?![\w-])";
         private const string _guidRegEx = @"\b__[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12}__\b";
 
 		[GeneratedRegex(_idRegEx)]
@@ -32,45 +33,45 @@ namespace uSync.Forms
 
 		public string GetExportValue(string value)
         {
-            if (!IdRegEx().IsMatch(value)) return value;
-            
             var replacements = new Dictionary<string, string>();
 
             foreach(Match m in IdRegEx().Matches(value).Cast<Match>())
             {
+                if (replacements.ContainsKey(m.Value)) continue;
+
                 if (int.TryParse(m.Value, out int id))
                 {
                     var entity = _entityService.Get(id);
                     if (entity != null)
                     {
-                        replacements.Add(m.Value, $"__{entity.Key.ToString().ToLower()}__");
+                        replacements[m.Value] = $"__{entity.Key.ToString().ToLower()}__";
                     }
                 }
             }
 
-            return value.ReplaceMany(replacements);
+            return replacements.Count == 0 ? value : value.ReplaceMany(replacements);
         }
 
         public string GetImportValue(string value)
         {
-            if (!GuidRegEx().IsMatch(value)) return value;
-
             var replacements = new Dictionary<string, string>();
             
             foreach(Match m in GuidRegEx().Matches(value).Cast<Match>())
             {
-                var guidValue = value.Trim('_');
+                if (replacements.ContainsKey(m.Value)) continue;
+
+                var guidValue = m.Value.Trim('_');
                 if (Guid.TryParse(guidValue, out Guid guid))
                 {
                     var entity = _entityService.Get(guid);
                     if (entity != null)
                     {
-                        replacements.Add(m.Value, entity.Id.ToString());
+                        replacements[m.Value] = entity.Id.ToString();
                     }
                 }
             }
 
-            return value.ReplaceMany(replacements);
+            return replacements.Count == 0 ? value : value.ReplaceMany(replacements);
         }
 	}
 }

@@ -26,13 +26,11 @@ namespace uSync.Forms.Serializers
         IsTwoPass = false)]
     public class FormSerializer : SyncSerializerRoot<Form>, ISyncSerializer<Form>
     {
-        private readonly IEntityService _entityService;
         private readonly SyncFormService _syncFormService;
 
-        public FormSerializer(ILogger<SyncSerializerRoot<Form>> logger, IEntityService entityService,
+        public FormSerializer(ILogger<SyncSerializerRoot<Form>> logger,
             SyncFormService formService) : base(logger)
         {
-            _entityService = entityService;
             _syncFormService = formService;
         }
 
@@ -77,6 +75,25 @@ namespace uSync.Forms.Serializers
                 info.Add(new XElement("NextLabel", item.NextLabel));
                 info.Add(new XElement("PreVLabel", item.PrevLabel));
 
+                info.Add(new XElement(nameof(item.MessageOnSubmitBlocks), item.MessageOnSubmitBlocks ?? string.Empty));
+
+                info.Add(new XElement(nameof(item.ShowPagingOnMultiPageForms), item.ShowPagingOnMultiPageForms));
+                info.Add(new XElement(nameof(item.PagingDetailsFormat), item.PagingDetailsFormat ?? string.Empty));
+                info.Add(new XElement(nameof(item.PageCaptionFormat), item.PageCaptionFormat ?? string.Empty));
+                info.Add(new XElement(nameof(item.ShowSummaryPageOnMultiPageForms), item.ShowSummaryPageOnMultiPageForms));
+                info.Add(new XElement(nameof(item.SummaryLabel), item.SummaryLabel ?? string.Empty));
+
+                info.Add(new XElement(nameof(item.DaysToRetainSubmittedRecordsFor), item.DaysToRetainSubmittedRecordsFor));
+                info.Add(new XElement(nameof(item.DaysToRetainApprovedRecordsFor), item.DaysToRetainApprovedRecordsFor));
+                info.Add(new XElement(nameof(item.DaysToRetainRejectedRecordsFor), item.DaysToRetainRejectedRecordsFor));
+
+                info.Add(new XElement(nameof(item.DisplayDefaultFields), item.DisplayDefaultFields));
+                info.Add(new XElement(nameof(item.SelectedDisplayFields),
+                    new XCData(JsonConvert.SerializeObject(item.SelectedDisplayFields ?? [], Formatting.Indented))));
+
+                info.Add(new XElement(nameof(item.ValidationRules),
+                    new XCData(JsonConvert.SerializeObject(item.ValidationRules ?? [], Formatting.Indented))));
+
                 node.Add(info);
 
                 node.Add(SerializePages(item.Pages));
@@ -87,26 +104,10 @@ namespace uSync.Forms.Serializers
 
         private void SerializeFolderInfo(XElement node, Form form)
         {
-            var folderId = form?.GetType()?.GetProperty("FolderId");
-            if (folderId != null)
-            {
-                var value = folderId.GetValue(form);
-                node.Add(new XElement("FolderId", folderId.GetValue(form)));
-
-                var attempt = value.TryConvertTo<Guid?>();
-                if (attempt.Success)
-                {
-                    if (attempt.Result != null)
-                    {
-                        var folderPath = _syncFormService.GetFolderPath(attempt.Result.Value);
-                        node.Add(new XElement("Folder", folderPath));
-                    }
-                    else
-                    {
-                        node.Add(new XElement("Folder", string.Empty));
-                    }
-                }
-            }
+            node.Add(new XElement("FolderId", form.FolderId));
+            node.Add(new XElement("Folder", form.FolderId is null
+                ? string.Empty
+                : _syncFormService.GetFolderPath(form.FolderId.Value)));
         }
 
         private XElement SerializePages(IEnumerable<Page> pages)
@@ -156,6 +157,9 @@ namespace uSync.Forms.Serializers
         {
             List<string> missing = new List<string>();
 
+            // looked up once (and only if a field needs it), not once per field.
+            Dictionary<string, FieldPreValueSource>? sources = null;
+
             foreach (var item in jArray.Cast<JObject>())
             {
                 var fieldSets = GetArray(item, "fieldSets");
@@ -170,8 +174,8 @@ namespace uSync.Forms.Serializers
                             var attempt = GetObjectValue<string>(field, "prevalueSourceId");
                             if (attempt && string.IsNullOrWhiteSpace(attempt.Result) is false && attempt.Result != Guid.Empty.ToString())
                             {
-                                var preValue = _syncFormService.GetPreValueSource(attempt.Result);
-                                if (preValue != null)
+                                sources ??= GetPreValueSourcesByName();
+                                if (sources.TryGetValue(attempt.Result, out var preValue))
                                 {
                                     field["prevalueSourceId"] = preValue.Id;
                                 }
@@ -192,6 +196,18 @@ namespace uSync.Forms.Serializers
 
             return missing.Count == 0 ? Attempt.Succeed<JArray?>(jArray) 
                 : Attempt.Fail<JArray?>(jArray, new Exception($"Could not find [{string.Join(",", missing)}]"));
+        }
+
+        private Dictionary<string, FieldPreValueSource> GetPreValueSourcesByName()
+        {
+            var sources = new Dictionary<string, FieldPreValueSource>(StringComparer.InvariantCultureIgnoreCase);
+            foreach (var source in _syncFormService.GetAllPreValues())
+            {
+                if (source.Name != null)
+                    sources.TryAdd(source.Name, source);
+            }
+
+            return sources;
         }
 
         private JArray GetArray(JObject obj, string propertyName)
@@ -232,17 +248,25 @@ namespace uSync.Forms.Serializers
 
             var changes = new List<uSyncChange>();
 
-            await DeserializeInfoAsync(node, item);
+            var info = node.Element("Info");
+
+            DeserializeInfo(node, info, item);
             changes.AddRange(DeserializePages(node, item));
 
-            // SaveItem(item);
+            // workflows reference the form, so it has to be saved before they are.
+            // we save here (once) and tell uSync not to save it again.
+            await SaveItemAsync(item);
 
-            return SyncAttempt<Form>.Succeed(item.Name, item, ChangeType.Import, changes);
+            if (info != null)
+                DeserializeWorkflows(info, item);
+
+            var attempt = SyncAttempt<Form>.Succeed(item.Name, item, ChangeType.Import, changes);
+            attempt.Saved = true;
+            return attempt;
         }
 
-        private async Task DeserializeInfoAsync(XElement node, Form item)
+        private void DeserializeInfo(XElement node, XElement? info, Form item)
         {
-            var info = node.Element("Info");
             if (info == null) return;
 
             item.Name = info.Element("Name").ValueOrDefault(node.GetAlias());
@@ -259,7 +283,9 @@ namespace uSync.Forms.Serializers
             item.MessageOnSubmitIsHtml =
                 info.Element("MessageOnSubmit")?.Attribute("IsHtml").ValueOrDefault(false) ?? false;
 
-            item.GoToPageOnSubmit = info.Element("GoToPageOnSubmit").ValueOrDefault(Guid.Empty).ToString();
+            // forms stores this as a string (a content key, "0" or empty) - round trip it as is,
+            // so the imported value matches the file and doesn't show as a change every time.
+            item.GoToPageOnSubmit = info.Element("GoToPageOnSubmit").ValueOrDefault(string.Empty);
 
             item.XPathOnSubmit = info.Element("XPathOnSubmit").ValueOrDefault(string.Empty);
             item.ManualApproval = info.Element("ManualApproval").ValueOrDefault(false);
@@ -273,34 +299,79 @@ namespace uSync.Forms.Serializers
             item.NextLabel = info.Element("NextLabel").ValueOrDefault(string.Empty);
             item.PrevLabel = info.Element("PreVLabel").ValueOrDefault(string.Empty);
 
-            // have to save before we do the workflow and source. 
-            await SaveItemAsync(item);
+            DeserializeOptionalInfo(info, item);
 
-            DeserializeWorkflows(info, item);
             DesersilizeDataSource(info, item);
-
-            await DeserializeFoldersAsync(info, item);
+            DeserializeFolders(info, item);
         }
 
-        private async Task DeserializeFoldersAsync(XElement info, Form item)
+        /// <summary>
+        ///  settings that were added to the file after the first release. they are only
+        ///  set when they are in the file, so importing an older export doesn't reset them.
+        /// </summary>
+        private static void DeserializeOptionalInfo(XElement info, Form item)
         {
-            var folderPath = info.Element("Folder").ValueOrDefault(string.Empty);
+            SetIfPresent(info, nameof(item.MessageOnSubmitBlocks), string.Empty,
+                x => item.MessageOnSubmitBlocks = string.IsNullOrEmpty(x) ? null : x);
 
-            if (!string.IsNullOrWhiteSpace(folderPath))
+            SetIfPresent(info, nameof(item.ShowPagingOnMultiPageForms), MultiPageNavigationOption.None,
+                x => item.ShowPagingOnMultiPageForms = x);
+            SetIfPresent(info, nameof(item.PagingDetailsFormat), string.Empty, x => item.PagingDetailsFormat = x);
+            SetIfPresent(info, nameof(item.PageCaptionFormat), string.Empty, x => item.PageCaptionFormat = x);
+            SetIfPresent(info, nameof(item.ShowSummaryPageOnMultiPageForms), false,
+                x => item.ShowSummaryPageOnMultiPageForms = x);
+            SetIfPresent(info, nameof(item.SummaryLabel), string.Empty,
+                x => item.SummaryLabel = string.IsNullOrEmpty(x) ? null : x);
+
+            SetIfPresent(info, nameof(item.DaysToRetainSubmittedRecordsFor), 0, x => item.DaysToRetainSubmittedRecordsFor = x);
+            SetIfPresent(info, nameof(item.DaysToRetainApprovedRecordsFor), 0, x => item.DaysToRetainApprovedRecordsFor = x);
+            SetIfPresent(info, nameof(item.DaysToRetainRejectedRecordsFor), 0, x => item.DaysToRetainRejectedRecordsFor = x);
+
+            SetIfPresent(info, nameof(item.DisplayDefaultFields), true, x => item.DisplayDefaultFields = x);
+            SetIfPresent(info, nameof(item.SelectedDisplayFields), string.Empty,
+                x => item.SelectedDisplayFields = JsonConvert.DeserializeObject<List<RecordFieldDisplay>>(x) ?? []);
+
+            SetIfPresent(info, nameof(item.ValidationRules), string.Empty,
+                x => item.ValidationRules = JsonConvert.DeserializeObject<List<ValidationRule>>(x) ?? []);
+        }
+
+        private static void SetIfPresent<TValue>(XElement info, string name, TValue defaultValue, Action<TValue> setValue)
+        {
+            var element = info.Element(name);
+            if (element is null) return;
+
+            setValue(element.ValueOrDefault(defaultValue));
+        }
+
+        private void DeserializeFolders(XElement info, Form item)
+        {
+            // no folder info in the file (older exports) - leave the form where it is.
+            var folderNode = info.Element("Folder");
+            if (folderNode == null) return;
+
+            var folderId = info.Element("FolderId").ValueOrDefault(Guid.Empty);
+            var folderPath = folderNode.ValueOrDefault(string.Empty);
+
+            // the folder handler runs before forms, so the folder will normally exist by id.
+            if (folderId != Guid.Empty && _syncFormService.GetFolder(folderId) != null)
             {
-                Umbraco.Forms.Core.Models.Folder? folder;
-
-                if (item.FolderId != null && item.FolderId != Guid.Empty)
-                {
-                    folder = await _syncFormService.CreateOrFindFoldersWithIdAsync(Guid.Empty, item.FolderId.Value, "");
-                    if (folder != null) return;
-                }
-                
-                folder = _syncFormService.CreateOrFindFolders(Guid.Empty, folderPath);
-
-                if (folder != null) 
-                    item.FolderId = folder.Id;
+                item.FolderId = folderId;
+                return;
             }
+
+            if (string.IsNullOrWhiteSpace(folderPath))
+            {
+                // form is at the root.
+                item.FolderId = null;
+                return;
+            }
+
+            // not there by id, so find (or create) it by path. if we do have to create it, it
+            // gets the id from the file, so it matches when the folder itself is synced.
+            var folder = _syncFormService.CreateOrFindFolders(Guid.Empty, folderPath,
+                folderId == Guid.Empty ? null : folderId);
+            if (folder != null)
+                item.FolderId = folder.Id;
         }
 
 
@@ -521,39 +592,5 @@ namespace uSync.Forms.Serializers
 
         public override Task SaveItemAsync(Form item)
             => uSyncTaskHelper.FromResultOf(() => _syncFormService.SaveForm(item));
-      
-
-        private Guid GetContentKey(int id)
-        {
-            if (id > 0)
-            {
-                var attempt = _entityService.GetKey(id, UmbracoObjectTypes.Document);
-                if (attempt.Success) return attempt.Result;
-            }
-
-            return Guid.Empty;
-        }
-
-        private int GetContentId(Guid key)
-        {
-            if (key != Guid.Empty)
-            {
-                var attempt = _entityService.GetId(key, UmbracoObjectTypes.Document);
-                if (attempt.Success) return attempt.Result;
-            }
-
-            return 0;
-        }
-
-
-        protected override XElement CleanseNode(XElement node)
-        {
-            var cleansed = XElement.Parse(node.ToString());
-
-            var keyNode = cleansed.Attribute("key");
-            if (keyNode != null)
-                keyNode.Value = Guid.Empty.ToString();
-            return cleansed;
-        }
     }
 }

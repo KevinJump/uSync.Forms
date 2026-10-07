@@ -14,7 +14,7 @@ namespace uSync.Forms.Services
     public partial class SyncFormService
     {
         private bool IsNew(Folder folder)
-            => folder.Id == Guid.Empty || _folderService.Get(folder.Id) == null;
+            => folder.Id == Guid.Empty || !_folderService.Exists(folder.Id);
 
         public void SaveFolder(Folder item)
         {
@@ -36,17 +36,9 @@ namespace uSync.Forms.Services
         {
             var folders = new List<Folder>();
 
-            if (parent != null)
+            foreach (var folder in GetChildFolders(parent))
             {
-                folders.AddRange(_folderService.GetChildren(parent.Value));
-            }
-            else
-            {
-                folders.AddRange(_folderService.GetAtRoot());
-            }
-
-            foreach (var folder in folders)
-            {
+                folders.Add(folder);
                 folders.AddRange(GetAllFolders(folder.Id));
             }
 
@@ -65,7 +57,7 @@ namespace uSync.Forms.Services
             }
         }
 
-        // return all the forms in a folder or its children.
+        // return all the forms in a folder or any of the folders beneath it.
         public IEnumerable<Form> GetFolderForms(Guid folderId)
         {
             var ids = new List<Guid>()
@@ -73,11 +65,9 @@ namespace uSync.Forms.Services
                 folderId
             };
 
-            ids.AddRange(_folderService.GetChildren(folderId)
-                .Select(x => x.Id));
+            ids.AddRange(GetAllFolders(folderId).Select(x => x.Id));
 
-            // all forms who live in a folder that is either this folder or a child folder
-            return _formService.Get().Where(x => x.FolderId != null && ids.Contains(x.FolderId.Value));
+            return ids.SelectMany(id => _formService.GetFromFolder(id)).ToList();
         }
 
         public string GetFolderPath(Guid folderId)
@@ -101,11 +91,20 @@ namespace uSync.Forms.Services
 
         public Folder? CreateOrFindFolders(Guid parent, string folderPath)
         {
-            return CreateOrFindFoldersInternal(parent, folderPath);
+            return CreateOrFindFoldersInternal(parent, folderPath, null);
         }
 
-        private Folder? CreateOrFindFoldersInternal(Guid parent, string folderPath) 
-        { 
+        /// <summary>
+        ///  find or create the folders in a path, if the last folder in the path has
+        ///  to be created it is given the id passed in.
+        /// </summary>
+        public Folder? CreateOrFindFolders(Guid parent, string folderPath, Guid? folderId)
+        {
+            return CreateOrFindFoldersInternal(parent, folderPath, folderId);
+        }
+
+        private Folder? CreateOrFindFoldersInternal(Guid parent, string folderPath, Guid? folderId)
+        {
             var folderPathClean = folderPath.Trim('/');
 
             IEnumerable<Folder> folders;
@@ -124,16 +123,21 @@ namespace uSync.Forms.Services
                 folder = folderPathClean.Substring(0, folderPathClean.IndexOf('/'));
             }
 
-            var formFolder = folders.FirstOrDefault(x => x.Name.InvariantEquals( HttpUtility.UrlDecode(folder)));
+            // the path is made of url encoded folder names.
+            var folderName = HttpUtility.UrlDecode(folder);
+            var isLastFolder = !folderPathClean.Contains('/');
+
+            var formFolder = folders.FirstOrDefault(x => x.Name.InvariantEquals(folderName));
 
             if (formFolder == null)
             {
                 formFolder = new Folder
                 {
-                    Name = folder,
+                    Name = folderName,
                 };
 
                 if (parent != Guid.Empty) formFolder.ParentId = parent;
+                if (isLastFolder && folderId != null && folderId != Guid.Empty) formFolder.Id = folderId.Value;
 
                 try
                 {
@@ -150,7 +154,7 @@ namespace uSync.Forms.Services
             if (folderPathClean.Contains('/'))
             {
                 var remaining = folderPathClean.Substring(folderPathClean.IndexOf('/'));
-                return CreateOrFindFolders(formFolder?.Id ?? Guid.Empty, remaining);
+                return CreateOrFindFoldersInternal(formFolder?.Id ?? Guid.Empty, remaining, folderId);
             }
             else
             {

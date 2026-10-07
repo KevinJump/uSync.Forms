@@ -20,7 +20,7 @@ namespace uSync.Forms.Services
         ///  workflows json has the guid in it, so it new workflows might have empty guid values. 
         /// </summary>
         public bool IsNew(Workflow item, Form form)
-            => (item.Id == Guid.Empty || (FindWorkflow(item.Id, form) == null));
+            => item.Id == Guid.Empty || !_workflowService.Exists(item.Id);
 
 
         public Workflow? FindWorkflow(Guid id, Form form)

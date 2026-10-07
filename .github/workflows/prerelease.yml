@@ -1,0 +1,159 @@
+name: "Prerelease - push a nightly build"
+
+permissions:
+  contents: read
+
+# Manual only: dotnet-build.yml already builds every PR and package-build.yml packs
+# every push to a release branch, so nothing needs to reach the nightly feed unless
+# someone asks for it.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  config: Release
+  out_folder: ./build-out/
+  solution_name: ./uSync.Forms.slnx
+  forms_client_folder: ./uSync.Forms/forms-client
+
+jobs:
+  # One job on purpose: the solution is built once, with the nightly version stamped
+  # in, and then packed from that same build (--no-build).
+  nightly:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # GitVersion needs the full history
+          fetch-depth: 0
+
+      - name: Install GitVersion
+        # pinned to v3 on purpose: v4 of this action requires GitVersion >= 6.2, and our
+        # GitVersion.yml is still v5 schema (mode / tag rather than deployment-mode / label).
+        # Moving to v4 means migrating that config too.
+        uses: gittools/actions/gitversion/setup@v3
+        with:
+          versionSpec: "5.x"
+
+      - name: Determine Version with GitVersion
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v3
+        with:
+          useConfigFile: true
+          configFilePath: ./GitVersion.yml
+
+      # These builds are only ever pushed to the nightly feed, never to nuget.org,
+      # so the version carries a date + run number rather than GitVersion's own
+      # prerelease scheme - makes it obvious which nightly a given package build
+      # is, and when it was built.
+      #
+      # v18/main builds are "-prerelease.{date}.{run}". Any other branch is
+      # "-branch.{branch}.{date}.{run}", so a branch build on the feed can't be
+      # mistaken for a main nightly, and sorts below them ("branch" < "prerelease").
+      - name: Determine nightly version
+        id: version
+        run: |
+          date=$(date -u +%Y%m%d)
+          if [ "$GITHUB_REF" = "refs/heads/v18/main" ]; then
+            label=prerelease
+          else
+            # semver prerelease identifiers are [0-9A-Za-z-] only.
+            label="branch.$(echo "$GITHUB_REF_NAME" | sed 's/[^0-9A-Za-z-]/-/g')"
+          fi
+          version="${{ steps.gitversion.outputs.majorMinorPatch }}-$label.$date.$GITHUB_RUN_NUMBER"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Full Version: $version"
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "lts/*"
+          cache: npm
+          cache-dependency-path: "**/package-lock.json"
+
+      # forms-client has no MSBuild target wiring it into the dotnet build, unlike
+      # uSync.Forms.Complete's Client folder, so it has to be built explicitly first.
+      - name: build forms-client
+        working-directory: ${{ env.forms_client_folder }}
+        run: |
+          npm ci
+          npm run build
+
+      - name: restore
+        run: dotnet restore ${{ env.solution_name }} --locked-mode
+
+      # the version is set here, not at pack time, so the assemblies carry it and the
+      # pack step below can reuse this build instead of rebuilding every project.
+      #
+      # InformationalVersion is set explicitly because the GitVersion step exports its
+      # own values as environment variables for the rest of this job, including
+      # "informationalVersion". MSBuild reads environment variables as properties,
+      # case-insensitively, so without this the assemblies carry GitVersion's value,
+      # not the nightly one.
+      - name: build
+        run: >-
+          dotnet build ${{ env.solution_name }}
+          -c ${{ env.config }}
+          --no-restore
+          -p:ContinuousIntegrationBuild=true
+          -p:Version=${{ steps.version.outputs.version }}
+          -p:InformationalVersion=${{ steps.version.outputs.version }}
+
+      - name: pack
+        run: |
+          set -euo pipefail
+          projects=(
+            uSync.Forms
+            uSync.Forms.Complete
+          )
+          for project in "${projects[@]}"; do
+            dotnet pack "./$project/$project.csproj" \
+              -c ${{ env.config }} \
+              --no-build \
+              --output ${{ env.out_folder }} \
+              -p:Version=${{ steps.version.outputs.version }}
+          done
+
+      # NOTE: this workflow only ever runs on manual dispatch. Full releases to
+      # nuget.org happen separately, in release.yml, triggered by pushing a
+      # v{version} tag. The steps below push these packages to the Jumoo nightly
+      # feed instead, so testers can try a build (from main or a feature branch)
+      # without waiting for a tagged release.
+      - name: Upload nuget file as build artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: nuget-nightly-${{ steps.version.outputs.version }}
+          path: ${{ env.out_folder }}
+
+      # KevinJump/uSync.Forms isn't in the Jumoo org, so nightly-feed-config's
+      # organization-level Actions access doesn't reach it and `uses:
+      # Jumoo/nightly-feed-config@main` can't resolve with the job's own
+      # GITHUB_TOKEN. Check the action out locally with a PAT scoped to just
+      # that repo, then reference it by local path instead.
+      - name: Checkout nightly-feed-config
+        uses: actions/checkout@v7
+        with:
+          repository: Jumoo/nightly-feed-config
+          token: ${{ secrets.NIGHTLY_FEED_PAT }}
+          path: .nightly-feed-config
+
+      # Any branch can publish to the nightly feed - this workflow is manual only,
+      # and branch builds carry a "-branch.{name}" label (see the version step).
+      - name: Publish to nightly feed
+        uses: ./.nightly-feed-config
+        with:
+          packages: ${{ env.out_folder }}
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}

@@ -66,6 +66,8 @@ namespace uSync.Forms.Mappers
                                 Flags = flags,
                                 Order = uSyncFormPriorities.DataSources,
                             });
+
+                            return formDependency;
                         }
                     }
                 }
