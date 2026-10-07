@@ -38,7 +38,7 @@ namespace uSync.Forms.Services
         }
 
         private bool IsNew(FormDataSource item)
-            => item.Id == Guid.Empty || !GetAllDataSources().Any(x => x.Id == item.Id);
+            => item.Id == Guid.Empty || !_dataSourceService.Exists(item.Id);
 
         public void DeleteDataSource(FormDataSource item) => _dataSourceService.Delete(item);
     }

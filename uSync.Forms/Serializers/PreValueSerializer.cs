@@ -169,18 +169,6 @@ namespace uSync.Forms.Serializers
         public override Task SaveItemAsync(FieldPreValueSource item)
             => uSyncTaskHelper.FromResultOf(() => _syncFormService.SavePreValueSource(item));
 
-        /// <summary>
-        ///  we remove the key, because it can't be set in forms
-        /// </summary>
-        protected override XElement CleanseNode(XElement node)
-        {
-            var cleansed = XElement.Parse(node.ToString());
-
-            var keyNode = cleansed.Attribute("key");
-            if (keyNode != null)
-                keyNode.Value = Guid.Empty.ToString();
-            return cleansed;
-        }
 
     }
 }

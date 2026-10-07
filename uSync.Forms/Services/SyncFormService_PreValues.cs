@@ -33,7 +33,7 @@ namespace uSync.Forms.Services
 
         private bool IsNew(FieldPreValueSource item)
         {
-            return item.Id == Guid.Empty || GetAllPreValues().FirstOrDefault(x => x.Id == item.Id) == null;
+            return item.Id == Guid.Empty || !_preValueSourceService.Exists(item.Id);
         }
 
         public void DeletePreValueSource(FieldPreValueSource item) => _preValueSourceService.Delete(item);

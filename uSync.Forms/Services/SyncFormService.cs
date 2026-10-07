@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Umbraco.Extensions;
 using Umbraco.Forms.Core.Models;
 using Umbraco.Forms.Core.Services;
 
@@ -50,8 +51,9 @@ namespace uSync.Forms.Services
         }
 
         public Form? GetForm(string name) { 
-            try { return _formService.Get(name); }
-            catch { return null; }
+            // the forms Get(name) throws when there isn't a form with that name (or there
+            // are two), and we look forms up by name for every new form on an import.
+            return GetAllForms().FirstOrDefault(x => x.Name.InvariantEquals(name));
         }
 
         public void SaveForm(Form item)
@@ -60,7 +62,7 @@ namespace uSync.Forms.Services
         }
 
         private bool IsNew(Form item)
-            => item.Id == Guid.Empty || !GetAllForms().Any(x => x.Id == item.Id);
+            => item.Id == Guid.Empty || !_formService.Exists(item.Id);
 
 
         public void DeleteForm(Form item)

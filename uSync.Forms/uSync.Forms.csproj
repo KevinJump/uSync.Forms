@@ -15,7 +15,6 @@
 
 		<RepositoryUrl>https://github.com/KevinJump/uSync.Forms</RepositoryUrl>
 		<PackageProjectUrl>https://jumoo.co.uk/uSync</PackageProjectUrl>
-		<Copyright>Jumoo @ 2013-2024</Copyright>
 
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 
@@ -27,6 +26,11 @@
 		<Nullable>enable</Nullable>
 		
 	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- the client source's json files are picked up as content, keep them out of the package -->
+		<Content Remove="forms-client\**" />
+	</ItemGroup>
 
 	<ItemGroup>
 
