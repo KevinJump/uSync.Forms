@@ -6,11 +6,20 @@ updates:
       interval: "weekly"
     open-pull-requests-limit: 10
     ignore:
-      # Umbraco.Cms/.Forms versions are locked to the release we've pinned across
-      # the .NET projects and package.json (see "Pin @umbraco-cms/backoffice to the
-      # 17.4.2 release") - bump these deliberately, not via dependabot.
-      - dependency-name: "Umbraco.Cms*"
-      - dependency-name: "Umbraco.Forms*"
+      # Umbraco versions are locked to the release we've pinned across the .NET
+      # projects and package.json (see "Pin @umbraco-cms/backoffice to the 17.4.2
+      # release") - bump these deliberately, not via dependabot.
+      - dependency-name: "Umbraco.*"
+      # uSync and uSync.Complete are ours and set the minimum for anyone installing
+      # uSync.Forms, so they move with the Umbraco major too.
+      - dependency-name: "uSync*"
+    groups:
+      nuget-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "npm"
     directory: "/uSync.Forms/forms-client"
@@ -22,6 +31,16 @@ updates:
       # TypeScript 7 is not supported by @hey-api yet - stay on the current major.
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
+      # @hey-api/* is still 0.x, so a minor bump is a breaking one.
+      - dependency-name: "@hey-api/*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      npm-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "npm"
     directory: "/uSync.Forms.Complete/Client"
@@ -33,6 +52,16 @@ updates:
       # TypeScript 7 is not supported by @hey-api yet - stay on the current major.
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
+      # @hey-api/* is still 0.x, so a minor bump is a breaking one.
+      - dependency-name: "@hey-api/*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      npm-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -43,3 +72,10 @@ updates:
       # see the comment in package-build.yml. Migrate deliberately, not via dependabot.
       - dependency-name: "gittools/actions"
         update-types: ["version-update:semver-major"]
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
